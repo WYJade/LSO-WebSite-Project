@@ -1,0 +1,12 @@
+{
+  "buildCommand": "cd lso-account-dashboard && npm install && npm run build",
+  "outputDirectory": "lso-account-dashboard/build",
+  "installCommand": "cd lso-account-dashboard && npm install",
+  "framework": "create-react-app",
+  "rewrites": [
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
+  ]
+}
