@@ -1,0 +1,69 @@
+.tracking-card {
+  background: white;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 2rem;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.3s;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.tracking-card:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  transform: translateY(-2px);
+  border-color: #003366;
+}
+
+.card-icon {
+  margin-bottom: 1.5rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #4A90E2;
+}
+
+.card-icon svg {
+  width: 80px;
+  height: 80px;
+}
+
+.card-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #333;
+  margin: 0 0 1.5rem 0;
+}
+
+.card-button {
+  background-color: transparent;
+  color: #003366;
+  border: 2px solid #003366;
+  padding: 0.6rem 2rem;
+  border-radius: 4px;
+  font-size: 0.95rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.card-button:hover {
+  background-color: #003366;
+  color: white;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .tracking-card {
+    padding: 1.5rem;
+  }
+
+  .card-icon svg {
+    width: 60px;
+    height: 60px;
+  }
+
+  .card-title {
+    font-size: 1rem;
+  }
+}
