@@ -1,0 +1,8 @@
+.App {
+  min-height: 100vh;
+  background-color: var(--color-gray-100);
+}
+
+.dashboard {
+  min-height: 100vh;
+}

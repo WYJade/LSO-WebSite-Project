@@ -1,0 +1,76 @@
+.shipment-actions-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+  margin-top: 1.5rem;
+}
+
+.action-card {
+  background: white;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 2rem 1.5rem;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.3s;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+
+.action-card:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  transform: translateY(-2px);
+  border-color: #003366;
+}
+
+.action-icon {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.action-title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #333;
+  margin: 0;
+  min-height: 2.5rem;
+  display: flex;
+  align-items: center;
+}
+
+.action-button {
+  background-color: transparent;
+  color: #003366;
+  border: 2px solid #003366;
+  padding: 0.6rem 1.5rem;
+  border-radius: 4px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.action-button:hover {
+  background-color: #003366;
+  color: white;
+}
+
+@media (max-width: 1024px) {
+  .shipment-actions-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .shipment-actions-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .action-card {
+    padding: 1.5rem 1rem;
+  }
+}

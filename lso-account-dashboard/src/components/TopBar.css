@@ -1,0 +1,83 @@
+.top-bar {
+  background-color: #3a3a3a;
+  color: white;
+  padding: 0;
+  font-size: 13px;
+}
+
+.top-bar-container {
+  max-width: 1400px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.6rem 2rem;
+}
+
+.top-bar-left {
+  display: flex;
+  align-items: center;
+}
+
+.ship-now-btn {
+  background: linear-gradient(135deg, #0078D4 0%, #005a9e 100%);
+  color: white;
+  border: none;
+  padding: 0.6rem 1.5rem;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s;
+  letter-spacing: 0.5px;
+  border-radius: 0;
+}
+
+.ship-now-btn:hover {
+  background: linear-gradient(135deg, #005a9e 0%, #004578 100%);
+  transform: translateY(-1px);
+}
+
+.top-bar-right {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.top-bar-link {
+  color: white;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 13px;
+  transition: color 0.3s;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+}
+
+.top-bar-link:hover {
+  color: #00A4EF;
+}
+
+.icon {
+  font-size: 14px;
+}
+
+.locations-dropdown {
+  position: relative;
+}
+
+@media (max-width: 768px) {
+  .top-bar-container {
+    flex-direction: column;
+    gap: 0.8rem;
+  }
+
+  .top-bar-right {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 1rem;
+  }
+}
