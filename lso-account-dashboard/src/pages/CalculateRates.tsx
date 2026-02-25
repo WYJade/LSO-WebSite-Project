@@ -105,9 +105,9 @@ const CalculateRates: React.FC = () => {
           <div className="rates-header">
             <div className="header-icon">
               <svg width="60" height="60" viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <ellipse cx="30" cy="18" rx="23" ry="7.5" fill="#0052CC" transform="rotate(-25 30 18)"/>
-                <ellipse cx="33" cy="30" rx="25" ry="8.5" fill="#1976D2" transform="rotate(5 33 30)"/>
-                <circle cx="30" cy="45" r="8.5" fill="#00BCD4"/>
+                <ellipse cx="30" cy="18" rx="23" ry="7.5" fill="#1E3A8A" transform="rotate(-25 30 18)"/>
+                <ellipse cx="33" cy="30" rx="25" ry="8.5" fill="#2563EB" transform="rotate(5 33 30)"/>
+                <circle cx="30" cy="45" r="8.5" fill="#0EA5E9"/>
               </svg>
             </div>
             <h1 className="page-title">Calculate rates</h1>
