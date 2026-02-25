@@ -17,7 +17,8 @@ const TrackPackage: React.FC = () => {
   const [trackingInput, setTrackingInput] = useState('');
   const [trackingResults, setTrackingResults] = useState<any[]>([]);
   const [showFilterMenu, setShowFilterMenu] = useState(false);
-  const [selectedFilter, setSelectedFilter] = useState<string>('all');
+  const [selectedStatuses, setSelectedStatuses] = useState<string[]>([]);
+  const [selectedServiceTypes, setSelectedServiceTypes] = useState<string[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
   const [totalItems, setTotalItems] = useState(0);
@@ -190,8 +191,34 @@ const TrackPackage: React.FC = () => {
   };
 
   const handleFilterSelect = (filter: string) => {
-    setSelectedFilter(filter);
+    // This function is no longer used with multi-select
     setShowFilterMenu(false);
+  };
+
+  const handleStatusToggle = (status: string) => {
+    setSelectedStatuses(prev => 
+      prev.includes(status) 
+        ? prev.filter(s => s !== status)
+        : [...prev, status]
+    );
+  };
+
+  const handleServiceTypeToggle = (serviceType: string) => {
+    setSelectedServiceTypes(prev => 
+      prev.includes(serviceType) 
+        ? prev.filter(s => s !== serviceType)
+        : [...prev, serviceType]
+    );
+  };
+
+  const handleClearFilters = () => {
+    setSelectedStatuses([]);
+    setSelectedServiceTypes([]);
+  };
+
+  const handleApplyFilters = () => {
+    setShowFilterMenu(false);
+    // Filter logic will be applied to the results
   };
 
   const handlePageChange = (page: number) => {
@@ -564,19 +591,73 @@ const TrackPackage: React.FC = () => {
                   </div>
 
                   {showFilterMenu && (
-                    <div className="filter-dropdown">
-                      <div className="filter-title">Quick Status</div>
-                      <div className="filter-options">
-                        <button onClick={() => handleFilterSelect('new')}>New</button>
-                        <button onClick={() => handleFilterSelect('picked-up')}>Picked Up</button>
-                        <button onClick={() => handleFilterSelect('inbound')}>Inbound scan at destination</button>
-                        <button onClick={() => handleFilterSelect('out-for-delivery')}>Out For Delivery</button>
-                        <button onClick={() => handleFilterSelect('delivered')}>Delivered</button>
-                        <button onClick={() => handleFilterSelect('return')}>Return to Shipper</button>
-                        <button onClick={() => handleFilterSelect('discarded')}>Discarded</button>
-                        <button onClick={() => handleFilterSelect('lost')}>Lost</button>
-                        <button onClick={() => handleFilterSelect('delay')}>Delay Exception</button>
-                        <button onClick={() => handleFilterSelect('failed')}>Failed Attempt</button>
+                    <div className="filter-dropdown-panel">
+                      <div className="filter-panel-header">
+                        <h4>Filter Options</h4>
+                        <button className="filter-close-btn" onClick={() => setShowFilterMenu(false)}>✕</button>
+                      </div>
+                      
+                      <div className="filter-panel-body">
+                        {/* Status Filter */}
+                        <div className="filter-section">
+                          <div className="filter-section-title">Status</div>
+                          <div className="filter-checkbox-group">
+                            {[
+                              { value: 'new', label: 'New' },
+                              { value: 'picked-up', label: 'Picked Up' },
+                              { value: 'inbound', label: 'Inbound scan at destination' },
+                              { value: 'out-for-delivery', label: 'Out For Delivery' },
+                              { value: 'delivered', label: 'Delivered' },
+                              { value: 'return', label: 'Return to Shipper' },
+                              { value: 'discarded', label: 'Discarded' },
+                              { value: 'lost', label: 'Lost' },
+                              { value: 'delay', label: 'Delay Exception' },
+                              { value: 'failed', label: 'Failed Attempt' }
+                            ].map(status => (
+                              <label key={status.value} className="filter-checkbox-item">
+                                <input
+                                  type="checkbox"
+                                  checked={selectedStatuses.includes(status.value)}
+                                  onChange={() => handleStatusToggle(status.value)}
+                                />
+                                <span>{status.label}</span>
+                              </label>
+                            ))}
+                          </div>
+                        </div>
+
+                        {/* Service Type Filter */}
+                        <div className="filter-section">
+                          <div className="filter-section-title">Service Type</div>
+                          <div className="filter-checkbox-group">
+                            {[
+                              'LSO Priority Next Day™',
+                              'LSO Early Next Day™',
+                              'LSO Economy Next Day™',
+                              'LSO Ground™',
+                              'LSO 2nd Day™',
+                              'LSO E-Commerce Delivery™'
+                            ].map(serviceType => (
+                              <label key={serviceType} className="filter-checkbox-item">
+                                <input
+                                  type="checkbox"
+                                  checked={selectedServiceTypes.includes(serviceType)}
+                                  onChange={() => handleServiceTypeToggle(serviceType)}
+                                />
+                                <span>{serviceType}</span>
+                              </label>
+                            ))}
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="filter-panel-footer">
+                        <button className="filter-clear-btn" onClick={handleClearFilters}>
+                          Clear All
+                        </button>
+                        <button className="filter-apply-btn" onClick={handleApplyFilters}>
+                          Apply Filters
+                        </button>
                       </div>
                     </div>
                   )}
