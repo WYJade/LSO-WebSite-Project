@@ -26,12 +26,12 @@ const NavigationBar: React.FC<NavigationBarProps> = ({
         <div className="nav-left">
           <div className="logo" onClick={onLogoClick} data-testid="logo">
             <svg width="200" height="60" viewBox="0 0 200 60" xmlns="http://www.w3.org/2000/svg">
-              {/* Top ellipse - Dark Blue (Brand Color) */}
-              <ellipse cx="35" cy="15" rx="35" ry="11" fill="#1E3A8A" transform="rotate(-25 35 15)"/>
-              {/* Middle ellipse - Blue (Brand Color) */}
-              <ellipse cx="40" cy="30" rx="38" ry="13" fill="#2563EB" transform="rotate(5 40 30)"/>
-              {/* Bottom circle - Light Blue (Brand Color) */}
-              <circle cx="35" cy="47" r="13" fill="#0EA5E9"/>
+              {/* Top ellipse - Deep Blue */}
+              <ellipse cx="32" cy="16" rx="32" ry="12" fill="#1E3A8A" transform="rotate(-22 32 16)"/>
+              {/* Middle ellipse - Medium Blue */}
+              <ellipse cx="38" cy="30" rx="36" ry="14" fill="#2563EB" transform="rotate(3 38 30)"/>
+              {/* Bottom circle - Light Blue */}
+              <circle cx="32" cy="46" r="14" fill="#0EA5E9"/>
               
               {/* LSO Text */}
               <text x="75" y="42" fontFamily="Arial, sans-serif" fontSize="36" fontWeight="bold" fill="#000000">LSO</text>
