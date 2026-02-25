@@ -2414,8 +2414,39 @@
   font-size: 32px;
   font-weight: 700;
   color: #003087;
-  margin: 0 0 25px 0;
+  margin: 0 0 20px 0;
   letter-spacing: 1px;
+}
+
+/* Prominent Status Badge */
+.pod-status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+  color: white;
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 25px;
+  box-shadow: 0 4px 12px rgba(34, 197, 94, 0.3);
+}
+
+.pod-status-badge .status-icon {
+  font-size: 24px;
+  background: rgba(255, 255, 255, 0.2);
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+}
+
+.pod-status-badge .status-text {
+  font-weight: 600;
+  letter-spacing: 0.5px;
 }
 
 .pod-details-list {
@@ -2681,8 +2712,24 @@
   font-size: 32px;
   font-weight: 700;
   color: #000;
-  margin: 0 0 30px 0;
+  margin: 0 0 20px 0;
   letter-spacing: 1px;
+}
+
+/* Print Status Badge */
+.pod-print-status-badge {
+  background: #f0f0f0;
+  border: 2px solid #22c55e;
+  padding: 12px 20px;
+  border-radius: 6px;
+  margin-bottom: 25px;
+  font-size: 16px;
+  color: #000;
+}
+
+.pod-print-status-badge strong {
+  color: #22c55e;
+  margin-right: 8px;
 }
 
 .pod-print-details-list {

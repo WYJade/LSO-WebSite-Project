@@ -1373,15 +1373,13 @@ const TrackPackage: React.FC = () => {
                       <div key={index} className="pod-result-block">
                         <h2 className="pod-tracking-number">#{result.trackingNumber}</h2>
                         
+                        {/* Tracking Status - Prominent Display */}
+                        <div className="pod-status-badge">
+                          <span className="status-icon">✓</span>
+                          <span className="status-text">{result.trackingStatus}</span>
+                        </div>
+                        
                         <div className="pod-details-list">
-                          <div className="pod-detail-row">
-                            <span className="pod-detail-label">Airbill No</span>
-                            <span className="pod-detail-value">{result.airbillNo}</span>
-                          </div>
-                          <div className="pod-detail-row">
-                            <span className="pod-detail-label">Tracking Status</span>
-                            <span className="pod-detail-value">{result.trackingStatus}</span>
-                          </div>
                           <div className="pod-detail-row">
                             <span className="pod-detail-label">Delivery Date</span>
                             <span className="pod-detail-value">{result.deliveryDate}</span>
@@ -1445,15 +1443,12 @@ const TrackPackage: React.FC = () => {
                     <div key={index} className="pod-print-result-block">
                       <h2 className="pod-print-tracking-number">#{result.trackingNumber}</h2>
                       
+                      {/* Tracking Status - Prominent Display for Print */}
+                      <div className="pod-print-status-badge">
+                        <strong>Status:</strong> {result.trackingStatus}
+                      </div>
+                      
                       <div className="pod-print-details-list">
-                        <div className="pod-print-detail-row">
-                          <span className="pod-print-detail-label">Airbill No</span>
-                          <span className="pod-print-detail-value">{result.airbillNo}</span>
-                        </div>
-                        <div className="pod-print-detail-row">
-                          <span className="pod-print-detail-label">Tracking Status</span>
-                          <span className="pod-print-detail-value">{result.trackingStatus}</span>
-                        </div>
                         <div className="pod-print-detail-row">
                           <span className="pod-print-detail-label">Delivery Date</span>
                           <span className="pod-print-detail-value">{result.deliveryDate}</span>
