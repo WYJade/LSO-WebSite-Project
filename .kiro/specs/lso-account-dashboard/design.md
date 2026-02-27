@@ -2,11 +2,16 @@
 
 ## Overview
 
-LSO账户管理系统是一个现代化的Web应用程序，为物流客户提供集中的账户管理界面。系统采用响应式设计，支持桌面、平板和移动设备访问。
+LSO账户管理系统是一个现代化的Web应用程序，为物流客户提供集中的账户管理界面。系统采用模块化导航设计，包含6个主要功能模块：Overview（概览）、Claim（索赔）、Admin（管理）、Address book（地址簿）、Report（报告）、Billing（账单）。
+
+系统采用响应式设计，支持桌面、平板和移动设备访问。
 
 设计遵循以下核心原则：
+- **模块化导航**: 清晰的功能模块划分，便于用户快速定位
 - **信息层次**: 关键指标和操作位于显著位置
-- **卡片式布局**: 使用卡片组织相关功能，降低认知负担
+- **单屏展示**: 重要信息在一屏内完整展示，减少滚动
+- **批量操作**: 支持批量追踪查询（最多30个）
+- **快速访问**: 通过操作卡片快速访问常用功能
 - **一致性**: 统一的视觉模式、布局和交互行为
 - **响应式**: 适配桌面、平板和移动设备
 - **渐进式披露**: 从高层概览开始，按需深入细节
@@ -18,41 +23,66 @@ LSO账户管理系统是一个现代化的Web应用程序，为物流客户提�
 
 ## Architecture
 
-系统采用现代前端架构，包含以下层次：
+系统采用现代前端架构，基于模块化页面设计，包含以下层次：
 
 ### 1. 展示层 (Presentation Layer)
 - **组件**: 可复用的UI组件（按钮、卡片、导航栏等）
-- **页面**: 组合组件形成完整页面
+- **页面**: 6个主要模块页面（Overview, Claim, Admin, Address Book, Report, Billing）
 - **布局**: 响应式布局容器
 
 ### 2. 状态管理层 (State Management Layer)
-- **用户状态**: 当前登录用户信息
-- **导航状态**: 当前活动标签和路由
-- **数据状态**: 包裹、货运、地址等业务数据
+- **用户状态**: 当前登录用户信息和权限
+- **导航状态**: 当前活动模块和路由
+- **数据状态**: 包裹、货运、地址、用户等业务数据
+- **表单状态**: 各种表单的输入和验证状态
 
 ### 3. 数据访问层 (Data Access Layer)
 - **API客户端**: 与后端服务通信
 - **缓存**: 本地数据缓存以提升性能
 - **认证**: 处理用户认证和会话管理
 
+### 4. 路由层 (Routing Layer)
+- **页面路由**: 管理6个主模块的路由
+- **子路由**: 管理详情页面和操作页面的路由
+- **路由保护**: 基于权限的路由访问控制
+
 ### 架构图
 
 ```mermaid
 graph TD
-    A[用户界面] --> B[展示层组件]
-    B --> C[状态管理]
-    C --> D[数据访问层]
-    D --> E[后端API]
+    A[用户界面] --> B[主导航 MainNavigation]
+    B --> C1[Overview Page]
+    B --> C2[Claim Page]
+    B --> C3[Admin Page]
+    B --> C4[Address Book Page]
+    B --> C5[Report Page]
+    B --> C6[Billing Page]
     
-    B --> F[路由管理]
-    F --> C
+    C1 --> D[状态管理]
+    C2 --> D
+    C3 --> D
+    C4 --> D
+    C5 --> D
+    C6 --> D
     
-    C --> G[本地缓存]
+    D --> E[数据访问层]
+    E --> F[后端API]
+    
+    D --> G[本地缓存]
+    
+    B --> H[路由管理]
+    H --> D
     
     style A fill:#e1f5ff
     style B fill:#fff4e1
-    style C fill:#ffe1f5
-    style D fill:#e1ffe1
+    style C1 fill:#e1ffe1
+    style C2 fill:#e1ffe1
+    style C3 fill:#e1ffe1
+    style C4 fill:#e1ffe1
+    style C5 fill:#e1ffe1
+    style C6 fill:#e1ffe1
+    style D fill:#ffe1f5
+    style E fill:#ffe1e1
 ```
 
 ## Components and Interfaces
@@ -103,38 +133,92 @@ interface WelcomeHeaderProps {
 - 右侧显示装饰性插图
 - 响应式：移动设备上插图缩小或隐藏
 
-### 3. TabNavigation Component
+### 3. MainNavigation Component
 
-标签导航组件，用于在账户不同区域间切换。
+主导航组件，提供6个主要功能模块的导航。
 
 **Props:**
 ```typescript
-interface TabNavigationProps {
-  tabs: Tab[];
-  activeTabId: string;
-  onTabChange: (tabId: string) => void;
+interface MainNavigationProps {
+  activeModule: NavigationModule;
+  onModuleChange: (module: NavigationModule) => void;
 }
 
-interface Tab {
-  id: string;
-  label: string;
-  content: React.ReactNode;
+type NavigationModule = 'overview' | 'claim' | 'admin' | 'address-book' | 'report' | 'billing';
+```
+
+**行为:**
+- 显示6个导航模块：Overview, Claim, Admin, Address book, Report, Billing
+- 非活动模块背景色：深灰色 (#4a4a4a)
+- 活动模块背景色：蓝色 (#003087)
+- 字体：17px，weight 600
+- 顶部圆角：8px
+- 点击模块时切换页面
+- 响应式：移动设备上可能需要横向滚动或下拉菜单
+
+### 4. TrackingSearch Component
+
+批量追踪搜索组件，支持最多30个追踪号。
+
+**Props:**
+```typescript
+interface TrackingSearchProps {
+  onSearch: (trackingNumbers: string[]) => void;
+  maxNumbers?: number; // 默认30
 }
 ```
 
 **行为:**
-- 显示所有标签：Overview, Unshub, Add additional user, Address book, Group maintenance
-- 高亮显示当前活动标签
-- 点击标签时切换内容区域
-- 响应式：移动设备上可能需要横向滚动或下拉选择
+- 显示大型搜索输入框
+- Placeholder: "Enter up to 30 tracking numbers, separated by commas"
+- 解析逗号分隔的追踪号
+- 验证追踪号数量（最多30个）
+- 显示搜索按钮和图标
+- 超过限制时显示错误消息
+- 响应式：移动设备上优化输入体验
 
-### 4. TrackingCard Component
+### 5. TrackingResultsList Component
 
-追踪功能卡片，提供快速访问入口。
+追踪结果列表组件，可复用于多个页面。
 
 **Props:**
 ```typescript
-interface TrackingCardProps {
+interface TrackingResultsListProps {
+  results: TrackingResult[];
+  showDeliveredTime?: boolean; // 默认true
+  showDeleteButton?: boolean; // 默认false
+  onDelete?: (id: string) => void;
+  onFilter?: (filters: FilterOptions) => void;
+  onExport?: () => void;
+}
+
+interface TrackingResult {
+  id: string;
+  trackingNumber: string;
+  status: ShipmentStatus;
+  serviceType: string;
+  deliveredTime?: Date;
+  // ... 其他字段
+}
+```
+
+**行为:**
+- 显示追踪结果列表
+- "Delivered time"标签（而非"Signed"）
+- 仅在状态为"Delivered"时显示Delivered time
+- 可选显示删除按钮
+- Service Type显示为蓝色边框徽章
+- Status显示为橙色边框徽章
+- 支持筛选、导出、分页功能
+- 响应式：移动设备上优化列表显示
+
+### 6. ActionCard Component
+
+快速操作卡片组件。
+
+**Props:**
+```typescript
+interface ActionCardProps {
   title: string;
   icon: React.ReactNode;
   onClick: () => void;
@@ -142,67 +226,187 @@ interface TrackingCardProps {
 ```
 
 **行为:**
-- 显示图标、标题和"Click Here"按钮
+- 显示图标和标题
 - 悬停时显示视觉反馈
-- 点击时触发导航或操作
-- 响应式：移动设备上垂直堆叠
+- 点击时触发操作
+- 响应式：移动设备上适当调整大小
 
-### 5. ShipmentSection Component
+### 7. ShipmentDetail Component
 
-货运管理区域组件。
+货运详情组件，单屏展示所有信息。
 
 **Props:**
 ```typescript
-interface ShipmentSectionProps {
-  shipments: Shipment[];
-  onOptionSelect: (option: string) => void;
+interface ShipmentDetailProps {
+  shipment: DetailedShipment;
+  onCreateShipment: () => void;
+  onSchedulePickup: () => void;
+  onManagePickup: () => void;
+  onCalculateRate: () => void;
+}
+
+interface DetailedShipment {
+  id: string;
+  trackingNumber: string;
+  packageInfo: PackageInfo;
+  trackingHistory: TrackingEvent[];
+  sender: ContactInfo;
+  receiver: ContactInfo;
+  proofOfDelivery?: ProofOfDelivery;
 }
 ```
 
 **行为:**
-- 显示"Your shipments"标题
-- 提供"Your shipment options"下拉菜单
-- 显示货运列表或空状态
-- 响应式：移动设备上优化列表显示
+- 顶部显示4个操作按钮
+- 单屏布局，无需滚动
+- 使用全屏宽度高效展示
+- 包含：Package Info, Tracking History, Sender Info, Receiver Info, Proof of Delivery
+- 响应式：移动设备上可能需要滚动
 
-### 6. AddressBook Component
+### 8. ClaimPage Component
 
-地址簿管理组件。
+索赔页面组件。
 
 **Props:**
 ```typescript
-interface AddressBookProps {
+interface ClaimPageProps {
+  claims: Claim[];
+  onNewClaim: () => void;
+}
+```
+
+**行为:**
+- 显示"Your claims"区域
+- 提供"Click for New Claim Link"按钮
+- 显示可展开的索赔选项
+- 点击新建索赔按钮导航到表单
+
+### 9. AdminPage Component
+
+管理页面组件，用于用户和公司管理。
+
+**Props:**
+```typescript
+interface AdminPageProps {
+  users: AdminUser[];
+  currentUser: User;
+  onAddUser: (user: NewAdminUser) => void;
+  onEditUser: (id: string, user: Partial<AdminUser>) => void;
+  onDeleteUser: (id: string) => void;
+}
+
+interface AdminUser {
+  id: string;
+  username: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  accountNumber: string;
+  companyName: string;
+  phone: string;
+  address: string;
+  city: string;
+  state: string;
+  zip: string;
+  permissions: UserPermissions;
+  active: boolean;
+}
+
+interface UserPermissions {
+  billingRefRequired: boolean;
+  isAdmin: boolean;
+  showOnlyUserShipment: boolean;
+  disableBillingRefRequired: boolean;
+}
+```
+
+**行为:**
+- 仅对管理员用户可见
+- 显示用户管理表单
+- 显示用户列表，支持编辑和删除
+- 管理公司信息
+- 设置用户权限
+- 删除前显示确认对话框
+- 验证所有表单输入
+
+### 10. AddressBookPage Component
+
+地址簿页面组件（更新）。
+
+**Props:**
+```typescript
+interface AddressBookPageProps {
   addresses: Address[];
   onAdd: (address: Address) => void;
   onEdit: (id: string, address: Address) => void;
   onDelete: (id: string) => void;
+  onSearch: (query: string) => void;
+}
+
+interface Address {
+  id: string;
+  name: string;
+  company?: string;
+  addressLine1: string;
+  addressLine2?: string;
+  city: string;
+  state: string;
+  zipCode: string;
+  country: string;
+  phone: string;
+  type: 'residential' | 'commercial';
+  inUse: boolean;
 }
 ```
 
 **行为:**
-- 显示地址列表
-- 提供添加、编辑、删除操作
+- 显示地址列表，支持搜索
+- 添加新地址（表单或模态框）
+- 编辑现有地址
+- 删除地址（带确认）
+- 防止删除使用中的地址
 - 验证地址格式
-- 防止删除正在使用的地址
+- 与Ship With Account集成，支持快速选择
+- 地址类型选择：住宅或商业
 
-### 7. UserManagement Component
+### 11. ReportPage Component
 
-用户管理组件。
+报告页面组件。
 
 **Props:**
 ```typescript
-interface UserManagementProps {
-  users: AccountUser[];
-  onAddUser: (user: NewUserData) => void;
-  onRemoveUser: (userId: string) => void;
+interface ReportPageProps {
+  onGenerateReport: (dateRange: DateRange) => void;
+  onExportCSV: (data: ReportData) => void;
+  onPrint: () => void;
 }
 ```
 
 **行为:**
-- 显示现有用户列表
-- 提供添加新用户表单
-- 验证邮箱格式
-- 发送邀请邮件
+- 日期范围选择
+- "Run Report"按钮
+- 报告结果表格显示
+- 导出CSV功能（带导出对话框）
+- 打印功能
+- 保持TrackPackage实现的所有现有功能
+- 无列间垂直边框
+- 状态显示柔和视觉效果
+
+### 12. BillingPage Component
+
+账单页面组件（占位符）。
+
+**Props:**
+```typescript
+interface BillingPageProps {
+  comingSoon?: boolean;
+}
+```
+
+**行为:**
+- 显示专业的"Coming Soon"消息
+- 包含相关图标或插图
+- 可选：在导航中隐藏或显示为禁用状态
 
 ## Data Models
 
@@ -328,6 +532,170 @@ interface NewUserData {
 }
 ```
 
+### AdminUser Model
+
+```typescript
+interface AdminUser {
+  id: string;
+  username: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  password?: string; // 仅在创建时使用
+  accountNumber: string;
+  companyName: string;
+  phone: string;
+  address: string;
+  city: string;
+  state: string;
+  zip: string;
+  permissions: UserPermissions;
+  active: boolean;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+interface UserPermissions {
+  billingRefRequired: boolean;
+  isAdmin: boolean;
+  showOnlyUserShipment: boolean;
+  disableBillingRefRequired: boolean;
+}
+```
+
+### Claim Model
+
+```typescript
+interface Claim {
+  id: string;
+  trackingNumber: string;
+  claimType: ClaimType;
+  description: string;
+  amount: number;
+  status: ClaimStatus;
+  submittedAt: Date;
+  resolvedAt?: Date;
+  documents: ClaimDocument[];
+}
+
+enum ClaimType {
+  DAMAGE = 'damage',
+  LOSS = 'loss',
+  DELAY = 'delay',
+  OTHER = 'other'
+}
+
+enum ClaimStatus {
+  SUBMITTED = 'submitted',
+  UNDER_REVIEW = 'under_review',
+  APPROVED = 'approved',
+  DENIED = 'denied',
+  CLOSED = 'closed'
+}
+
+interface ClaimDocument {
+  id: string;
+  fileName: string;
+  fileUrl: string;
+  uploadedAt: Date;
+}
+```
+
+### TrackingResult Model
+
+```typescript
+interface TrackingResult {
+  id: string;
+  trackingNumber: string;
+  status: ShipmentStatus;
+  serviceType: string;
+  origin: string;
+  destination: string;
+  pickupDate?: Date;
+  deliveredTime?: Date;
+  signedBy?: string;
+  weight: number;
+  estimatedCost: number;
+}
+```
+
+### DetailedShipment Model
+
+```typescript
+interface DetailedShipment {
+  id: string;
+  trackingNumber: string;
+  status: ShipmentStatus;
+  serviceType: string;
+  packageInfo: PackageInfo;
+  trackingHistory: TrackingEvent[];
+  sender: ContactInfo;
+  receiver: ContactInfo;
+  proofOfDelivery?: ProofOfDelivery;
+}
+
+interface PackageInfo {
+  createTime: Date;
+  billingRef: string;
+  length: number;
+  width: number;
+  height: number;
+  weight: number;
+  dimensionUnit: 'in' | 'cm';
+  weightUnit: 'lb' | 'kg';
+}
+
+interface ContactInfo {
+  name: string;
+  company?: string;
+  address1: string;
+  address2?: string;
+  city: string;
+  state: string;
+  zipCode: string;
+  country: string;
+  phone: string;
+}
+
+interface ProofOfDelivery {
+  deliveryDate: Date;
+  signedBy: string;
+  signature?: string; // 签名图片URL
+  photo?: string; // 交付照片URL
+}
+```
+
+### ReportData Model
+
+```typescript
+interface ReportData {
+  dateRange: DateRange;
+  results: ReportRow[];
+  totalCount: number;
+}
+
+interface DateRange {
+  startDate: Date;
+  endDate: Date;
+}
+
+interface ReportRow {
+  printedDate: Date;
+  pickupDate: Date;
+  airbillNumber: string;
+  companyName: string;
+  attentionName: string;
+  deliveryAddress: string;
+  weight: number;
+  estimatedCost: number;
+  serviceType: string;
+  reference: string;
+  accountNumber: string;
+  deliveryDate?: Date;
+  deliverySignature?: string;
+}
+```
+
 ## Responsive Design Strategy
 
 系统采用移动优先的响应式设计策略：
@@ -343,27 +711,32 @@ interface NewUserData {
 ### 布局适配
 
 **Mobile (< 768px):**
-- 导航栏折叠为汉堡菜单
-- 追踪卡片垂直堆叠
-- 标签导航可横向滚动
+- 主导航可横向滚动或折叠为下拉菜单
+- 追踪搜索框全宽显示
+- 操作卡片垂直堆叠
+- 追踪结果列表单列
+- 货运详情可能需要滚动
 - 单列布局
 
 **Tablet (768px - 1024px):**
-- 导航栏显示主要菜单项
-- 追踪卡片2列布局
-- 标签导航完整显示
+- 主导航完整显示
+- 操作卡片2列布局
+- 追踪结果列表优化显示
+- 货运详情优化布局
 - 双列布局
 
 **Desktop (> 1024px):**
-- 完整导航栏
-- 追踪卡片3列布局
+- 完整主导航
+- 操作卡片3-4列布局
+- 追踪结果列表宽松布局
+- 货运详情单屏展示
 - 宽松的间距和边距
 - 多列布局
 
 ### CSS Grid 实现
 
 ```css
-.tracking-cards-container {
+.action-cards-container {
   display: grid;
   gap: 1.5rem;
   
@@ -375,9 +748,20 @@ interface NewUserData {
     grid-template-columns: repeat(2, 1fr);
   }
   
-  /* Desktop: 3 columns */
+  /* Desktop: 4 columns */
   @media (min-width: 1024px) {
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+.main-navigation {
+  display: flex;
+  gap: 0.5rem;
+  
+  /* Mobile: horizontal scroll */
+  @media (max-width: 767px) {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
   }
 }
 ```

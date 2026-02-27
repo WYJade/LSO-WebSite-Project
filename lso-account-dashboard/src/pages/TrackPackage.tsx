@@ -33,6 +33,7 @@ const TrackPackage: React.FC = () => {
   const [attachments, setAttachments] = useState<Array<{name: string, size: number, type: string}>>([]);
   const [showBulkExportDialog, setShowBulkExportDialog] = useState(false);
   const [selectedExportFormat, setSelectedExportFormat] = useState<'pdf' | 'excel' | 'csv'>('pdf');
+  const [showCsvExportDialog, setShowCsvExportDialog] = useState(false);
   const [showDetailView, setShowDetailView] = useState(false);
   const [selectedShipment, setSelectedShipment] = useState<any>(null);
   const [showPrintView, setShowPrintView] = useState(false);
@@ -40,6 +41,8 @@ const TrackPackage: React.FC = () => {
   // Proof of Delivery states
   const [podSearchInput, setPodSearchInput] = useState('');
   const [podResults, setPodResults] = useState<any[]>([]);
+  const [podCurrentPage, setPodCurrentPage] = useState(1);
+  const [podItemsPerPage, setPodItemsPerPage] = useState(10);
   const [showPodPrintView, setShowPodPrintView] = useState(false);
   const [showImageModal, setShowImageModal] = useState(false);
   const [modalImageUrl, setModalImageUrl] = useState('');
@@ -147,44 +150,34 @@ const TrackPackage: React.FC = () => {
   };
 
   const handleExportCSV = () => {
-    console.log('Exporting to CSV...');
+    setShowCsvExportDialog(true);
+  };
+
+  const confirmCsvExport = () => {
+    console.log('Exporting report to CSV...');
+    alert('CSV export started. Your file will download shortly.');
+    setShowCsvExportDialog(false);
     // In real app, this would generate and download CSV
   };
 
   const handleTrackingSearch = () => {
-    // Mock tracking results
-    const mockResults = [
-      {
-        trackingNumber: 'QY326068',
-        type: 'LSO Ground™',
-        signTime: '2025-12-16 19:25',
-        fromCity: 'New York',
-        toCity: 'Los Angeles',
-        sender: 'John Smith',
-        receiver: 'Emily Johnson',
-        status: 'Delivered'
-      },
-      {
-        trackingNumber: 'QY326211',
-        type: 'eCommerce delivery',
-        signTime: '2025-12-15 14:30',
-        fromCity: 'Chicago',
-        toCity: 'Houston',
-        sender: 'Michael Brown',
-        receiver: 'Sarah Davis',
-        status: 'Picked Up'
-      },
-      {
-        trackingNumber: 'QY327402',
-        type: 'LSO Ground™',
-        signTime: '2025-12-06 08:34',
-        fromCity: 'Phoenix',
-        toCity: 'Philadelphia',
-        sender: 'David Wilson',
-        receiver: 'Jessica Martinez',
-        status: 'New'
-      }
-    ];
+    // Mock tracking results - 50 items for large dataset testing
+    const cities = ['New York', 'Los Angeles', 'Chicago', 'Houston', 'Phoenix', 'Philadelphia', 'San Antonio', 'San Diego', 'Dallas', 'San Jose', 'Austin', 'Jacksonville', 'Fort Worth', 'Columbus', 'Charlotte', 'San Francisco', 'Indianapolis', 'Seattle', 'Denver', 'Boston'];
+    const names = ['John Smith', 'Emily Johnson', 'Michael Brown', 'Sarah Davis', 'David Wilson', 'Jessica Martinez', 'James Anderson', 'Jennifer Taylor', 'Robert Thomas', 'Linda Jackson', 'William White', 'Mary Harris', 'Richard Martin', 'Patricia Thompson', 'Charles Garcia'];
+    const serviceTypes = ['LSO Ground™', 'LSO Priority Next Day™', 'LSO Early Next Day™', 'LSO Economy Next Day™', 'LSO 2nd Day™', 'LSO E-Commerce Delivery™'];
+    const statuses = ['Delivered', 'Picked Up', 'In Transit', 'Out For Delivery', 'New'];
+    
+    const mockResults = Array.from({ length: 50 }, (_, i) => ({
+      trackingNumber: `QY${326000 + i}`,
+      type: serviceTypes[i % serviceTypes.length],
+      signTime: `2025-12-${String(Math.floor(Math.random() * 28) + 1).padStart(2, '0')} ${String(Math.floor(Math.random() * 24)).padStart(2, '0')}:${String(Math.floor(Math.random() * 60)).padStart(2, '0')}`,
+      fromCity: cities[i % cities.length],
+      toCity: cities[(i + 7) % cities.length],
+      sender: names[i % names.length],
+      receiver: names[(i + 5) % names.length],
+      status: statuses[i % statuses.length]
+    }));
+    
     setTrackingResults(mockResults);
     setTotalItems(mockResults.length);
     setCurrentPage(1);
@@ -356,7 +349,7 @@ const TrackPackage: React.FC = () => {
   };
 
   const handleViewShipmentDetail = (shipment: any) => {
-    // Add detailed tracking history
+    // Add detailed tracking history and package information
     const detailedShipment = {
       ...shipment,
       trackingHistory: [
@@ -369,7 +362,17 @@ const TrackPackage: React.FC = () => {
       weight: `${(Math.random() * 50 + 1).toFixed(1)} lbs`,
       serviceType: shipment.type,
       signatureUrl: 'https://images.unsplash.com/photo-1589829545856-d10d557cf95f?w=800&q=80',
-      podImage: 'https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?w=800&q=80'
+      podImage: 'https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?w=800&q=80',
+      // Package Info fields
+      createTime: '02/08/2026 09:20 PM',
+      billingRef: `REF${Math.floor(Math.random() * 900000) + 100000}`,
+      length: `${Math.floor(Math.random() * 30) + 10} in`,
+      width: `${Math.floor(Math.random() * 20) + 8} in`,
+      height: `${Math.floor(Math.random() * 15) + 6} in`,
+      // Sender address
+      senderAddress: `${Math.floor(Math.random() * 9000) + 1000} ${['Broadway', 'Market St', 'Park Ave', 'Main St'][Math.floor(Math.random() * 4)]}, Suite ${Math.floor(Math.random() * 500) + 100}, ${shipment.fromCity}, ${['CA', 'TX', 'NY', 'IL'][Math.floor(Math.random() * 4)]}`,
+      // Receiver address
+      receiverAddress: `${Math.floor(Math.random() * 9000) + 1000} ${['Oak Ave', 'Elm Rd', 'Pine Blvd', 'Cedar Ln'][Math.floor(Math.random() * 4)]}, Apt ${Math.floor(Math.random() * 300) + 1}, ${shipment.toCity}, ${['CA', 'TX', 'NY', 'IL'][Math.floor(Math.random() * 4)]}`
     };
     setSelectedShipment(detailedShipment);
     setShowDetailView(true);
@@ -419,27 +422,34 @@ const TrackPackage: React.FC = () => {
 
   // Proof of Delivery handlers
   const handlePodSearch = () => {
-    // Mock POD results with realistic sample data
-    const mockPodResults = [
-      {
-        trackingNumber: 'Z100D0V0',
-        airbillNo: 'Z100D0V0',
-        trackingStatus: 'Delivered',
-        deliveryDate: '02/15/2026',
-        deliveryAddress: '1234 MAIN ST, LOS ANGELES, CA 90001',
-        signatureUrl: 'https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf',
-        podImages: 'https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?w=800&q=80'
-      },
-      {
-        trackingNumber: 'ZYOGEVHA',
-        airbillNo: 'ZYOGEVHA',
-        trackingStatus: 'Delivered',
-        deliveryDate: '02/14/2026',
-        deliveryAddress: '5678 OAK AVE, NEW YORK, NY 10001',
-        signatureUrl: 'https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf',
-        podImages: 'https://images.unsplash.com/photo-1566576721346-d4a3b4eaeb55?w=800&q=80'
-      }
+    // Mock POD results with realistic sample data - 20 items
+    const addresses = [
+      '1234 MAIN ST, LOS ANGELES, CA 90001',
+      '5678 OAK AVE, NEW YORK, NY 10001',
+      '9012 PINE RD, CHICAGO, IL 60601',
+      '3456 ELM BLVD, HOUSTON, TX 77001',
+      '7890 MAPLE DR, PHOENIX, AZ 85001',
+      '2345 CEDAR LN, PHILADELPHIA, PA 19101',
+      '6789 BIRCH ST, SAN ANTONIO, TX 78201',
+      '1357 SPRUCE AVE, SAN DIEGO, CA 92101',
+      '2468 WILLOW RD, DALLAS, TX 75201',
+      '3579 ASPEN BLVD, SAN JOSE, CA 95101'
     ];
+    const serviceTypes = ['LSO Ground™', 'LSO Priority Next Day™', 'LSO Early Next Day™', 'LSO 2nd Day™'];
+    const signedByNames = ['John Smith', 'Mary Johnson', 'Robert Brown', 'Jennifer Davis', 'Michael Wilson', 'Linda Martinez', 'David Anderson', 'Sarah Taylor', 'James Thomas', 'Patricia Garcia'];
+    
+    const mockPodResults = Array.from({ length: 20 }, (_, i) => ({
+      trackingNumber: `Z${100 + i}D0V${i}`,
+      airbillNo: `Z${100 + i}D0V${i}`,
+      trackingStatus: 'Delivered',
+      serviceType: serviceTypes[i % serviceTypes.length],
+      deliveryDate: `02/${String(Math.floor(Math.random() * 28) + 1).padStart(2, '0')}/2026`,
+      deliveryAddress: addresses[i % addresses.length],
+      signedBy: signedByNames[i % signedByNames.length],
+      signatureUrl: 'https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf',
+      podImages: 'https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?w=800&q=80'
+    }));
+    
     setPodResults(mockPodResults);
   };
 
@@ -591,79 +601,82 @@ const TrackPackage: React.FC = () => {
                   </div>
 
                   {showFilterMenu && (
-                    <div className="filter-dropdown-panel">
-                      <div className="filter-panel-header">
-                        <h4>Filter Options</h4>
-                        <button className="filter-close-btn" onClick={() => setShowFilterMenu(false)}>✕</button>
-                      </div>
-                      
-                      <div className="filter-panel-body">
-                        {/* Status Filter */}
-                        <div className="filter-section">
-                          <div className="filter-section-title">Status</div>
-                          <div className="filter-checkbox-group">
-                            {[
-                              { value: 'new', label: 'New' },
-                              { value: 'picked-up', label: 'Picked Up' },
-                              { value: 'inbound', label: 'Inbound scan at destination' },
-                              { value: 'out-for-delivery', label: 'Out For Delivery' },
-                              { value: 'delivered', label: 'Delivered' },
-                              { value: 'return', label: 'Return to Shipper' },
-                              { value: 'discarded', label: 'Discarded' },
-                              { value: 'lost', label: 'Lost' },
-                              { value: 'delay', label: 'Delay Exception' },
-                              { value: 'failed', label: 'Failed Attempt' }
-                            ].map(status => (
-                              <label key={status.value} className="filter-checkbox-item">
-                                <input
-                                  type="checkbox"
-                                  checked={selectedStatuses.includes(status.value)}
-                                  onChange={() => handleStatusToggle(status.value)}
-                                />
-                                <span>{status.label}</span>
-                              </label>
-                            ))}
+                    <div className="filter-modal-overlay" onClick={() => setShowFilterMenu(false)}>
+                      <div className="filter-modal-panel" onClick={(e) => e.stopPropagation()}>
+                        <div className="filter-panel-header">
+                          <h4>Filter Options</h4>
+                          <button className="filter-close-btn" onClick={() => setShowFilterMenu(false)}>✕</button>
+                        </div>
+                        
+                        <div className="filter-panel-body">
+                          {/* Status Filter */}
+                          <div className="filter-section">
+                            <div className="filter-section-title">Status</div>
+                            <div className="filter-checkbox-group">
+                              {[
+                                { value: 'created', label: 'Created' },
+                                { value: 'picked-up-by-driver', label: 'Picked up by Driver' },
+                                { value: 'possession-scan', label: 'Possession Scan at Terminal' },
+                                { value: 'inbound', label: 'Inbound scan at destination' },
+                                { value: 'out-for-delivery', label: 'Out For Delivery' },
+                                { value: 'delivered', label: 'Delivered' },
+                                { value: 'failed', label: 'Failed Attempt' },
+                                { value: 'discarded', label: 'Discarded' },
+                                { value: 'lost', label: 'Lost' },
+                                { value: 'return', label: 'Return to sender' },
+                                { value: 'delay', label: 'Delay Exception' }
+                              ].map(status => (
+                                <label key={status.value} className="filter-checkbox-item">
+                                  <input
+                                    type="checkbox"
+                                    checked={selectedStatuses.includes(status.value)}
+                                    onChange={() => handleStatusToggle(status.value)}
+                                  />
+                                  <span>{status.label}</span>
+                                </label>
+                              ))}
+                            </div>
+                          </div>
+
+                          {/* Service Type Filter */}
+                          <div className="filter-section">
+                            <div className="filter-section-title">Service Type</div>
+                            <div className="filter-checkbox-group">
+                              {[
+                                'LSO Priority Next Day™',
+                                'LSO Early Next Day™',
+                                'LSO Economy Next Day™',
+                                'LSO Ground™',
+                                'LSO 2nd Day™',
+                                'LSO E-Commerce Delivery™'
+                              ].map(serviceType => (
+                                <label key={serviceType} className="filter-checkbox-item">
+                                  <input
+                                    type="checkbox"
+                                    checked={selectedServiceTypes.includes(serviceType)}
+                                    onChange={() => handleServiceTypeToggle(serviceType)}
+                                  />
+                                  <span>{serviceType}</span>
+                                </label>
+                              ))}
+                            </div>
                           </div>
                         </div>
 
-                        {/* Service Type Filter */}
-                        <div className="filter-section">
-                          <div className="filter-section-title">Service Type</div>
-                          <div className="filter-checkbox-group">
-                            {[
-                              'LSO Priority Next Day™',
-                              'LSO Early Next Day™',
-                              'LSO Economy Next Day™',
-                              'LSO Ground™',
-                              'LSO 2nd Day™',
-                              'LSO E-Commerce Delivery™'
-                            ].map(serviceType => (
-                              <label key={serviceType} className="filter-checkbox-item">
-                                <input
-                                  type="checkbox"
-                                  checked={selectedServiceTypes.includes(serviceType)}
-                                  onChange={() => handleServiceTypeToggle(serviceType)}
-                                />
-                                <span>{serviceType}</span>
-                              </label>
-                            ))}
-                          </div>
+                        <div className="filter-panel-footer">
+                          <button className="filter-clear-btn" onClick={handleClearFilters}>
+                            Clear All
+                          </button>
+                          <button className="filter-apply-btn" onClick={handleApplyFilters}>
+                            Apply Filters
+                          </button>
                         </div>
-                      </div>
-
-                      <div className="filter-panel-footer">
-                        <button className="filter-clear-btn" onClick={handleClearFilters}>
-                          Clear All
-                        </button>
-                        <button className="filter-apply-btn" onClick={handleApplyFilters}>
-                          Apply Filters
-                        </button>
                       </div>
                     </div>
                   )}
 
                   <div className="tracking-results-list">
-                    {trackingResults.map((result, index) => (
+                    {trackingResults.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage).map((result, index) => (
                       <div 
                         key={index} 
                         className="tracking-result-card clickable-card"
@@ -672,8 +685,11 @@ const TrackPackage: React.FC = () => {
                         <div className="result-header">
                           <div className="result-tracking-info">
                             <span className="result-tracking-number">Tracking # {result.trackingNumber}</span>
-                            <span className={`result-type-badge ${result.type === 'eCommerce delivery' ? 'ecommerce' : 'ground'}`}>
+                            <span className="result-service-type-badge">
                               {result.type}
+                            </span>
+                            <span className={`result-status-badge status-${result.status.toLowerCase().replace(' ', '-')}`}>
+                              {result.status}
                             </span>
                           </div>
                           <div className="result-sign-time">Signed: {result.signTime}</div>
@@ -687,15 +703,12 @@ const TrackPackage: React.FC = () => {
                           <div className="result-arrow">
                             <svg className="route-arrow-icon" viewBox="0 0 200 60" xmlns="http://www.w3.org/2000/svg">
                               <defs>
-                                <marker id="arrowhead-top" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto">
+                                <marker id={`arrowhead-${index}`} markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto">
                                   <polygon points="0 3, 12 6, 0 9" fill="#d0d0d0" />
                                 </marker>
                               </defs>
-                              <line x1="10" y1="20" x2="190" y2="20" stroke="#d0d0d0" strokeWidth="3" markerEnd="url(#arrowhead-top)" />
+                              <line x1="10" y1="20" x2="190" y2="20" stroke="#d0d0d0" strokeWidth="3" markerEnd={`url(#arrowhead-${index})`} />
                             </svg>
-                            <div className={`result-status status-${result.status.toLowerCase().replace(' ', '-')}`}>
-                              {result.status}
-                            </div>
                           </div>
                           <div className="result-location to-location">
                             <div className="location-label">To</div>
@@ -783,27 +796,27 @@ const TrackPackage: React.FC = () => {
                 {/* Shipment Information Grid */}
                 <div className="detail-info-grid">
                   <div className="info-section">
-                    <h3 className="section-title">Shipment Information</h3>
+                    <h3 className="section-title">Package Info</h3>
                     <div className="info-rows">
                       <div className="info-row">
-                        <span className="info-label">Airbill No</span>
-                        <span className="info-value">{selectedShipment.trackingNumber}</span>
+                        <span className="info-label">Create Time</span>
+                        <span className="info-value">{selectedShipment.createTime}</span>
                       </div>
                       <div className="info-row">
-                        <span className="info-label">Tracking Status</span>
-                        <span className="info-value">{selectedShipment.status}</span>
+                        <span className="info-label">Billing Ref</span>
+                        <span className="info-value">{selectedShipment.billingRef}</span>
                       </div>
                       <div className="info-row">
-                        <span className="info-label">Delivery Date</span>
-                        <span className="info-value">{selectedShipment.signTime}</span>
+                        <span className="info-label">Length</span>
+                        <span className="info-value">{selectedShipment.length}</span>
                       </div>
                       <div className="info-row">
-                        <span className="info-label">Signed by</span>
-                        <span className="info-value">{selectedShipment.receiver}</span>
+                        <span className="info-label">Width</span>
+                        <span className="info-value">{selectedShipment.width}</span>
                       </div>
                       <div className="info-row">
-                        <span className="info-label">Service Type</span>
-                        <span className="info-value">{selectedShipment.serviceType}</span>
+                        <span className="info-label">Height</span>
+                        <span className="info-value">{selectedShipment.height}</span>
                       </div>
                       <div className="info-row">
                         <span className="info-label">Weight</span>
@@ -813,7 +826,17 @@ const TrackPackage: React.FC = () => {
                   </div>
 
                   <div className="info-section">
-                    <h3 className="section-title">Delivery Info</h3>
+                    <h3 className="section-title">Proof of Delivery</h3>
+                    <div className="info-rows">
+                      <div className="info-row">
+                        <span className="info-label">Delivery Date</span>
+                        <span className="info-value">{selectedShipment.signTime}</span>
+                      </div>
+                      <div className="info-row">
+                        <span className="info-label">Signed by</span>
+                        <span className="info-value">{selectedShipment.receiver}</span>
+                      </div>
+                    </div>
                     <div className="address-box">
                       <div className="address-icon">📍</div>
                       <div className="address-text">{selectedShipment.deliveryAddress}</div>
@@ -839,23 +862,23 @@ const TrackPackage: React.FC = () => {
                   </div>
 
                   <div className="info-section">
-                    <h3 className="section-title">Sender Information</h3>
+                    <h3 className="section-title">Sender Info</h3>
                     <div className="contact-info">
                       <div className="contact-icon">👤</div>
                       <div>
                         <div className="contact-name">{selectedShipment.sender}</div>
-                        <div className="contact-location">{selectedShipment.fromCity}</div>
+                        <div className="contact-location">{selectedShipment.senderAddress}</div>
                       </div>
                     </div>
                   </div>
 
                   <div className="info-section">
-                    <h3 className="section-title">Receiver Information</h3>
+                    <h3 className="section-title">Receiver Info</h3>
                     <div className="contact-info">
                       <div className="contact-icon">👤</div>
                       <div>
                         <div className="contact-name">{selectedShipment.receiver}</div>
-                        <div className="contact-location">{selectedShipment.toCity}</div>
+                        <div className="contact-location">{selectedShipment.receiverAddress}</div>
                       </div>
                     </div>
                   </div>
@@ -1195,6 +1218,76 @@ const TrackPackage: React.FC = () => {
             </div>
           )}
 
+          {/* CSV Export Dialog for Reports */}
+          {showCsvExportDialog && (
+            <div className="dialog-overlay" onClick={() => setShowCsvExportDialog(false)}>
+              <div className="dialog-box csv-export-dialog" onClick={(e) => e.stopPropagation()}>
+                <div className="dialog-header">
+                  <h3>📊 Export Report to CSV</h3>
+                  <button className="dialog-close" onClick={() => setShowCsvExportDialog(false)}>✕</button>
+                </div>
+                <div className="dialog-body">
+                  <p>Export your report data to CSV format for easy analysis in spreadsheet applications.</p>
+                  
+                  <div className="export-info-box">
+                    <div className="info-item">
+                      <span className="info-icon">📅</span>
+                      <div className="info-content">
+                        <div className="info-label">Date Range</div>
+                        <div className="info-value">{fromMonth}/{fromDay}/{fromYear} - {toMonth}/{toDay}/{toYear}</div>
+                      </div>
+                    </div>
+                    <div className="info-item">
+                      <span className="info-icon">📋</span>
+                      <div className="info-content">
+                        <div className="info-label">Format</div>
+                        <div className="info-value">CSV</div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="csv-export-features">
+                    <div className="feature-title">Your CSV export will include:</div>
+                    <div className="feature-list">
+                      <div className="feature-item">
+                        <span className="feature-icon">✓</span>
+                        <span>All shipment tracking numbers</span>
+                      </div>
+                      <div className="feature-item">
+                        <span className="feature-icon">✓</span>
+                        <span>Pickup and delivery dates</span>
+                      </div>
+                      <div className="feature-item">
+                        <span className="feature-icon">✓</span>
+                        <span>Origin and destination information</span>
+                      </div>
+                      <div className="feature-item">
+                        <span className="feature-icon">✓</span>
+                        <span>Service types and status</span>
+                      </div>
+                      <div className="feature-item">
+                        <span className="feature-icon">✓</span>
+                        <span>Weight and billing details</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="export-note">
+                    <span className="note-icon">ℹ️</span>
+                    <span>The CSV file can be opened in Excel, Google Sheets, or any spreadsheet application.</span>
+                  </div>
+                </div>
+                <div className="dialog-footer">
+                  <button className="dialog-btn cancel-btn" onClick={() => setShowCsvExportDialog(false)}>Cancel</button>
+                  <button className="dialog-btn confirm-btn export-confirm-btn" onClick={confirmCsvExport}>
+                    <span>📥</span>
+                    <span>Download CSV</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+
           {/* Print-Ready View Dialog */}
           {showPrintView && (
             <div className="print-view-container" onClick={handleClosePrintView}>
@@ -1364,15 +1457,15 @@ const TrackPackage: React.FC = () => {
             <div className="report-results-content">
               <div className="report-results-header">
                 <div className="report-columns-header">
-                  <div className="column-item">PRINTED DATE</div>
-                  <div className="column-item">PICKUP DATE</div>
-                  <div className="column-item">AIRBILL NUMBER</div>
-                  <div className="column-item">COMPANY NAME ATTENTION NAME</div>
-                  <div className="column-item">DELIVERY ADDRESS</div>
-                  <div className="column-item">Weight Est. Cost</div>
-                  <div className="column-item">Service Type</div>
-                  <div className="column-item">Reference AcctNum</div>
-                  <div className="column-item">Delivery Date/Delivery Signature</div>
+                  <div className="column-item">PRINTED<br/>DATE</div>
+                  <div className="column-item">PICKUP<br/>DATE</div>
+                  <div className="column-item">AIRBILL<br/>NUMBER</div>
+                  <div className="column-item">COMPANY<br/>NAME<br/>ATTENTION<br/>NAME</div>
+                  <div className="column-item">DELIVERY<br/>ADDRESS</div>
+                  <div className="column-item">WEIGHT<br/>EST. COST</div>
+                  <div className="column-item">SERVICE<br/>TYPE</div>
+                  <div className="column-item">REFERENCE<br/>ACCTNUM</div>
+                  <div className="column-item">DELIVERY<br/>DATE/DELIVERY<br/>SIGNATURE</div>
                 </div>
               </div>
 
@@ -1450,14 +1543,17 @@ const TrackPackage: React.FC = () => {
                   </div>
 
                   <div className="pod-results-list">
-                    {podResults.map((result, index) => (
+                    {podResults.slice((podCurrentPage - 1) * podItemsPerPage, podCurrentPage * podItemsPerPage).map((result, index) => (
                       <div key={index} className="pod-result-block">
-                        <h2 className="pod-tracking-number">#{result.trackingNumber}</h2>
-                        
-                        {/* Tracking Status - Prominent Display */}
-                        <div className="pod-status-badge">
-                          <span className="status-icon">✓</span>
-                          <span className="status-text">{result.trackingStatus}</span>
+                        <div className="pod-header-row">
+                          <h2 className="pod-tracking-number">#{result.trackingNumber}</h2>
+                          <div className="pod-badges">
+                            <span className="pod-service-type-badge">{result.serviceType}</span>
+                            <span className="pod-status-badge-outline">
+                              <span className="status-icon">✓</span>
+                              <span className="status-text">{result.trackingStatus}</span>
+                            </span>
+                          </div>
                         </div>
                         
                         <div className="pod-details-list">
@@ -1468,6 +1564,10 @@ const TrackPackage: React.FC = () => {
                           <div className="pod-detail-row">
                             <span className="pod-detail-label">Delivery Address</span>
                             <span className="pod-detail-value">{result.deliveryAddress}</span>
+                          </div>
+                          <div className="pod-detail-row">
+                            <span className="pod-detail-label">Signed By</span>
+                            <span className="pod-detail-value">{result.signedBy}</span>
                           </div>
                           <div className="pod-detail-row">
                             <span className="pod-detail-label">Signature URL</span>
@@ -1492,6 +1592,54 @@ const TrackPackage: React.FC = () => {
                         </div>
                       </div>
                     ))}
+                  </div>
+
+                  <div className="pagination-container">
+                    <div className="pagination-info">
+                      <span className="total-items">Total {podResults.length} items</span>
+                      <select 
+                        className="items-per-page-select" 
+                        value={podItemsPerPage}
+                        onChange={(e) => { setPodItemsPerPage(Number(e.target.value)); setPodCurrentPage(1); }}
+                      >
+                        <option value={10}>10 items/page</option>
+                        <option value={20}>20 items/page</option>
+                        <option value={50}>50 items/page</option>
+                        <option value={100}>100 items/page</option>
+                      </select>
+                    </div>
+                    <div className="pagination-controls">
+                      <button 
+                        className="page-btn prev-btn"
+                        onClick={() => setPodCurrentPage(podCurrentPage - 1)}
+                        disabled={podCurrentPage === 1}
+                      >
+                        ‹
+                      </button>
+                      {Array.from({ length: Math.ceil(podResults.length / podItemsPerPage) }, (_, i) => i + 1)
+                        .filter(page => {
+                          const totalPages = Math.ceil(podResults.length / podItemsPerPage);
+                          return page === 1 || page === totalPages || Math.abs(page - podCurrentPage) <= 1;
+                        })
+                        .map((page, idx, arr) => (
+                          <React.Fragment key={page}>
+                            {idx > 0 && arr[idx - 1] !== page - 1 && <span className="page-ellipsis">...</span>}
+                            <button
+                              className={`page-btn ${page === podCurrentPage ? 'active' : ''}`}
+                              onClick={() => setPodCurrentPage(page)}
+                            >
+                              {page}
+                            </button>
+                          </React.Fragment>
+                        ))}
+                      <button 
+                        className="page-btn next-btn"
+                        onClick={() => setPodCurrentPage(podCurrentPage + 1)}
+                        disabled={podCurrentPage === Math.ceil(podResults.length / podItemsPerPage)}
+                      >
+                        ›
+                      </button>
+                    </div>
                   </div>
 
                   <div className="pod-actions">
