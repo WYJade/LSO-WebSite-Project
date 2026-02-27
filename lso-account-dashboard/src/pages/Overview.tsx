@@ -78,7 +78,7 @@ const Overview: React.FC<OverviewProps> = ({ onNavigate }) => {
       id: 'proof-of-delivery',
       title: 'Proof of Delivery',
       icon: '📋',
-      path: '/tracking?tab=proof',
+      path: '/proof-of-delivery',
     },
   ];
 

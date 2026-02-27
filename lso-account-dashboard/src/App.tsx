@@ -6,6 +6,7 @@ import ShipWithAccount from './pages/ShipWithAccount';
 import CalculateRates from './pages/CalculateRates';
 import SchedulePickup from './pages/SchedulePickup';
 import CancelPickup from './pages/CancelPickup';
+import ProofOfDelivery from './pages/ProofOfDelivery';
 import { User, UserRole } from './types/models';
 import './styles/theme.css';
 import './styles/global.css';
@@ -33,6 +34,7 @@ function App() {
           <Route path="/calculate-rates" element={<CalculateRates />} />
           <Route path="/schedule-pickup" element={<SchedulePickup />} />
           <Route path="/cancel-pickup" element={<CancelPickup />} />
+          <Route path="/proof-of-delivery" element={<ProofOfDelivery />} />
           <Route path="/reports" element={<div>Reports Page</div>} />
           <Route path="/delivery-proof" element={<div>Delivery Proof Page</div>} />
           <Route path="/shipping" element={<div>Shipping Page</div>} />
