@@ -80,7 +80,8 @@ const Overview: React.FC<OverviewProps> = ({ onNavigate }) => {
       icon: '🔍',
       action: () => {
         window.scrollTo({ top: 0, behavior: 'smooth' });
-        document.querySelector('.tracking-search-input')?.focus();
+        const input = document.querySelector('.tracking-search-input') as HTMLTextAreaElement;
+        if (input) input.focus();
       },
     },
   ];
