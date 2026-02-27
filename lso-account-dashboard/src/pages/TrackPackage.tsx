@@ -692,7 +692,9 @@ const TrackPackage: React.FC = () => {
                               {result.status}
                             </span>
                           </div>
-                          <div className="result-sign-time">Signed: {result.signTime}</div>
+                          {result.status === 'Delivered' && result.signTime && (
+                            <div className="result-sign-time">Delivered time: {result.signTime}</div>
+                          )}
                         </div>
                         <div className="result-route">
                           <div className="result-location from-location">
@@ -716,8 +718,8 @@ const TrackPackage: React.FC = () => {
                             <div className="location-person">{result.receiver}</div>
                           </div>
                         </div>
-                        <div className="result-actions" onClick={(e) => e.stopPropagation()}>
-                          <button className="result-action-icon" onClick={() => handleDeleteClick(result.trackingNumber)}>🗑️</button>
+                      </div>
+                    ))}
                           <button className="result-action-link" onClick={() => handleCustomerServiceClick(result.trackingNumber)}>💬 Customer Service</button>
                         </div>
                       </div>
