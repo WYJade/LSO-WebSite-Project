@@ -57,32 +57,28 @@ const Overview: React.FC<OverviewProps> = ({ onNavigate }) => {
 
   const actionCards = [
     {
-      id: 'create-shipment',
-      title: 'Create Shipment',
+      id: 'create-airbill',
+      title: 'Create airbill',
       icon: '📦',
       path: '/ship-with-account',
     },
     {
       id: 'schedule-pickup',
-      title: 'Schedule Pickup',
+      title: 'Schedule pickup',
       icon: '🚚',
       path: '/schedule-pickup',
     },
     {
-      id: 'calculate-rates',
-      title: 'Calculate Rates',
-      icon: '💰',
-      path: '/calculate-rates',
+      id: 'cancel-pickup',
+      title: 'Cancel a scheduled pickup',
+      icon: '❌',
+      path: '/cancel-pickup',
     },
     {
-      id: 'track-package',
-      title: 'Track Package',
-      icon: '🔍',
-      action: () => {
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-        const input = document.querySelector('.tracking-search-input') as HTMLTextAreaElement;
-        if (input) input.focus();
-      },
+      id: 'proof-of-delivery',
+      title: 'Proof of Delivery',
+      icon: '📋',
+      path: '/tracking?tab=proof',
     },
   ];
 
@@ -159,7 +155,7 @@ const Overview: React.FC<OverviewProps> = ({ onNavigate }) => {
             <div
               key={card.id}
               className="action-card"
-              onClick={() => card.action ? card.action() : handleNavigate(card.path!)}
+              onClick={() => handleNavigate(card.path)}
             >
               <div className="action-card-icon">{card.icon}</div>
               <div className="action-card-title">{card.title}</div>
