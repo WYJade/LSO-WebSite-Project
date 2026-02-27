@@ -720,10 +720,6 @@ const TrackPackage: React.FC = () => {
                         </div>
                       </div>
                     ))}
-                          <button className="result-action-link" onClick={() => handleCustomerServiceClick(result.trackingNumber)}>💬 Customer Service</button>
-                        </div>
-                      </div>
-                    ))}
                   </div>
 
                   <div className="pagination-container">
