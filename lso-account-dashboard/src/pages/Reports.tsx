@@ -1,7 +1,10 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import './Reports.css';
 
 const Reports: React.FC = () => {
+  const navigate = useNavigate();
+  
   const getDefaultDates = () => {
     const today = new Date();
     const oneMonthAgo = new Date(today);
@@ -44,9 +47,20 @@ const Reports: React.FC = () => {
     setToYear(dates.toYear);
   };
 
+  const handleHelp = () => {
+    alert('Help: This page allows you to generate reports for your shipments. Select a date range and report options, then click "Run report" to generate your report.');
+  };
+
+  const handleShipAnother = () => {
+    navigate('/ship-with-account');
+  };
+
   const handleRunReport = () => {
-    console.log('Running report...');
-    alert('Report functionality will be implemented');
+    console.log('Running report with dates:', {
+      from: `${fromMonth}/${fromDay}/${fromYear}`,
+      to: `${toMonth}/${toDay}/${toYear}`
+    });
+    alert('Report is being generated. This feature will be fully implemented soon.');
   };
 
   return (
@@ -160,8 +174,8 @@ const Reports: React.FC = () => {
         </div>
 
         <div className="report-actions">
-          <button className="help-btn">Help</button>
-          <button className="skip-btn">Ship another</button>
+          <button className="help-btn" onClick={handleHelp}>Help</button>
+          <button className="skip-btn" onClick={handleShipAnother}>Ship another</button>
           <button className="run-report-btn" onClick={handleRunReport}>Run report</button>
         </div>
       </div>
