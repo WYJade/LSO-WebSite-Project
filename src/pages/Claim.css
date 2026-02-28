@@ -1,0 +1,139 @@
+.claim-page {
+  padding: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.claim-page h2 {
+  font-size: 28px;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 2rem;
+}
+
+.claim-actions {
+  margin-bottom: 2rem;
+}
+
+.new-claim-button {
+  padding: 1rem 2rem;
+  font-size: 16px;
+  font-weight: 600;
+  color: #ffffff;
+  background-color: #003087;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.new-claim-button:hover {
+  background-color: #002266;
+}
+
+.claim-options {
+  margin-bottom: 3rem;
+}
+
+.claim-option-section {
+  background: #ffffff;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+  overflow: hidden;
+}
+
+.claim-option-header {
+  width: 100%;
+  padding: 1.25rem 1.5rem;
+  background: #f8f8f8;
+  border: none;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: 600;
+  color: #333;
+  transition: background-color 0.3s ease;
+}
+
+.claim-option-header:hover {
+  background: #f0f0f0;
+}
+
+.expand-icon {
+  font-size: 20px;
+  font-weight: bold;
+  color: #003087;
+}
+
+.claim-option-content {
+  padding: 1.5rem;
+  background: #ffffff;
+  border-top: 1px solid #e0e0e0;
+}
+
+.claim-option-content p {
+  margin-bottom: 1rem;
+  line-height: 1.6;
+  color: #555;
+}
+
+.claim-option-content ol,
+.claim-option-content ul {
+  margin-left: 1.5rem;
+  line-height: 1.8;
+  color: #555;
+}
+
+.claim-option-content li {
+  margin-bottom: 0.5rem;
+}
+
+.existing-claims {
+  margin-top: 3rem;
+}
+
+.existing-claims h3 {
+  font-size: 20px;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 1.5rem;
+}
+
+.no-claims-message {
+  padding: 2rem;
+  background: #f8f8f8;
+  border-radius: 8px;
+  text-align: center;
+}
+
+.no-claims-message p {
+  color: #666;
+  font-size: 16px;
+}
+
+/* Responsive Design */
+@media (max-width: 767px) {
+  .claim-page {
+    padding: 1rem;
+  }
+
+  .claim-page h2 {
+    font-size: 24px;
+  }
+
+  .new-claim-button {
+    width: 100%;
+  }
+
+  .claim-option-header {
+    padding: 1rem;
+    font-size: 15px;
+  }
+
+  .claim-option-content {
+    padding: 1rem;
+  }
+}

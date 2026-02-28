@@ -2,13 +2,16 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import NavigationBar from '../components/NavigationBar';
 import WelcomeHeader from '../components/WelcomeHeader';
-import TabNavigation from '../components/TabNavigation';
-import OverviewTab from './OverviewTab';
+import MainNavigation, { NavigationModule } from '../components/MainNavigation';
+import Overview from './Overview';
+import Claim from './Claim';
 import AddressBook from '../components/AddressBook';
 import UserManagement from '../components/UserManagement';
+import Reports from './Reports';
+import Billing from './Billing';
 import Footer from '../components/Footer';
 import { MenuItem } from '../types/components';
-import { User, Shipment, Address, AccountUser, NewUserData } from '../types/models';
+import { User, Address, AccountUser, NewUserData } from '../types/models';
 
 interface DashboardProps {
   currentUser: User;
@@ -16,10 +19,9 @@ interface DashboardProps {
 
 const Dashboard: React.FC<DashboardProps> = ({ currentUser }) => {
   const navigate = useNavigate();
-  const [activeTab, setActiveTab] = useState('overview');
+  const [activeModule, setActiveModule] = useState<NavigationModule>('overview');
   
   // Mock data
-  const [shipments] = useState<Shipment[]>([]);
   const [addresses, setAddresses] = useState<Address[]>([]);
   const [users, setUsers] = useState<AccountUser[]>([]);
 
@@ -41,20 +43,12 @@ const Dashboard: React.FC<DashboardProps> = ({ currentUser }) => {
     console.log('Language changed to:', language);
   };
 
-  const handleTrackPackage = () => {
-    navigate('/tracking');
+  const handleModuleChange = (module: NavigationModule) => {
+    setActiveModule(module);
   };
 
-  const handleViewReports = () => {
-    navigate('/tracking?tab=reports');
-  };
-
-  const handleViewProofOfDelivery = () => {
-    navigate('/delivery-proof');
-  };
-
-  const handleShipmentOptionSelect = (option: string) => {
-    console.log('Shipment option selected:', option);
+  const handleNavigate = (path: string) => {
+    navigate(path);
   };
 
   const handleAddAddress = (address: Address) => {
@@ -84,58 +78,40 @@ const Dashboard: React.FC<DashboardProps> = ({ currentUser }) => {
     setUsers(users.filter((u) => u.id !== userId));
   };
 
-  const tabs = [
-    {
-      id: 'overview',
-      label: 'Overview',
-      content: (
-        <OverviewTab
-          shipments={shipments}
-          onTrackPackage={handleTrackPackage}
-          onViewReports={handleViewReports}
-          onViewProofOfDelivery={handleViewProofOfDelivery}
-          onShipmentOptionSelect={handleShipmentOptionSelect}
-        />
-      ),
-    },
-    {
-      id: 'datahub',
-      label: 'Datahub',
-      content: <div>Datahub content coming soon...</div>,
-    },
-    {
-      id: 'add-user',
-      label: 'Add additional user',
-      content: (
-        <UserManagement
-          users={users}
-          onAddUser={handleAddUser}
-          onRemoveUser={handleRemoveUser}
-        />
-      ),
-    },
-    {
-      id: 'address-book',
-      label: 'Address book',
-      content: (
-        <AddressBook
-          addresses={addresses}
-          onAdd={handleAddAddress}
-          onEdit={handleEditAddress}
-          onDelete={handleDeleteAddress}
-        />
-      ),
-    },
-    {
-      id: 'group-maintenance',
-      label: 'Group maintenance',
-      content: <div>Group maintenance content coming soon...</div>,
-    },
-  ];
+  const renderModuleContent = () => {
+    switch (activeModule) {
+      case 'overview':
+        return <Overview onNavigate={handleNavigate} />;
+      case 'claim':
+        return <Claim />;
+      case 'admin':
+        return (
+          <UserManagement
+            users={users}
+            onAddUser={handleAddUser}
+            onRemoveUser={handleRemoveUser}
+          />
+        );
+      case 'address-book':
+        return (
+          <AddressBook
+            addresses={addresses}
+            onAdd={handleAddAddress}
+            onEdit={handleEditAddress}
+            onDelete={handleDeleteAddress}
+          />
+        );
+      case 'report':
+        return <Reports />;
+      case 'billing':
+        return <Billing />;
+      default:
+        return <Overview onNavigate={handleNavigate} />;
+    }
+  };
 
   return (
     <div className="dashboard">
-      {/* <TopBar /> */}
       <NavigationBar
         currentUser={currentUser}
         onLogoClick={handleLogoClick}
@@ -144,11 +120,13 @@ const Dashboard: React.FC<DashboardProps> = ({ currentUser }) => {
         onLanguageChange={handleLanguageChange}
       />
       <WelcomeHeader userName={currentUser.firstName} />
-      <TabNavigation
-        tabs={tabs}
-        activeTabId={activeTab}
-        onTabChange={setActiveTab}
+      <MainNavigation
+        activeModule={activeModule}
+        onModuleChange={handleModuleChange}
       />
+      <div className="dashboard-content">
+        {renderModuleContent()}
+      </div>
       <Footer />
     </div>
   );

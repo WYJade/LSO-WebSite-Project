@@ -1,0 +1,29 @@
+.schedule-pickup-page {
+  min-height: 60vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px;
+}
+
+.schedule-pickup-content {
+  text-align: center;
+  max-width: 600px;
+}
+
+.schedule-pickup-icon {
+  font-size: 80px;
+  margin-bottom: 20px;
+}
+
+.schedule-pickup-content h1 {
+  font-size: 32px;
+  color: #003087;
+  margin-bottom: 16px;
+}
+
+.schedule-pickup-content p {
+  font-size: 18px;
+  color: #666;
+  line-height: 1.6;
+}

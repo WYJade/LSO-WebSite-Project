@@ -12,9 +12,9 @@ const Footer: React.FC<{ showNewsletter?: boolean }> = ({ showNewsletter = true 
               <span className="newsletter-label">NEWSLETTER</span>
               <h2 className="newsletter-title">
                 <svg className="lso-icon-inline" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg">
-                  <ellipse cx="30" cy="18" rx="23" ry="7.5" fill="#0052CC" transform="rotate(-25 30 18)"/>
-                  <ellipse cx="33" cy="30" rx="25" ry="8.5" fill="#1976D2" transform="rotate(5 33 30)"/>
-                  <circle cx="30" cy="45" r="8.5" fill="#00BCD4"/>
+                  <ellipse cx="26" cy="18" rx="21" ry="8" fill="#1E3A8A" transform="rotate(-22 26 18)"/>
+                  <ellipse cx="30" cy="30" rx="24" ry="9" fill="#2563EB" transform="rotate(3 30 30)"/>
+                  <circle cx="26" cy="44" r="9" fill="#0EA5E9"/>
                 </svg>
                 Get the latest updates from us
               </h2>
@@ -34,9 +34,9 @@ const Footer: React.FC<{ showNewsletter?: boolean }> = ({ showNewsletter = true 
           <div className="footer-column footer-brand">
             <div className="footer-logo">
               <svg width="100" height="50" viewBox="0 0 100 50" xmlns="http://www.w3.org/2000/svg">
-                <ellipse cx="18" cy="12" rx="23" ry="7.5" fill="#0052CC" transform="rotate(-25 18 12)"/>
-                <ellipse cx="21" cy="25" rx="25" ry="8.5" fill="#1976D2" transform="rotate(5 21 25)"/>
-                <circle cx="18" cy="39" r="8.5" fill="#00BCD4"/>
+                <ellipse cx="16" cy="13" rx="21" ry="8" fill="#1E3A8A" transform="rotate(-22 16 13)"/>
+                <ellipse cx="20" cy="25" rx="24" ry="9" fill="#2563EB" transform="rotate(3 20 25)"/>
+                <circle cx="16" cy="38" r="9" fill="#0EA5E9"/>
                 <text x="40" y="32" fontFamily="Arial, sans-serif" fontSize="24" fontWeight="bold" fill="white">LSO</text>
               </svg>
             </div>
