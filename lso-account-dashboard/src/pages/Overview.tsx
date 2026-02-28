@@ -11,6 +11,9 @@ const Overview: React.FC<OverviewProps> = ({ onNavigate }) => {
   const [trackingInput, setTrackingInput] = useState('');
   const [trackingResults, setTrackingResults] = useState<any[]>([]);
   const [error, setError] = useState('');
+  const [showFilterMenu, setShowFilterMenu] = useState(false);
+  const [selectedStatuses, setSelectedStatuses] = useState<string[]>([]);
+  const [selectedServiceTypes, setSelectedServiceTypes] = useState<string[]>([]);
 
   const handleSearch = () => {
     setError('');
@@ -31,7 +34,10 @@ const Overview: React.FC<OverviewProps> = ({ onNavigate }) => {
       return;
     }
 
-    // Mock search results
+    // Mock search results with different sender/receiver names
+    const senderNames = ['John Smith', 'Emily Johnson', 'Michael Brown', 'Sarah Davis', 'David Wilson', 'Jessica Martinez', 'James Anderson', 'Jennifer Taylor', 'Robert Thomas', 'Linda Jackson'];
+    const receiverNames = ['William White', 'Mary Harris', 'Richard Martin', 'Patricia Thompson', 'Charles Garcia', 'Nancy Rodriguez', 'Joseph Lee', 'Karen Walker', 'Thomas Hall', 'Betty Allen'];
+    
     const mockResults = numbers.map((num, index) => ({
       id: `${index + 1}`,
       trackingNumber: num,
@@ -41,7 +47,8 @@ const Overview: React.FC<OverviewProps> = ({ onNavigate }) => {
       destination: 'New York, NY',
       pickupDate: new Date(2024, 1, 10 + index),
       deliveredTime: index % 3 === 0 ? new Date(2024, 1, 15 + index) : undefined,
-      signedBy: index % 3 === 0 ? 'John Doe' : 'Jane Smith',
+      sender: senderNames[index % senderNames.length],
+      receiver: receiverNames[index % receiverNames.length],
     }));
 
     setTrackingResults(mockResults);
@@ -55,30 +62,64 @@ const Overview: React.FC<OverviewProps> = ({ onNavigate }) => {
     }
   };
 
+  const handlePrintReady = () => {
+    window.print();
+  };
+
+  const handleExport = () => {
+    console.log('Exporting tracking results...');
+    alert('Export functionality will be implemented');
+  };
+
+  const handleStatusToggle = (status: string) => {
+    setSelectedStatuses(prev => 
+      prev.includes(status) 
+        ? prev.filter(s => s !== status)
+        : [...prev, status]
+    );
+  };
+
+  const handleServiceTypeToggle = (serviceType: string) => {
+    setSelectedServiceTypes(prev => 
+      prev.includes(serviceType) 
+        ? prev.filter(s => s !== serviceType)
+        : [...prev, serviceType]
+    );
+  };
+
+  const handleClearFilters = () => {
+    setSelectedStatuses([]);
+    setSelectedServiceTypes([]);
+  };
+
+  const handleApplyFilters = () => {
+    setShowFilterMenu(false);
+  };
+
   const actionCards = [
     {
-      id: 'create-airbill',
-      title: 'Create airbill',
+      id: 'create-shipment',
+      title: 'Create Shipment',
       icon: '📦',
       path: '/ship-with-account',
     },
     {
       id: 'schedule-pickup',
-      title: 'Schedule pickup',
+      title: 'Schedule Pickup',
       icon: '🚚',
       path: '/schedule-pickup',
     },
     {
-      id: 'cancel-pickup',
-      title: 'Cancel a scheduled pickup',
-      icon: '❌',
+      id: 'manage-pickup',
+      title: 'Manage Pickup',
+      icon: '📋',
       path: '/cancel-pickup',
     },
     {
-      id: 'proof-of-delivery',
-      title: 'Proof of Delivery',
-      icon: '📋',
-      path: '/proof-of-delivery',
+      id: 'rate',
+      title: 'Rate',
+      icon: '💰',
+      path: '/calculate-rates',
     },
   ];
 
@@ -106,7 +147,81 @@ const Overview: React.FC<OverviewProps> = ({ onNavigate }) => {
       {/* Tracking Results */}
       {trackingResults.length > 0 && (
         <div className="tracking-results-section">
-          <h3>Tracking Results ({trackingResults.length})</h3>
+          <div className="results-header-bar">
+            <h3 className="results-title">Tracking Results ({trackingResults.length})</h3>
+            <div className="results-actions">
+              <button className="print-ready-btn" onClick={handlePrintReady}>
+                📄 See Print-ready option
+              </button>
+              <button className="export-icon-btn" onClick={handleExport}>📤 Export</button>
+              <button className="filter-icon-btn" onClick={() => setShowFilterMenu(!showFilterMenu)}>
+                🔽 Filter
+              </button>
+            </div>
+          </div>
+
+          {showFilterMenu && (
+            <div className="filter-modal-overlay" onClick={() => setShowFilterMenu(false)}>
+              <div className="filter-modal-panel" onClick={(e) => e.stopPropagation()}>
+                <div className="filter-panel-header">
+                  <h4>Filter Options</h4>
+                  <button className="filter-close-btn" onClick={() => setShowFilterMenu(false)}>✕</button>
+                </div>
+                
+                <div className="filter-panel-body">
+                  <div className="filter-section">
+                    <div className="filter-section-title">Status</div>
+                    <div className="filter-checkbox-group">
+                      {[
+                        { value: 'delivered', label: 'Delivered' },
+                        { value: 'in-transit', label: 'In Transit' },
+                        { value: 'out-for-delivery', label: 'Out For Delivery' },
+                      ].map(status => (
+                        <label key={status.value} className="filter-checkbox-item">
+                          <input
+                            type="checkbox"
+                            checked={selectedStatuses.includes(status.value)}
+                            onChange={() => handleStatusToggle(status.value)}
+                          />
+                          <span>{status.label}</span>
+                        </label>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="filter-section">
+                    <div className="filter-section-title">Service Type</div>
+                    <div className="filter-checkbox-group">
+                      {[
+                        'LSO Ground™',
+                        'LSO Priority Next Day™',
+                        'LSO 2nd Day™',
+                      ].map(serviceType => (
+                        <label key={serviceType} className="filter-checkbox-item">
+                          <input
+                            type="checkbox"
+                            checked={selectedServiceTypes.includes(serviceType)}
+                            onChange={() => handleServiceTypeToggle(serviceType)}
+                          />
+                          <span>{serviceType}</span>
+                        </label>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+
+                <div className="filter-panel-footer">
+                  <button className="filter-clear-btn" onClick={handleClearFilters}>
+                    Clear All
+                  </button>
+                  <button className="filter-apply-btn" onClick={handleApplyFilters}>
+                    Apply Filters
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+
           <div className="tracking-results-list">
             {trackingResults.map((result) => (
               <div key={result.id} className="tracking-result-card">
@@ -126,7 +241,7 @@ const Overview: React.FC<OverviewProps> = ({ onNavigate }) => {
                   <div className="result-location from-location">
                     <div className="location-label">FROM</div>
                     <div className="location-city">{result.origin.split(',')[0]}</div>
-                    <div className="location-person">{result.signedBy || 'Sender'}</div>
+                    <div className="location-person">{result.sender}</div>
                   </div>
                   <div className="result-arrow">
                     <svg className="route-arrow-icon" viewBox="0 0 200 60" xmlns="http://www.w3.org/2000/svg">
@@ -141,7 +256,7 @@ const Overview: React.FC<OverviewProps> = ({ onNavigate }) => {
                   <div className="result-location to-location">
                     <div className="location-label">TO</div>
                     <div className="location-city">{result.destination.split(',')[0]}</div>
-                    <div className="location-person">{result.signedBy || 'Receiver'}</div>
+                    <div className="location-person">{result.receiver}</div>
                   </div>
                 </div>
               </div>
