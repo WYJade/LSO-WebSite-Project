@@ -7,7 +7,7 @@ import Overview from './Overview';
 import Claim from './Claim';
 import AddressBook from '../components/AddressBook';
 import UserManagement from '../components/UserManagement';
-import TrackPackage from './TrackPackage';
+import Reports from './Reports';
 import Billing from './Billing';
 import Footer from '../components/Footer';
 import { MenuItem } from '../types/components';
@@ -102,7 +102,7 @@ const Dashboard: React.FC<DashboardProps> = ({ currentUser }) => {
           />
         );
       case 'report':
-        return <TrackPackage />;
+        return <Reports />;
       case 'billing':
         return <Billing />;
       default:
