@@ -36,12 +36,12 @@ const Overview: React.FC<OverviewProps> = ({ onNavigate }) => {
       id: `${index + 1}`,
       trackingNumber: num,
       status: index % 3 === 0 ? 'Delivered' : index % 3 === 1 ? 'In Transit' : 'Out For Delivery',
-      serviceType: 'Ground',
+      serviceType: 'LSO Ground™',
       origin: 'Los Angeles, CA',
       destination: 'New York, NY',
       pickupDate: new Date(2024, 1, 10 + index),
       deliveredTime: index % 3 === 0 ? new Date(2024, 1, 15 + index) : undefined,
-      signedBy: index % 3 === 0 ? 'John Doe' : undefined,
+      signedBy: index % 3 === 0 ? 'John Doe' : 'Jane Smith',
     }));
 
     setTrackingResults(mockResults);
@@ -111,35 +111,38 @@ const Overview: React.FC<OverviewProps> = ({ onNavigate }) => {
             {trackingResults.map((result) => (
               <div key={result.id} className="tracking-result-card">
                 <div className="result-header">
-                  <div className="result-tracking-number">
-                    <strong>Tracking #:</strong> {result.trackingNumber}
-                  </div>
-                  <div className="result-badges">
-                    <span className="service-type-badge">{result.serviceType}</span>
-                    <span className={`status-badge status-${result.status.toLowerCase().replace(/\s+/g, '-')}`}>
+                  <div className="result-tracking-info">
+                    <span className="result-tracking-number">Tracking # {result.trackingNumber}</span>
+                    <span className="result-service-type-badge">{result.serviceType}</span>
+                    <span className={`result-status-badge status-${result.status.toLowerCase().replace(/\s+/g, '-')}`}>
                       {result.status}
                     </span>
                   </div>
-                </div>
-                <div className="result-details">
-                  <div className="result-row">
-                    <span className="label">Origin:</span>
-                    <span className="value">{result.origin}</span>
-                  </div>
-                  <div className="result-row">
-                    <span className="label">Destination:</span>
-                    <span className="value">{result.destination}</span>
-                  </div>
-                  <div className="result-row">
-                    <span className="label">Pickup Date:</span>
-                    <span className="value">{result.pickupDate.toLocaleDateString()}</span>
-                  </div>
                   {result.status === 'Delivered' && result.deliveredTime && (
-                    <div className="result-row">
-                      <span className="label">Delivered time:</span>
-                      <span className="value">{result.deliveredTime.toLocaleString()}</span>
-                    </div>
+                    <div className="result-sign-time">Delivered time: {result.deliveredTime.toLocaleString()}</div>
                   )}
+                </div>
+                <div className="result-route">
+                  <div className="result-location from-location">
+                    <div className="location-label">FROM</div>
+                    <div className="location-city">{result.origin.split(',')[0]}</div>
+                    <div className="location-person">{result.signedBy || 'Sender'}</div>
+                  </div>
+                  <div className="result-arrow">
+                    <svg className="route-arrow-icon" viewBox="0 0 200 60" xmlns="http://www.w3.org/2000/svg">
+                      <defs>
+                        <marker id={`arrowhead-${result.id}`} markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto">
+                          <polygon points="0 3, 12 6, 0 9" fill="#d0d0d0" />
+                        </marker>
+                      </defs>
+                      <line x1="10" y1="20" x2="190" y2="20" stroke="#d0d0d0" strokeWidth="3" markerEnd={`url(#arrowhead-${result.id})`} />
+                    </svg>
+                  </div>
+                  <div className="result-location to-location">
+                    <div className="location-label">TO</div>
+                    <div className="location-city">{result.destination.split(',')[0]}</div>
+                    <div className="location-person">{result.signedBy || 'Receiver'}</div>
+                  </div>
                 </div>
               </div>
             ))}
