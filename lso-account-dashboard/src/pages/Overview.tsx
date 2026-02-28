@@ -12,6 +12,7 @@ const Overview: React.FC<OverviewProps> = ({ onNavigate }) => {
   const [trackingResults, setTrackingResults] = useState<any[]>([]);
   const [error, setError] = useState('');
   const [showFilterMenu, setShowFilterMenu] = useState(false);
+  const [showExportDialog, setShowExportDialog] = useState(false);
   const [selectedStatuses, setSelectedStatuses] = useState<string[]>([]);
   const [selectedServiceTypes, setSelectedServiceTypes] = useState<string[]>([]);
 
@@ -67,8 +68,13 @@ const Overview: React.FC<OverviewProps> = ({ onNavigate }) => {
   };
 
   const handleExport = () => {
-    console.log('Exporting tracking results...');
-    alert('Export functionality will be implemented');
+    setShowExportDialog(true);
+  };
+
+  const handleExportFormat = (format: string) => {
+    console.log(`Exporting tracking results as ${format}...`);
+    alert(`Exporting ${trackingResults.length} tracking results as ${format}`);
+    setShowExportDialog(false);
   };
 
   const handleStatusToggle = (status: string) => {
@@ -96,6 +102,10 @@ const Overview: React.FC<OverviewProps> = ({ onNavigate }) => {
     setShowFilterMenu(false);
   };
 
+  const handleTrackingCardClick = (trackingNumber: string) => {
+    handleNavigate(`/shipment-details/${trackingNumber}`);
+  };
+
   const actionCards = [
     {
       id: 'create-shipment',
@@ -120,6 +130,12 @@ const Overview: React.FC<OverviewProps> = ({ onNavigate }) => {
       title: 'Rate',
       icon: '💰',
       path: '/calculate-rates',
+    },
+    {
+      id: 'preferences',
+      title: 'Your Preferences',
+      icon: '⚙️',
+      path: '/preferences',
     },
   ];
 
@@ -173,9 +189,16 @@ const Overview: React.FC<OverviewProps> = ({ onNavigate }) => {
                     <div className="filter-section-title">Status</div>
                     <div className="filter-checkbox-group">
                       {[
-                        { value: 'delivered', label: 'Delivered' },
-                        { value: 'in-transit', label: 'In Transit' },
+                        { value: 'created', label: 'Created' },
+                        { value: 'picked-up', label: 'Picked Up' },
+                        { value: 'inbound', label: 'Inbound scan at destination' },
                         { value: 'out-for-delivery', label: 'Out For Delivery' },
+                        { value: 'delivered', label: 'Delivered' },
+                        { value: 'return-to-shipper', label: 'Return to Shipper' },
+                        { value: 'discarded', label: 'Discarded' },
+                        { value: 'lost', label: 'Lost' },
+                        { value: 'delay', label: 'Delay Exception' },
+                        { value: 'failed', label: 'Failed Attempt' },
                       ].map(status => (
                         <label key={status.value} className="filter-checkbox-item">
                           <input
@@ -193,9 +216,12 @@ const Overview: React.FC<OverviewProps> = ({ onNavigate }) => {
                     <div className="filter-section-title">Service Type</div>
                     <div className="filter-checkbox-group">
                       {[
-                        'LSO Ground™',
                         'LSO Priority Next Day™',
+                        'LSO Early Next Day™',
+                        'LSO Economy Next Day™',
+                        'LSO Ground™',
                         'LSO 2nd Day™',
+                        'LSO E-Commerce Delivery™'
                       ].map(serviceType => (
                         <label key={serviceType} className="filter-checkbox-item">
                           <input
@@ -224,7 +250,12 @@ const Overview: React.FC<OverviewProps> = ({ onNavigate }) => {
 
           <div className="tracking-results-list">
             {trackingResults.map((result) => (
-              <div key={result.id} className="tracking-result-card">
+              <div 
+                key={result.id} 
+                className="tracking-result-card"
+                onClick={() => handleTrackingCardClick(result.trackingNumber)}
+                style={{ cursor: 'pointer' }}
+              >
                 <div className="result-header">
                   <div className="result-tracking-info">
                     <span className="result-tracking-number">Tracking # {result.trackingNumber}</span>
@@ -261,6 +292,35 @@ const Overview: React.FC<OverviewProps> = ({ onNavigate }) => {
                 </div>
               </div>
             ))}
+          </div>
+        </div>
+      )}
+
+      {/* Export Dialog */}
+      {showExportDialog && (
+        <div className="export-dialog-overlay" onClick={() => setShowExportDialog(false)}>
+          <div className="export-dialog" onClick={(e) => e.stopPropagation()}>
+            <div className="export-dialog-header">
+              <h3>Export Tracking Results</h3>
+              <button className="dialog-close-btn" onClick={() => setShowExportDialog(false)}>✕</button>
+            </div>
+            <div className="export-dialog-body">
+              <p>Choose export format for {trackingResults.length} tracking result{trackingResults.length !== 1 ? 's' : ''}:</p>
+              <div className="export-options">
+                <button className="export-option-btn" onClick={() => handleExportFormat('PDF')}>
+                  <span className="export-icon">📄</span>
+                  <span>PDF Document</span>
+                </button>
+                <button className="export-option-btn" onClick={() => handleExportFormat('CSV')}>
+                  <span className="export-icon">📊</span>
+                  <span>CSV Spreadsheet</span>
+                </button>
+                <button className="export-option-btn" onClick={() => handleExportFormat('Excel')}>
+                  <span className="export-icon">📗</span>
+                  <span>Excel Workbook</span>
+                </button>
+              </div>
+            </div>
           </div>
         </div>
       )}

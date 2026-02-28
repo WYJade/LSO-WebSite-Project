@@ -28,6 +28,83 @@ const Reports: React.FC = () => {
   const [toDay, setToDay] = useState(defaultDates.toDay);
   const [toYear, setToYear] = useState(defaultDates.toYear);
   const [showResults, setShowResults] = useState(false);
+  const [reportData, setReportData] = useState<any[]>([]);
+
+  // Mock report data
+  const generateMockReportData = () => {
+    return [
+      {
+        printedDate: '01/15/2025',
+        pickupDate: '01/16/2025',
+        airbillNumber: 'LSO2025011501',
+        companyName: 'Tech Solutions Inc.',
+        attentionName: 'John Smith',
+        deliveryAddress: '742 Evergreen Terrace, Los Angeles, CA 90001',
+        weight: '5.2 lbs',
+        estCost: '$45.50',
+        serviceType: 'LSO Ground™',
+        referenceAcctnum: 'REF-2025-001',
+        deliveryDate: '01/18/2025',
+        deliverySignature: 'J. Smith'
+      },
+      {
+        printedDate: '01/15/2025',
+        pickupDate: '01/16/2025',
+        airbillNumber: 'LSO2025011502',
+        companyName: 'Global Imports LLC',
+        attentionName: 'Emily Johnson',
+        deliveryAddress: '1515 Pine Boulevard, New York, NY 10001',
+        weight: '12.8 lbs',
+        estCost: '$78.25',
+        serviceType: 'LSO Priority Next Day™',
+        referenceAcctnum: 'REF-2025-002',
+        deliveryDate: '01/17/2025',
+        deliverySignature: 'E. Johnson'
+      },
+      {
+        printedDate: '01/16/2025',
+        pickupDate: '01/17/2025',
+        airbillNumber: 'LSO2025011601',
+        companyName: 'Retail Distributors Co.',
+        attentionName: 'Michael Brown',
+        deliveryAddress: '890 Market Street, San Francisco, CA 94102',
+        weight: '8.5 lbs',
+        estCost: '$52.00',
+        serviceType: 'LSO 2nd Day™',
+        referenceAcctnum: 'REF-2025-003',
+        deliveryDate: '01/19/2025',
+        deliverySignature: 'M. Brown'
+      },
+      {
+        printedDate: '01/16/2025',
+        pickupDate: '01/17/2025',
+        airbillNumber: 'LSO2025011602',
+        companyName: 'Manufacturing Plus',
+        attentionName: 'Sarah Davis',
+        deliveryAddress: '456 Industrial Way, Chicago, IL 60601',
+        weight: '25.0 lbs',
+        estCost: '$125.75',
+        serviceType: 'LSO Ground™',
+        referenceAcctnum: 'REF-2025-004',
+        deliveryDate: '01/20/2025',
+        deliverySignature: 'S. Davis'
+      },
+      {
+        printedDate: '01/17/2025',
+        pickupDate: '01/18/2025',
+        airbillNumber: 'LSO2025011701',
+        companyName: 'E-Commerce Solutions',
+        attentionName: 'David Wilson',
+        deliveryAddress: '123 Commerce Drive, Seattle, WA 98101',
+        weight: '3.2 lbs',
+        estCost: '$35.50',
+        serviceType: 'LSO E-Commerce Delivery™',
+        referenceAcctnum: 'REF-2025-005',
+        deliveryDate: '01/19/2025',
+        deliverySignature: 'D. Wilson'
+      }
+    ];
+  };
 
   const handleClearDate = () => {
     setFromMonth('');
@@ -61,6 +138,9 @@ const Reports: React.FC = () => {
       from: `${fromMonth}/${fromDay}/${fromYear}`,
       to: `${toMonth}/${toDay}/${toYear}`
     });
+    // Generate mock data
+    const mockData = generateMockReportData();
+    setReportData(mockData);
     setShowResults(true);
   };
 
@@ -73,7 +153,16 @@ const Reports: React.FC = () => {
   };
 
   const handleExportCSV = () => {
-    alert('CSV export will be available soon.');
+    console.log('Exporting report as CSV...');
+    // Simulate CSV export with visual feedback
+    const button = document.querySelector('.export-csv-btn');
+    if (button) {
+      button.textContent = 'EXPORTING...';
+      setTimeout(() => {
+        button.textContent = 'EXPORT CSV';
+        alert(`Successfully exported ${reportData.length} records to CSV`);
+      }, 1500);
+    }
   };
 
   return (
@@ -200,11 +289,11 @@ const Reports: React.FC = () => {
               <div className="column-item">PRINTED<br/>DATE</div>
               <div className="column-item">PICKUP<br/>DATE</div>
               <div className="column-item">AIRBILL<br/>NUMBER</div>
-              <div className="column-item">COMPANY<br/>NAME &<br/>PERSON<br/>NAME</div>
-              <div className="column-item">DELIVERY<br/>& ADDRESS</div>
-              <div className="column-item">WEIGHT<br/>WT. COST</div>
+              <div className="column-item">COMPANY<br/>NAME<br/>ATTENTION<br/>NAME</div>
+              <div className="column-item">DELIVERY<br/>ADDRESS</div>
+              <div className="column-item">WEIGHT<br/>EST. COST</div>
               <div className="column-item">SERVICE<br/>TYPE</div>
-              <div className="column-item">REFERENCE<br/>ACCT#/NUM</div>
+              <div className="column-item">REFERENCE<br/>ACCTNUM</div>
               <div className="column-item">DELIVERY<br/>DATE/DELIVERY<br/>SIGNATURE</div>
             </div>
           </div>
@@ -212,6 +301,33 @@ const Reports: React.FC = () => {
           <div className="report-no-results">
             <p>NO REPORT FOUND ON THE SPECIFIED DATE</p>
           </div>
+
+          {reportData.length > 0 && (
+            <div className="report-data-rows">
+              {reportData.map((row, index) => (
+                <div key={index} className="report-data-row">
+                  <div className="report-cell">{row.printedDate}</div>
+                  <div className="report-cell">{row.pickupDate}</div>
+                  <div className="report-cell">{row.airbillNumber}</div>
+                  <div className="report-cell">
+                    <div>{row.companyName}</div>
+                    <div className="attention-name">{row.attentionName}</div>
+                  </div>
+                  <div className="report-cell">{row.deliveryAddress}</div>
+                  <div className="report-cell">
+                    <div>{row.weight}</div>
+                    <div className="cost-value">{row.estCost}</div>
+                  </div>
+                  <div className="report-cell">{row.serviceType}</div>
+                  <div className="report-cell">{row.referenceAcctnum}</div>
+                  <div className="report-cell">
+                    <div>{row.deliveryDate}</div>
+                    <div className="signature-value">{row.deliverySignature}</div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
 
           <div className="report-results-actions">
             <button className="back-to-reports-btn" onClick={handleBackToReports}>
