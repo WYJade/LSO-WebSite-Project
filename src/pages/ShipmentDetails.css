@@ -1,5 +1,5 @@
 .shipment-details-page {
-  padding: 20px;
+  padding: 15px;
   max-width: 1400px;
   margin: 0 auto;
   min-height: 100vh;
@@ -7,17 +7,17 @@
 }
 
 .shipment-details-header {
-  margin-bottom: 20px;
+  margin-bottom: 15px;
 }
 
 .back-to-list-btn {
   background: none;
   border: none;
   color: #003087;
-  font-size: 16px;
+  font-size: 14px;
   cursor: pointer;
-  padding: 8px 0;
-  margin-bottom: 10px;
+  padding: 6px 0;
+  margin-bottom: 8px;
   display: flex;
   align-items: center;
   gap: 5px;
@@ -30,7 +30,7 @@
 }
 
 .shipment-details-header h2 {
-  font-size: 28px;
+  font-size: 24px;
   color: #333;
   margin: 0;
 }
@@ -46,14 +46,14 @@
 .details-top-banner {
   background: linear-gradient(135deg, #003087 0%, #0052cc 100%);
   color: white;
-  padding: 30px;
+  padding: 20px 25px;
   display: flex;
   justify-content: space-between;
   align-items: center;
 }
 
 .tracking-number-display {
-  font-size: 36px;
+  font-size: 32px;
   font-weight: bold;
   letter-spacing: 1px;
 }
@@ -64,9 +64,9 @@
 }
 
 .status-badge {
-  padding: 8px 20px;
+  padding: 6px 16px;
   border-radius: 20px;
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 600;
   border: 2px solid white;
 }
@@ -76,9 +76,9 @@
 }
 
 .service-badge {
-  padding: 8px 20px;
+  padding: 6px 16px;
   border-radius: 20px;
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 600;
   background: rgba(255, 255, 255, 0.2);
   border: 2px solid white;
@@ -88,15 +88,15 @@
 .details-content-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 30px;
-  padding: 30px;
+  gap: 20px;
+  padding: 20px;
 }
 
 .details-left-column,
 .details-right-column {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 16px;
 }
 
 /* Info Cards */
@@ -104,28 +104,28 @@
   background: #f9f9f9;
   border: 1px solid #e0e0e0;
   border-radius: 8px;
-  padding: 20px;
+  padding: 16px;
 }
 
 .card-title {
-  font-size: 18px;
+  font-size: 16px;
   color: #003087;
-  margin: 0 0 15px 0;
+  margin: 0 0 12px 0;
   font-weight: 600;
   border-bottom: 2px solid #003087;
-  padding-bottom: 8px;
+  padding-bottom: 6px;
 }
 
 .info-grid {
   display: grid;
-  gap: 12px;
+  gap: 8px;
 }
 
 .info-row {
   display: grid;
-  grid-template-columns: 150px 1fr;
-  gap: 15px;
-  padding: 8px 0;
+  grid-template-columns: 140px 1fr;
+  gap: 12px;
+  padding: 6px 0;
   border-bottom: 1px solid #e8e8e8;
 }
 
@@ -134,14 +134,14 @@
 }
 
 .info-label {
-  font-size: 12px;
+  font-size: 11px;
   color: #666;
   font-weight: 600;
   text-transform: uppercase;
 }
 
 .info-value {
-  font-size: 14px;
+  font-size: 13px;
   color: #333;
   font-weight: 500;
 }
@@ -150,45 +150,45 @@
 .parties-container {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 15px;
+  gap: 12px;
 }
 
 .party-card {
   background: #f9f9f9;
   border: 1px solid #e0e0e0;
   border-radius: 8px;
-  padding: 20px;
+  padding: 16px;
   text-align: center;
 }
 
 .party-icon {
-  font-size: 40px;
-  margin-bottom: 10px;
+  font-size: 36px;
+  margin-bottom: 8px;
 }
 
 .party-title {
-  font-size: 14px;
+  font-size: 13px;
   color: #003087;
-  margin: 0 0 10px 0;
+  margin: 0 0 8px 0;
   font-weight: 600;
 }
 
 .party-name {
-  font-size: 16px;
+  font-size: 15px;
   color: #333;
   font-weight: 600;
-  margin-bottom: 8px;
+  margin-bottom: 6px;
 }
 
 .party-address {
-  font-size: 14px;
+  font-size: 13px;
   color: #555;
-  margin-bottom: 4px;
+  margin-bottom: 3px;
   line-height: 1.4;
 }
 
 .party-location {
-  font-size: 14px;
+  font-size: 13px;
   color: #666;
   line-height: 1.4;
 }
@@ -197,37 +197,37 @@
 .delivery-address {
   display: flex;
   align-items: flex-start;
-  gap: 12px;
-  padding: 15px;
+  gap: 10px;
+  padding: 12px;
   background: white;
   border-radius: 6px;
-  margin-bottom: 15px;
+  margin-bottom: 12px;
 }
 
 .address-icon {
-  font-size: 24px;
+  font-size: 22px;
   color: #e91e63;
 }
 
 .address-text {
-  font-size: 14px;
+  font-size: 13px;
   color: #333;
   line-height: 1.6;
 }
 
 .delivery-actions {
   display: flex;
-  gap: 15px;
+  gap: 12px;
 }
 
 .action-link {
   background: none;
   border: none;
   color: #003087;
-  font-size: 14px;
+  font-size: 13px;
   cursor: pointer;
   text-decoration: underline;
-  padding: 5px 0;
+  padding: 4px 0;
   transition: color 0.2s;
 }
 
@@ -243,12 +243,12 @@
 .tracking-timeline {
   display: flex;
   flex-direction: column;
-  gap: 15px;
+  gap: 12px;
 }
 
 .timeline-item {
   display: flex;
-  gap: 15px;
+  gap: 12px;
   position: relative;
 }
 
@@ -256,15 +256,15 @@
   content: '';
   position: absolute;
   left: 9px;
-  top: 30px;
+  top: 26px;
   width: 2px;
-  height: calc(100% + 5px);
+  height: calc(100% + 2px);
   background: #d0d0d0;
 }
 
 .timeline-marker {
-  width: 20px;
-  height: 20px;
+  width: 18px;
+  height: 18px;
   border-radius: 50%;
   background: #4caf50;
   border: 3px solid white;
@@ -278,16 +278,16 @@
 }
 
 .timeline-status {
-  font-size: 14px;
+  font-size: 13px;
   color: #333;
   font-weight: 600;
-  margin-bottom: 4px;
+  margin-bottom: 3px;
 }
 
 .timeline-details {
   display: flex;
-  gap: 15px;
-  font-size: 12px;
+  gap: 12px;
+  font-size: 11px;
   color: #666;
 }
 
@@ -300,23 +300,23 @@
 .details-actions {
   display: flex;
   justify-content: flex-end;
-  gap: 15px;
-  padding: 20px 30px;
+  gap: 12px;
+  padding: 16px 20px;
   border-top: 1px solid #e0e0e0;
   background: #fafafa;
 }
 
 .action-btn {
-  padding: 12px 30px;
+  padding: 10px 24px;
   border: none;
   border-radius: 6px;
-  font-size: 15px;
+  font-size: 14px;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s;
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
 }
 
 .secondary-btn {
@@ -590,6 +590,227 @@
   }
   
   .action-btn {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+/* Compact Layout Styles */
+.shipment-details-container-compact {
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+
+.details-compact-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  padding: 24px;
+}
+
+.compact-section {
+  background: #f9f9f9;
+  border: 1px solid #e0e0e0;
+  border-radius: 6px;
+  padding: 16px;
+}
+
+.compact-section.tracking-section-compact {
+  grid-column: span 3;
+}
+
+.section-title-compact {
+  font-size: 16px;
+  color: #003087;
+  margin: 0 0 12px 0;
+  font-weight: 600;
+  padding-bottom: 8px;
+  border-bottom: 2px solid #003087;
+}
+
+.info-rows-compact {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.info-row-compact {
+  display: grid;
+  grid-template-columns: 120px 1fr;
+  gap: 12px;
+  padding: 6px 0;
+  font-size: 13px;
+  align-items: center;
+}
+
+.info-row-compact.full-width {
+  grid-template-columns: 1fr;
+}
+
+.label-compact {
+  color: #666;
+  font-weight: 600;
+}
+
+.value-compact {
+  color: #333;
+  font-weight: 500;
+}
+
+.link-btn-compact {
+  background: none;
+  border: none;
+  color: #003087;
+  font-size: 13px;
+  cursor: pointer;
+  text-decoration: underline;
+  padding: 0;
+  text-align: left;
+  transition: color 0.2s;
+}
+
+.link-btn-compact:hover {
+  color: #0052cc;
+}
+
+/* Tracking Table Compact */
+.tracking-table-compact {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  background: #e0e0e0;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.tracking-header-compact {
+  display: grid;
+  grid-template-columns: 2fr 2fr 1.5fr;
+  gap: 1px;
+  background: #003087;
+  color: white;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 10px 12px;
+}
+
+.tracking-row-compact {
+  display: grid;
+  grid-template-columns: 2fr 2fr 1.5fr;
+  gap: 1px;
+  background: white;
+  font-size: 12px;
+  padding: 10px 12px;
+  transition: background 0.2s;
+}
+
+.tracking-row-compact:hover {
+  background: #f5f5f5;
+}
+
+.tracking-status-compact {
+  color: #333;
+  font-weight: 600;
+}
+
+.tracking-date-compact {
+  color: #666;
+}
+
+.tracking-location-compact {
+  color: #666;
+}
+
+/* Bottom Actions Compact */
+.details-actions-compact {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  padding: 16px 24px;
+  border-top: 1px solid #e0e0e0;
+  background: #fafafa;
+}
+
+.action-btn-compact {
+  padding: 10px 24px;
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.secondary-btn-compact {
+  background: white;
+  color: #666;
+  border: 2px solid #ddd;
+}
+
+.secondary-btn-compact:hover {
+  background: #f5f5f5;
+  border-color: #bbb;
+}
+
+.primary-btn-compact {
+  background: #003087;
+  color: white;
+}
+
+.primary-btn-compact:hover {
+  background: #0052cc;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 48, 135, 0.3);
+}
+
+/* Responsive for Compact Layout */
+@media (max-width: 1200px) {
+  .details-compact-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .compact-section.tracking-section-compact {
+    grid-column: span 2;
+  }
+}
+
+@media (max-width: 768px) {
+  .details-compact-grid {
+    grid-template-columns: 1fr;
+    padding: 16px;
+    gap: 16px;
+  }
+  
+  .compact-section.tracking-section-compact {
+    grid-column: span 1;
+  }
+  
+  .info-row-compact {
+    grid-template-columns: 1fr;
+    gap: 4px;
+  }
+  
+  .tracking-header-compact,
+  .tracking-row-compact {
+    grid-template-columns: 1fr;
+    gap: 4px;
+  }
+  
+  .tracking-header-compact span,
+  .tracking-row-compact span {
+    padding: 4px 0;
+  }
+  
+  .details-actions-compact {
+    flex-direction: column;
+  }
+  
+  .action-btn-compact {
     width: 100%;
     justify-content: center;
   }

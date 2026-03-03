@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import './ShipmentDetails.css';
 
@@ -6,7 +6,7 @@ const ShipmentDetails: React.FC = () => {
   const navigate = useNavigate();
   const { trackingNumber } = useParams<{ trackingNumber: string }>();
 
-  // Mock shipment data
+  // Mock shipment data based on the table structure
   const shipmentData = {
     trackingNumber: trackingNumber || 'QY326068',
     status: 'DELIVERED',
@@ -14,11 +14,16 @@ const ShipmentDetails: React.FC = () => {
     airbillNo: 'QY326068',
     trackingStatus: 'Delivered',
     deliveryDate: '2025-12-16 19:25',
+    createTime: '2025-12-16 19:25 CST',
+    billingRef: 'REF123456',
+    length: '12 in',
+    width: '8 in',
+    height: '6 in',
     signedBy: 'Emily Johnson',
     weight: '25.6 lbs',
     deliveryAddress: '1515 Pine Blvd, Los Angeles, CA 90048',
-    signatureUrl: '/signature.png',
-    proofImageUrl: '/delivery-proof.jpg',
+    signatureUrl: 'https://images.unsplash.com/photo-1450101499163-c8848c66ca85?w=1200&q=80',
+    proofImageUrl: 'https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?w=800&q=80',
     sender: {
       name: 'John Smith',
       address: '742 Evergreen Terrace',
@@ -50,7 +55,15 @@ const ShipmentDetails: React.FC = () => {
   };
 
   const handleTrackAnother = () => {
-    navigate('/dashboard');
+    navigate('/track');
+  };
+
+  const handleViewSignature = () => {
+    window.open(shipmentData.signatureUrl, '_blank');
+  };
+
+  const handleViewImage = () => {
+    window.open(shipmentData.proofImageUrl, '_blank');
   };
 
   return (
@@ -81,28 +94,28 @@ const ShipmentDetails: React.FC = () => {
               <h3 className="card-title">Shipment Information</h3>
               <div className="info-grid">
                 <div className="info-row">
-                  <span className="info-label">AIRBILL NO.</span>
-                  <span className="info-value">{shipmentData.airbillNo}</span>
+                  <span className="info-label">CREATE TIME</span>
+                  <span className="info-value">{shipmentData.createTime}</span>
                 </div>
                 <div className="info-row">
                   <span className="info-label">TRACKING STATUS</span>
                   <span className="info-value">{shipmentData.trackingStatus}</span>
                 </div>
                 <div className="info-row">
-                  <span className="info-label">DELIVERY DATE</span>
-                  <span className="info-value">{shipmentData.deliveryDate}</span>
-                </div>
-                <div className="info-row">
-                  <span className="info-label">SIGNED BY</span>
-                  <span className="info-value">{shipmentData.signedBy}</span>
-                </div>
-                <div className="info-row">
                   <span className="info-label">SERVICE TYPE</span>
                   <span className="info-value">{shipmentData.serviceType}</span>
                 </div>
                 <div className="info-row">
+                  <span className="info-label">BILLING REF</span>
+                  <span className="info-value">{shipmentData.billingRef}</span>
+                </div>
+                <div className="info-row">
                   <span className="info-label">WEIGHT</span>
                   <span className="info-value">{shipmentData.weight}</span>
+                </div>
+                <div className="info-row">
+                  <span className="info-label">DIMENSIONS</span>
+                  <span className="info-value">{shipmentData.length} × {shipmentData.width} × {shipmentData.height}</span>
                 </div>
               </div>
             </div>
@@ -136,13 +149,23 @@ const ShipmentDetails: React.FC = () => {
             {/* Delivery Info */}
             <div className="info-card">
               <h3 className="card-title">Delivery Info</h3>
+              <div className="info-grid">
+                <div className="info-row">
+                  <span className="info-label">DELIVERY DATE</span>
+                  <span className="info-value">{shipmentData.deliveryDate}</span>
+                </div>
+                <div className="info-row">
+                  <span className="info-label">SIGNED BY</span>
+                  <span className="info-value">{shipmentData.signedBy}</span>
+                </div>
+              </div>
               <div className="delivery-address">
                 <div className="address-icon">📍</div>
                 <div className="address-text">{shipmentData.deliveryAddress}</div>
               </div>
               <div className="delivery-actions">
-                <button className="action-link">View Signature</button>
-                <button className="action-link">View Image</button>
+                <button className="action-link" onClick={handleViewSignature}>View Signature</button>
+                <button className="action-link" onClick={handleViewImage}>View Image</button>
               </div>
             </div>
 
@@ -177,8 +200,6 @@ const ShipmentDetails: React.FC = () => {
           </button>
         </div>
       </div>
-
-      {/* Export Dialog - Removed from this page */}
     </div>
   );
 };

@@ -71,6 +71,10 @@ const TrackPackage: React.FC = () => {
   const [toMonth, setToMonth] = useState(defaultDates.toMonth);
   const [toDay, setToDay] = useState(defaultDates.toDay);
   const [toYear, setToYear] = useState(defaultDates.toYear);
+  
+  // Report Options states
+  const [leftReportOption, setLeftReportOption] = useState<string>('');
+  const [rightReportOption, setRightReportOption] = useState<string>('');
 
   const currentUser: User = {
     id: '1',
@@ -135,10 +139,18 @@ const TrackPackage: React.FC = () => {
   };
 
   const handleRunReport = () => {
+    // Check if both options are selected
+    if (!leftReportOption || !rightReportOption) {
+      return; // Button should be disabled, but just in case
+    }
     // Simulate running report - in real app, this would call an API
     setShowReportResults(true);
     // Mock data - empty results to show "NO REPORT FOUND" message
     setReportData([]);
+  };
+
+  const isRunReportEnabled = () => {
+    return leftReportOption !== '' && rightReportOption !== '';
   };
 
   const handleBackToReports = () => {
@@ -554,7 +566,7 @@ const TrackPackage: React.FC = () => {
                 <input
                   type="text"
                   className="tracking-search-input"
-                  placeholder="Enter Tracking number to search, separate multiple with commas"
+                  placeholder="Enter up to 30 tracking numbers, separated by commas or pressing Enter."
                   value={trackingInput}
                   onChange={(e) => setTrackingInput(e.target.value)}
                 />
@@ -1219,67 +1231,45 @@ const TrackPackage: React.FC = () => {
           {/* CSV Export Dialog for Reports */}
           {showCsvExportDialog && (
             <div className="dialog-overlay" onClick={() => setShowCsvExportDialog(false)}>
-              <div className="dialog-box csv-export-dialog" onClick={(e) => e.stopPropagation()}>
+              <div className="dialog-box csv-export-dialog-simple" onClick={(e) => e.stopPropagation()}>
                 <div className="dialog-header">
-                  <h3>📊 Export Report to CSV</h3>
+                  <h3>Export Report to CSV</h3>
                   <button className="dialog-close" onClick={() => setShowCsvExportDialog(false)}>✕</button>
                 </div>
                 <div className="dialog-body">
-                  <p>Export your report data to CSV format for easy analysis in spreadsheet applications.</p>
+                  <p className="export-description">Export your report data to CSV format for easy analysis in spreadsheet applications.</p>
                   
-                  <div className="export-info-box">
-                    <div className="info-item">
-                      <span className="info-icon">📅</span>
-                      <div className="info-content">
-                        <div className="info-label">Date Range</div>
-                        <div className="info-value">{fromMonth}/{fromDay}/{fromYear} - {toMonth}/{toDay}/{toYear}</div>
-                      </div>
+                  <div className="export-details-grid">
+                    <div className="detail-row">
+                      <span className="detail-label">Date Range:</span>
+                      <span className="detail-value">{fromMonth}/{fromDay}/{fromYear} - {toMonth}/{toDay}/{toYear}</span>
                     </div>
-                    <div className="info-item">
-                      <span className="info-icon">📋</span>
-                      <div className="info-content">
-                        <div className="info-label">Format</div>
-                        <div className="info-value">CSV</div>
-                      </div>
+                    <div className="detail-row">
+                      <span className="detail-label">Format:</span>
+                      <span className="detail-value">CSV</span>
                     </div>
                   </div>
 
-                  <div className="csv-export-features">
-                    <div className="feature-title">Your CSV export will include:</div>
-                    <div className="feature-list">
-                      <div className="feature-item">
-                        <span className="feature-icon">✓</span>
-                        <span>All shipment tracking numbers</span>
-                      </div>
-                      <div className="feature-item">
-                        <span className="feature-icon">✓</span>
-                        <span>Pickup and delivery dates</span>
-                      </div>
-                      <div className="feature-item">
-                        <span className="feature-icon">✓</span>
-                        <span>Origin and destination information</span>
-                      </div>
-                      <div className="feature-item">
-                        <span className="feature-icon">✓</span>
-                        <span>Service types and status</span>
-                      </div>
-                      <div className="feature-item">
-                        <span className="feature-icon">✓</span>
-                        <span>Weight and billing details</span>
-                      </div>
-                    </div>
+                  <div className="export-includes-section">
+                    <p className="includes-title">Your CSV export will include:</p>
+                    <ul className="includes-list">
+                      <li>All shipment tracking numbers</li>
+                      <li>Pickup and delivery dates</li>
+                      <li>Origin and destination information</li>
+                      <li>Service types and status</li>
+                      <li>Weight and billing details</li>
+                    </ul>
                   </div>
 
-                  <div className="export-note">
-                    <span className="note-icon">ℹ️</span>
+                  <div className="export-info-note">
+                    <span className="info-icon-small">ℹ️</span>
                     <span>The CSV file can be opened in Excel, Google Sheets, or any spreadsheet application.</span>
                   </div>
                 </div>
                 <div className="dialog-footer">
                   <button className="dialog-btn cancel-btn" onClick={() => setShowCsvExportDialog(false)}>Cancel</button>
-                  <button className="dialog-btn confirm-btn export-confirm-btn" onClick={confirmCsvExport}>
-                    <span>📥</span>
-                    <span>Download CSV</span>
+                  <button className="dialog-btn confirm-btn" onClick={confirmCsvExport}>
+                    Download CSV
                   </button>
                 </div>
               </div>
@@ -1414,29 +1404,62 @@ const TrackPackage: React.FC = () => {
                 <div className="options-grid">
                   <div className="options-column">
                     <label className="radio-option">
-                      <input type="radio" name="reportType" defaultChecked />
+                      <input 
+                        type="radio" 
+                        name="leftReportType" 
+                        checked={leftReportOption === 'pickup-date'}
+                        onChange={() => setLeftReportOption('pickup-date')}
+                      />
                       <span>Pickup Date<br /><small>(shows only those packages picked up)</small></span>
                     </label>
                     <label className="radio-option">
-                      <input type="radio" name="reportType" />
+                      <input 
+                        type="radio" 
+                        name="leftReportType"
+                        checked={leftReportOption === 'printed-date'}
+                        onChange={() => setLeftReportOption('printed-date')}
+                      />
                       <span>Printed Date<br /><small>(shows all packages)</small></span>
                     </label>
                     <label className="radio-option">
-                      <input type="radio" name="reportType" />
+                      <input 
+                        type="radio" 
+                        name="leftReportType"
+                        checked={leftReportOption === 'billing-difference'}
+                        onChange={() => setLeftReportOption('billing-difference')}
+                      />
                       <span>Billing difference<br /><small>(shows only those packages picked up)</small></span>
                     </label>
                   </div>
                   <div className="options-column">
+                    {leftReportOption && (
+                      <div className="required-indicator">* Required</div>
+                    )}
                     <label className="radio-option">
-                      <input type="radio" name="reportType" />
+                      <input 
+                        type="radio" 
+                        name="rightReportType"
+                        checked={rightReportOption === 'my-shipments'}
+                        onChange={() => setRightReportOption('my-shipments')}
+                      />
                       <span>My Shipments</span>
                     </label>
                     <label className="radio-option">
-                      <input type="radio" name="reportType" />
+                      <input 
+                        type="radio" 
+                        name="rightReportType"
+                        checked={rightReportOption === 'all-shipments'}
+                        onChange={() => setRightReportOption('all-shipments')}
+                      />
                       <span>All Shipments on my Account</span>
                     </label>
                     <label className="radio-option">
-                      <input type="radio" name="reportType" />
+                      <input 
+                        type="radio" 
+                        name="rightReportType"
+                        checked={rightReportOption === 'my-shipments-3rd-party'}
+                        onChange={() => setRightReportOption('my-shipments-3rd-party')}
+                      />
                       <span>My Shipments<br /><small>(including 3rd Party billed)</small></span>
                     </label>
                   </div>
@@ -1446,7 +1469,13 @@ const TrackPackage: React.FC = () => {
               <div className="report-actions">
                 <button className="help-btn">Help</button>
                 <button className="skip-btn" onClick={() => navigate('/ship-with-account')}>Ship another</button>
-                <button className="run-report-btn" onClick={handleRunReport}>Run report</button>
+                <button 
+                  className={`run-report-btn ${!isRunReportEnabled() ? 'disabled' : ''}`}
+                  onClick={handleRunReport}
+                  disabled={!isRunReportEnabled()}
+                >
+                  Run report
+                </button>
               </div>
             </div>
           )}
