@@ -3483,23 +3483,95 @@
   border-bottom: 2px solid #e0e0e0;
 }
 
-.report-columns-header {
-  display: grid;
-  grid-template-columns: repeat(9, 1fr);
-  gap: 0;
-  color: #333;
-  font-size: 11px;
+.report-results-header h3 {
+  margin: 0 0 8px 0;
+  color: #003087;
+  font-size: 24px;
   font-weight: 700;
+}
+
+.report-results-header p {
+  margin: 0;
+  color: #666;
+  font-size: 14px;
+}
+
+.report-table-wrapper {
+  overflow-x: auto;
+  padding: 20px 30px;
+  background: white;
+}
+
+.report-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+  min-width: 2000px;
+}
+
+.report-table thead {
+  background: #f8f9fa;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.report-table th {
+  padding: 12px 10px;
+  text-align: left;
+  font-weight: 700;
+  color: #333;
+  border-bottom: 2px solid #e0e0e0;
+  white-space: nowrap;
+  font-size: 12px;
   text-transform: uppercase;
   letter-spacing: 0.5px;
+}
+
+.report-table td {
+  padding: 12px 10px;
+  border-bottom: 1px solid #f0f0f0;
+  color: #444;
+  vertical-align: top;
+}
+
+.report-table tbody tr:hover {
   background: #f8f9fa;
 }
 
-.column-item {
-  text-align: center;
-  line-height: 1.4;
-  padding: 12px 8px;
-  white-space: normal;
+.report-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.status-badge {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  white-space: nowrap;
+}
+
+.status-created {
+  background: #e3f2fd;
+  color: #1976d2;
+}
+
+.status-in-transit {
+  background: #fff3e0;
+  color: #f57c00;
+}
+
+.status-delivered {
+  background: #e8f5e9;
+  color: #388e3c;
+}
+
+.status-exception {
+  background: #ffebee;
+  color: #d32f2f;
 }
 
 .no-report-message {
@@ -3514,12 +3586,6 @@
   font-weight: 600;
   letter-spacing: 1px;
   margin: 0;
-}
-
-.report-table {
-  padding: 30px;
-  background: white;
-  min-height: 200px;
 }
 
 .report-results-actions {
@@ -4322,5 +4388,257 @@
   .delete-input-btn-inline {
     right: 15px;
     top: 12px;
+  }
+}
+
+/* New Reports Design Styles */
+.report-section {
+  margin-bottom: 30px;
+  padding: 24px;
+  background: #f8f9fa;
+  border-radius: 8px;
+  border: 1px solid #e0e0e0;
+}
+
+.section-label {
+  font-size: 16px;
+  font-weight: 600;
+  margin: 0 0 16px 0;
+  color: #003087;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.helper-text {
+  font-size: 13px;
+  color: #666;
+  margin: 12px 0 0 0;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* Date Type Options */
+.date-type-options {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+}
+
+.date-type-option {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 16px;
+  background: white;
+  border: 2px solid #ddd;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.date-type-option:hover {
+  border-color: #003087;
+  background: #f0f7ff;
+}
+
+.date-type-option input[type="radio"] {
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+}
+
+.date-type-option input[type="radio"]:checked + span {
+  color: #003087;
+  font-weight: 600;
+}
+
+.date-type-option span {
+  font-size: 14px;
+  color: #333;
+  font-weight: 500;
+}
+
+/* Date Actions */
+.date-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.date-actions .date-action-btn {
+  margin-left: 0;
+}
+
+/* Scope Options */
+.scope-options {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.scope-option {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 16px;
+  background: white;
+  border: 2px solid #ddd;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.scope-option:hover {
+  border-color: #003087;
+  background: #f0f7ff;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 48, 135, 0.1);
+}
+
+.scope-option input[type="radio"] {
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+  margin-top: 2px;
+  flex-shrink: 0;
+}
+
+.scope-option input[type="radio"]:checked ~ .option-text strong {
+  color: #003087;
+}
+
+.option-text {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.option-text strong {
+  font-size: 15px;
+  color: #333;
+  font-weight: 600;
+}
+
+.option-text small {
+  font-size: 13px;
+  color: #666;
+  font-weight: normal;
+}
+
+/* Additional Option */
+.additional-option {
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid #e0e0e0;
+}
+
+.checkbox-option-large {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 16px;
+  background: white;
+  border: 2px solid #ddd;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.checkbox-option-large:hover {
+  border-color: #003087;
+  background: #f0f7ff;
+}
+
+.checkbox-option-large input[type="checkbox"] {
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+  margin-top: 2px;
+  flex-shrink: 0;
+}
+
+.checkbox-option-large input[type="checkbox"]:checked ~ .option-text strong {
+  color: #003087;
+}
+
+/* Status Filter Options */
+.status-filter-options {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.status-checkbox {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 16px;
+  background: white;
+  border: 2px solid #ddd;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.status-checkbox:hover {
+  border-color: #003087;
+  background: #f0f7ff;
+}
+
+.status-checkbox input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+}
+
+.status-checkbox input[type="checkbox"]:checked ~ span {
+  color: #003087;
+  font-weight: 600;
+}
+
+.status-checkbox span {
+  font-size: 14px;
+  color: #333;
+  font-weight: 500;
+}
+
+/* Responsive Design for New Reports */
+@media (max-width: 1024px) {
+  .date-type-options {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .scope-options {
+    grid-template-columns: 1fr;
+  }
+  
+  .status-filter-options {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .report-section {
+    padding: 16px;
+  }
+  
+  .date-type-options {
+    grid-template-columns: 1fr;
+  }
+  
+  .status-filter-options {
+    grid-template-columns: 1fr;
+  }
+  
+  .date-actions {
+    flex-direction: column;
+  }
+  
+  .date-actions .date-action-btn {
+    width: 100%;
   }
 }

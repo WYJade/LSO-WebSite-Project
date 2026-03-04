@@ -29,81 +29,67 @@ const Reports: React.FC = () => {
   const [toYear, setToYear] = useState(defaultDates.toYear);
   const [showResults, setShowResults] = useState(false);
   const [reportData, setReportData] = useState<any[]>([]);
+  
+  // New Report Options states
+  const [dateRangeType, setDateRangeType] = useState<string>('create-date');
+  const [shipmentScope, setShipmentScope] = useState<string>('all-shipments');
+  const [include3rdParty, setInclude3rdParty] = useState<boolean>(true);
+  const [selectedStatuses, setSelectedStatuses] = useState<string[]>([]);
 
   // Mock report data
   const generateMockReportData = () => {
-    return [
-      {
-        printedDate: '01/15/2025',
-        pickupDate: '01/16/2025',
-        airbillNumber: 'LSO2025011501',
-        companyName: 'Tech Solutions Inc.',
-        attentionName: 'John Smith',
-        deliveryAddress: '742 Evergreen Terrace, Los Angeles, CA 90001',
-        weight: '5.2 lbs',
-        estCost: '$45.50',
-        serviceType: 'LSO Ground™',
-        referenceAcctnum: 'REF-2025-001',
-        deliveryDate: '01/18/2025',
-        deliverySignature: 'J. Smith'
-      },
-      {
-        printedDate: '01/15/2025',
-        pickupDate: '01/16/2025',
-        airbillNumber: 'LSO2025011502',
-        companyName: 'Global Imports LLC',
-        attentionName: 'Emily Johnson',
-        deliveryAddress: '1515 Pine Boulevard, New York, NY 10001',
-        weight: '12.8 lbs',
-        estCost: '$78.25',
-        serviceType: 'LSO Priority Next Day™',
-        referenceAcctnum: 'REF-2025-002',
-        deliveryDate: '01/17/2025',
-        deliverySignature: 'E. Johnson'
-      },
-      {
-        printedDate: '01/16/2025',
-        pickupDate: '01/17/2025',
-        airbillNumber: 'LSO2025011601',
-        companyName: 'Retail Distributors Co.',
-        attentionName: 'Michael Brown',
-        deliveryAddress: '890 Market Street, San Francisco, CA 94102',
-        weight: '8.5 lbs',
-        estCost: '$52.00',
-        serviceType: 'LSO 2nd Day™',
-        referenceAcctnum: 'REF-2025-003',
-        deliveryDate: '01/19/2025',
-        deliverySignature: 'M. Brown'
-      },
-      {
-        printedDate: '01/16/2025',
-        pickupDate: '01/17/2025',
-        airbillNumber: 'LSO2025011602',
-        companyName: 'Manufacturing Plus',
-        attentionName: 'Sarah Davis',
-        deliveryAddress: '456 Industrial Way, Chicago, IL 60601',
-        weight: '25.0 lbs',
-        estCost: '$125.75',
-        serviceType: 'LSO Ground™',
-        referenceAcctnum: 'REF-2025-004',
-        deliveryDate: '01/20/2025',
-        deliverySignature: 'S. Davis'
-      },
-      {
-        printedDate: '01/17/2025',
-        pickupDate: '01/18/2025',
-        airbillNumber: 'LSO2025011701',
-        companyName: 'E-Commerce Solutions',
-        attentionName: 'David Wilson',
-        deliveryAddress: '123 Commerce Drive, Seattle, WA 98101',
-        weight: '3.2 lbs',
-        estCost: '$35.50',
-        serviceType: 'LSO E-Commerce Delivery™',
-        referenceAcctnum: 'REF-2025-005',
-        deliveryDate: '01/19/2025',
-        deliverySignature: 'D. Wilson'
-      }
-    ];
+    const statuses = ['Created', 'In Transit', 'Delivered', 'Exception'];
+    const serviceTypes = ['Ground', 'Express', '2-Day', 'Overnight'];
+    const signatureReqs = ['--', 'Adult Signature', 'General Signature', 'Consignee Signature'];
+    const cities = ['New York', 'Los Angeles', 'Chicago', 'Houston', 'Phoenix', 'Philadelphia', 'San Antonio', 'Dallas'];
+    const states = ['NY', 'CA', 'IL', 'TX', 'AZ', 'PA'];
+    const companies = ['ABC Corp', 'XYZ Industries', 'Tech Solutions Inc', 'Global Logistics', 'Prime Shipping Co'];
+    
+    const data = [];
+    for (let i = 0; i < 15; i++) {
+      const createdDate = new Date(2026, 1, Math.floor(Math.random() * 28) + 1, Math.floor(Math.random() * 24), Math.floor(Math.random() * 60));
+      const pickupDate = new Date(createdDate.getTime() + Math.random() * 2 * 24 * 60 * 60 * 1000);
+      const deliveredDate = new Date(pickupDate.getTime() + Math.random() * 5 * 24 * 60 * 60 * 1000);
+      
+      data.push({
+        airbillNumber: `LSO${1000000000 + i}`,
+        reference: `REF-${Math.floor(Math.random() * 10000)}`,
+        status: statuses[Math.floor(Math.random() * statuses.length)],
+        createdDate: formatDateCST(createdDate),
+        pickupDate: formatDateCST(pickupDate),
+        deliveredDate: formatDateCST(deliveredDate),
+        fromCompany: companies[Math.floor(Math.random() * companies.length)],
+        fromName: `Sender ${i + 1}`,
+        fromAddress1: `${Math.floor(Math.random() * 9000) + 1000} Main St`,
+        fromAddress2: Math.random() > 0.5 ? `Suite ${Math.floor(Math.random() * 500)}` : '',
+        fromCity: cities[Math.floor(Math.random() * cities.length)],
+        fromState: states[Math.floor(Math.random() * states.length)],
+        fromZipcode: `${Math.floor(Math.random() * 90000) + 10000}`,
+        toCompany: companies[Math.floor(Math.random() * companies.length)],
+        toName: `Receiver ${i + 1}`,
+        toAddress1: `${Math.floor(Math.random() * 9000) + 1000} Oak Ave`,
+        toAddress2: Math.random() > 0.5 ? `Apt ${Math.floor(Math.random() * 200)}` : '',
+        toCity: cities[Math.floor(Math.random() * cities.length)],
+        toState: states[Math.floor(Math.random() * states.length)],
+        toZipcode: `${Math.floor(Math.random() * 90000) + 10000}`,
+        serviceType: serviceTypes[Math.floor(Math.random() * serviceTypes.length)],
+        signatureRequirement: signatureReqs[Math.floor(Math.random() * signatureReqs.length)],
+        weight: (Math.random() * 50 + 1).toFixed(1),
+        dimension: `${Math.floor(Math.random() * 20) + 5} x ${Math.floor(Math.random() * 20) + 5} x ${Math.floor(Math.random() * 20) + 5}`,
+        shippingRate: `$${(Math.random() * 100 + 10).toFixed(2)}`,
+        billToAccount: `ACC-${Math.floor(Math.random() * 100000)}`
+      });
+    }
+    return data;
+  };
+
+  const formatDateCST = (date: Date) => {
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    const year = date.getFullYear();
+    const hours = String(date.getHours()).padStart(2, '0');
+    const minutes = String(date.getMinutes()).padStart(2, '0');
+    return `${month}/${day}/${year} ${hours}:${minutes} CST`;
   };
 
   const handleClearDate = () => {
@@ -134,14 +120,43 @@ const Reports: React.FC = () => {
   };
 
   const handleRunReport = () => {
+    // Validate date range (max 90 days)
+    if (fromMonth && fromDay && fromYear && toMonth && toDay && toYear) {
+      const fromDate = new Date(parseInt(fromYear), parseInt(fromMonth) - 1, parseInt(fromDay));
+      const toDate = new Date(parseInt(toYear), parseInt(toMonth) - 1, parseInt(toDay));
+      const daysDiff = Math.floor((toDate.getTime() - fromDate.getTime()) / (1000 * 60 * 60 * 24));
+      
+      if (daysDiff > 90) {
+        alert('Date range cannot exceed 90 days. Please adjust your date selection.');
+        return;
+      }
+      
+      if (daysDiff < 0) {
+        alert('End date must be after start date.');
+        return;
+      }
+    }
+    
     console.log('Running report with dates:', {
       from: `${fromMonth}/${fromDay}/${fromYear}`,
-      to: `${toMonth}/${toDay}/${toYear}`
+      to: `${toMonth}/${toDay}/${toYear}`,
+      dateRangeType,
+      shipmentScope,
+      include3rdParty,
+      selectedStatuses
     });
     // Generate mock data
     const mockData = generateMockReportData();
     setReportData(mockData);
     setShowResults(true);
+  };
+  
+  const handleStatusToggle = (status: string) => {
+    setSelectedStatuses(prev => 
+      prev.includes(status) 
+        ? prev.filter(s => s !== status)
+        : [...prev, status]
+    );
   };
 
   const handleBackToReports = () => {
@@ -175,102 +190,211 @@ const Reports: React.FC = () => {
           </div>
 
           <div className="date-range-section">
-            <div className="date-group">
-              <label>From</label>
-              <div className="date-inputs">
-                <input 
-                  type="text" 
-                  placeholder="Month" 
-                  maxLength={2} 
-                  className="date-input-month" 
-                  value={fromMonth}
-                  onChange={(e) => setFromMonth(e.target.value)}
-                />
-                <span className="date-separator">/</span>
-                <input 
-                  type="text" 
-                  placeholder="Day" 
-                  maxLength={2} 
-                  className="date-input-day" 
-                  value={fromDay}
-                  onChange={(e) => setFromDay(e.target.value)}
-                />
-                <span className="date-separator">/</span>
-                <input 
-                  type="text" 
-                  placeholder="Year" 
-                  maxLength={4} 
-                  className="date-input-year" 
-                  value={fromYear}
-                  onChange={(e) => setFromYear(e.target.value)}
-                />
-                <button className="date-action-btn" onClick={handleClearDate}>Clear date</button>
+            <div className="date-row-container">
+              <div className="date-group">
+                <label>From</label>
+                <div className="date-inputs">
+                  <input 
+                    type="text" 
+                    placeholder="MM" 
+                    maxLength={2} 
+                    className="date-input-month" 
+                    value={fromMonth}
+                    onChange={(e) => setFromMonth(e.target.value)}
+                  />
+                  <span className="date-separator">/</span>
+                  <input 
+                    type="text" 
+                    placeholder="DD" 
+                    maxLength={2} 
+                    className="date-input-day" 
+                    value={fromDay}
+                    onChange={(e) => setFromDay(e.target.value)}
+                  />
+                  <span className="date-separator">/</span>
+                  <input 
+                    type="text" 
+                    placeholder="YYYY" 
+                    maxLength={4} 
+                    className="date-input-year" 
+                    value={fromYear}
+                    onChange={(e) => setFromYear(e.target.value)}
+                  />
+                </div>
               </div>
-            </div>
 
-            <div className="date-group">
-              <label>To</label>
-              <div className="date-inputs">
-                <input 
-                  type="text" 
-                  placeholder="Month" 
-                  maxLength={2} 
-                  className="date-input-month" 
-                  value={toMonth}
-                  onChange={(e) => setToMonth(e.target.value)}
-                />
-                <span className="date-separator">/</span>
-                <input 
-                  type="text" 
-                  placeholder="Day" 
-                  maxLength={2} 
-                  className="date-input-day" 
-                  value={toDay}
-                  onChange={(e) => setToDay(e.target.value)}
-                />
-                <span className="date-separator">/</span>
-                <input 
-                  type="text" 
-                  placeholder="Year" 
-                  maxLength={4} 
-                  className="date-input-year" 
-                  value={toYear}
-                  onChange={(e) => setToYear(e.target.value)}
-                />
+              <div className="date-group">
+                <label>To</label>
+                <div className="date-inputs">
+                  <input 
+                    type="text" 
+                    placeholder="MM" 
+                    maxLength={2} 
+                    className="date-input-month" 
+                    value={toMonth}
+                    onChange={(e) => setToMonth(e.target.value)}
+                  />
+                  <span className="date-separator">/</span>
+                  <input 
+                    type="text" 
+                    placeholder="DD" 
+                    maxLength={2} 
+                    className="date-input-day" 
+                    value={toDay}
+                    onChange={(e) => setToDay(e.target.value)}
+                  />
+                  <span className="date-separator">/</span>
+                  <input 
+                    type="text" 
+                    placeholder="YYYY" 
+                    maxLength={4} 
+                    className="date-input-year" 
+                    value={toYear}
+                    onChange={(e) => setToYear(e.target.value)}
+                  />
+                </div>
+              </div>
+
+              <div className="date-actions">
+                <button className="date-action-btn" onClick={handleClearDate}>Clear date</button>
                 <button className="date-action-btn" onClick={handleReloadDates}>Reload dates</button>
               </div>
             </div>
           </div>
 
+          {/* Date Range Type Selection */}
+          <div className="report-section">
+            <h4 className="section-label">Date Range Type</h4>
+            <div className="date-type-options">
+              <label className="date-type-option">
+                <input 
+                  type="radio" 
+                  name="dateRangeType" 
+                  value="create-date"
+                  checked={dateRangeType === 'create-date'}
+                  onChange={(e) => setDateRangeType(e.target.value)}
+                />
+                <span>Create Date</span>
+              </label>
+              <label className="date-type-option">
+                <input 
+                  type="radio" 
+                  name="dateRangeType" 
+                  value="pickup-date"
+                  checked={dateRangeType === 'pickup-date'}
+                  onChange={(e) => setDateRangeType(e.target.value)}
+                />
+                <span>Pickup Date</span>
+              </label>
+              <label className="date-type-option">
+                <input 
+                  type="radio" 
+                  name="dateRangeType" 
+                  value="delivered-date"
+                  checked={dateRangeType === 'delivered-date'}
+                  onChange={(e) => setDateRangeType(e.target.value)}
+                />
+                <span>Delivered Date</span>
+              </label>
+              <label className="date-type-option">
+                <input 
+                  type="radio" 
+                  name="dateRangeType" 
+                  value="last-event-date"
+                  checked={dateRangeType === 'last-event-date'}
+                  onChange={(e) => setDateRangeType(e.target.value)}
+                />
+                <span>Last Event Date</span>
+              </label>
+            </div>
+            <p className="helper-text">📅 Maximum date range: 90 days</p>
+          </div>
+
           <div className="report-options-section">
             <h4>Report Options</h4>
-            <div className="options-grid">
-              <div className="options-column">
-                <label className="radio-option">
-                  <input type="radio" name="reportType" defaultChecked />
-                  <span>Pickup Date<br /><small>(shows only those packages picked up)</small></span>
+            
+            {/* Shipment Scope */}
+            <div className="scope-section">
+              <div className="scope-options">
+                <label className="scope-option">
+                  <input 
+                    type="radio" 
+                    name="shipmentScope" 
+                    value="my-shipments-only"
+                    checked={shipmentScope === 'my-shipments-only'}
+                    onChange={(e) => setShipmentScope(e.target.value)}
+                  />
+                  <span className="option-text">
+                    <strong>My Shipments only</strong>
+                    <small>Show only shipments created by me</small>
+                  </span>
                 </label>
-                <label className="radio-option">
-                  <input type="radio" name="reportType" />
-                  <span>Printed Date<br /><small>(shows all packages)</small></span>
-                </label>
-                <label className="radio-option">
-                  <input type="radio" name="reportType" />
-                  <span>Billing difference<br /><small>(shows only those packages picked up)</small></span>
+                <label className="scope-option">
+                  <input 
+                    type="radio" 
+                    name="shipmentScope" 
+                    value="all-shipments"
+                    checked={shipmentScope === 'all-shipments'}
+                    onChange={(e) => setShipmentScope(e.target.value)}
+                  />
+                  <span className="option-text">
+                    <strong>All Shipments</strong>
+                    <small>Show all shipments on my account</small>
+                  </span>
                 </label>
               </div>
-              <div className="options-column">
-                <label className="radio-option">
-                  <input type="radio" name="reportType" />
-                  <span>My Shipments</span>
+              
+              <div className="additional-option">
+                <label className="checkbox-option-large">
+                  <input 
+                    type="checkbox" 
+                    checked={include3rdParty}
+                    onChange={(e) => setInclude3rdParty(e.target.checked)}
+                  />
+                  <span className="option-text">
+                    <strong>Include 3rd Party Billing</strong>
+                    <small>Include shipments billed to third parties</small>
+                  </span>
                 </label>
-                <label className="radio-option">
-                  <input type="radio" name="reportType" />
-                  <span>All Shipments on my Account</span>
+              </div>
+            </div>
+            
+            {/* Status Filter */}
+            <div className="status-filter-section">
+              <h5 className="filter-label">Status Filter (Optional)</h5>
+              <p className="filter-helper-text">Select specific statuses to filter, or leave unselected to include all statuses</p>
+              <div className="status-filter-options">
+                <label className="status-checkbox">
+                  <input 
+                    type="checkbox" 
+                    checked={selectedStatuses.includes('created')}
+                    onChange={() => handleStatusToggle('created')}
+                  />
+                  <span>Created</span>
                 </label>
-                <label className="radio-option">
-                  <input type="radio" name="reportType" />
-                  <span>My Shipments<br /><small>(including 3rd Party billed)</small></span>
+                <label className="status-checkbox">
+                  <input 
+                    type="checkbox" 
+                    checked={selectedStatuses.includes('in-transit')}
+                    onChange={() => handleStatusToggle('in-transit')}
+                  />
+                  <span>In Transit</span>
+                </label>
+                <label className="status-checkbox">
+                  <input 
+                    type="checkbox" 
+                    checked={selectedStatuses.includes('delivered')}
+                    onChange={() => handleStatusToggle('delivered')}
+                  />
+                  <span>Delivered</span>
+                </label>
+                <label className="status-checkbox">
+                  <input 
+                    type="checkbox" 
+                    checked={selectedStatuses.includes('exception')}
+                    onChange={() => handleStatusToggle('exception')}
+                  />
+                  <span>Exception</span>
                 </label>
               </div>
             </div>
@@ -284,48 +408,81 @@ const Reports: React.FC = () => {
         </div>
       ) : (
         <div className="report-results-content">
-          <div className="report-results-header">
-            <div className="report-columns-header">
-              <div className="column-item">PRINTED<br/>DATE</div>
-              <div className="column-item">PICKUP<br/>DATE</div>
-              <div className="column-item">AIRBILL<br/>NUMBER</div>
-              <div className="column-item">COMPANY<br/>NAME<br/>ATTENTION<br/>NAME</div>
-              <div className="column-item">DELIVERY<br/>ADDRESS</div>
-              <div className="column-item">WEIGHT<br/>EST. COST</div>
-              <div className="column-item">SERVICE<br/>TYPE</div>
-              <div className="column-item">REFERENCE<br/>ACCTNUM</div>
-              <div className="column-item">DELIVERY<br/>DATE/DELIVERY<br/>SIGNATURE</div>
+          <div className="report-results-header-new">
+            <h3>Report Results</h3>
+            <p>Showing {reportData.length} shipments from {fromMonth}/{fromDay}/{fromYear} to {toMonth}/{toDay}/{toYear}</p>
+          </div>
+
+          {reportData.length === 0 ? (
+            <div className="report-no-results">
+              <p>NO REPORT FOUND ON THE SPECIFIED DATE</p>
             </div>
-          </div>
-
-          <div className="report-no-results">
-            <p>NO REPORT FOUND ON THE SPECIFIED DATE</p>
-          </div>
-
-          {reportData.length > 0 && (
-            <div className="report-data-rows">
-              {reportData.map((row, index) => (
-                <div key={index} className="report-data-row">
-                  <div className="report-cell">{row.printedDate}</div>
-                  <div className="report-cell">{row.pickupDate}</div>
-                  <div className="report-cell">{row.airbillNumber}</div>
-                  <div className="report-cell">
-                    <div>{row.companyName}</div>
-                    <div className="attention-name">{row.attentionName}</div>
-                  </div>
-                  <div className="report-cell">{row.deliveryAddress}</div>
-                  <div className="report-cell">
-                    <div>{row.weight}</div>
-                    <div className="cost-value">{row.estCost}</div>
-                  </div>
-                  <div className="report-cell">{row.serviceType}</div>
-                  <div className="report-cell">{row.referenceAcctnum}</div>
-                  <div className="report-cell">
-                    <div>{row.deliveryDate}</div>
-                    <div className="signature-value">{row.deliverySignature}</div>
-                  </div>
-                </div>
-              ))}
+          ) : (
+            <div className="report-table-container">
+              <table className="report-results-table">
+                <thead>
+                  <tr>
+                    <th>Airbill Number</th>
+                    <th>Reference</th>
+                    <th>Status</th>
+                    <th>Created Date</th>
+                    <th>Pickup Date</th>
+                    <th>Delivered Date</th>
+                    <th>From Company</th>
+                    <th>From Name</th>
+                    <th>From Address 1</th>
+                    <th>From Address 2</th>
+                    <th>From City</th>
+                    <th>From State</th>
+                    <th>From Zipcode</th>
+                    <th>To Company</th>
+                    <th>To Name</th>
+                    <th>To Address 1</th>
+                    <th>To Address 2</th>
+                    <th>To City</th>
+                    <th>To State</th>
+                    <th>To Zipcode</th>
+                    <th>Service Type</th>
+                    <th>Signature Requirement</th>
+                    <th>Weight (lbs)</th>
+                    <th>Dimension (in)</th>
+                    <th>Shipping Rate</th>
+                    <th>Bill to Account</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {reportData.map((row, index) => (
+                    <tr key={index}>
+                      <td>{row.airbillNumber}</td>
+                      <td>{row.reference}</td>
+                      <td><span className={`status-badge-new status-${row.status.toLowerCase().replace(' ', '-')}`}>{row.status}</span></td>
+                      <td>{row.createdDate}</td>
+                      <td>{row.pickupDate}</td>
+                      <td>{row.deliveredDate}</td>
+                      <td>{row.fromCompany}</td>
+                      <td>{row.fromName}</td>
+                      <td>{row.fromAddress1}</td>
+                      <td>{row.fromAddress2}</td>
+                      <td>{row.fromCity}</td>
+                      <td>{row.fromState}</td>
+                      <td>{row.fromZipcode}</td>
+                      <td>{row.toCompany}</td>
+                      <td>{row.toName}</td>
+                      <td>{row.toAddress1}</td>
+                      <td>{row.toAddress2}</td>
+                      <td>{row.toCity}</td>
+                      <td>{row.toState}</td>
+                      <td>{row.toZipcode}</td>
+                      <td>{row.serviceType}</td>
+                      <td>{row.signatureRequirement}</td>
+                      <td>{row.weight}</td>
+                      <td>{row.dimension}</td>
+                      <td>{row.shippingRate}</td>
+                      <td>{row.billToAccount}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
             </div>
           )}
 
