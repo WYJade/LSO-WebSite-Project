@@ -16,7 +16,6 @@ const Preferences: React.FC = () => {
   const [printPublishedRates, setPrintPublishedRates] = useState(true);
   const [defaultService, setDefaultService] = useState('Next Day');
   const [printTo, setPrintTo] = useState('Plain Paper');
-  const [handlingFee, setHandlingFee] = useState('');
   const [oldPassword, setOldPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [showOldPassword, setShowOldPassword] = useState(false);
@@ -223,15 +222,6 @@ const Preferences: React.FC = () => {
                 <option value="4 x 5 in Label">4 x 5 in Label</option>
                 <option value="4 x 6.5 in Label w/ Receipt">4 x 6.5 in Label w/ Receipt</option>
               </select>
-            </div>
-            <div className="form-group">
-              <label>Handling fee</label>
-              <input
-                type="text"
-                value={handlingFee}
-                onChange={(e) => setHandlingFee(e.target.value)}
-                placeholder="0.00"
-              />
             </div>
             <button className="update-btn-compact" onClick={handleUpdatePreferences}>
               Update

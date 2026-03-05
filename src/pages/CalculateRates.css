@@ -180,6 +180,11 @@
   margin-bottom: 6px;
 }
 
+.form-group-calc label .required-star {
+  color: #dc2626;
+  margin-left: 4px;
+}
+
 .input-wrapper-calc {
   position: relative;
   display: flex;
@@ -187,7 +192,8 @@
 }
 
 .form-group-calc input[type="text"],
-.form-group-calc input[type="number"] {
+.form-group-calc input[type="number"],
+.form-group-calc select {
   width: 100%;
   padding: 10px 14px;
   border: 1px solid #d1d5db;
@@ -197,6 +203,15 @@
   color: #111827;
   outline: none;
   transition: all 0.2s;
+}
+
+.form-group-calc select {
+  cursor: pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg width='12' height='8' viewBox='0 0 12 8' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1L6 6L11 1' stroke='%23374151' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  padding-right: 40px;
 }
 
 .form-group-calc input.error {
@@ -659,4 +674,108 @@
     width: 100%;
     height: 1px;
   }
+}
+
+
+/* Form Row for From/To Zip */
+.form-group-row-calc {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 18px;
+}
+
+.form-field-half-calc {
+  display: flex;
+  flex-direction: column;
+}
+
+.form-field-half-calc label {
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+  color: #374151;
+  margin-bottom: 6px;
+}
+
+.form-field-half-calc input {
+  width: 100%;
+  padding: 10px 14px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 14px;
+  background: #ffffff;
+  color: #111827;
+  outline: none;
+  transition: all 0.2s;
+}
+
+.form-field-half-calc input.error {
+  border-color: #dc2626;
+  background: #fef2f2;
+}
+
+.form-field-half-calc input:hover {
+  border-color: #9ca3af;
+}
+
+.form-field-half-calc input:focus {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+.form-field-half-calc input.error:focus {
+  border-color: #dc2626;
+  box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1);
+}
+
+.form-field-half-calc .error-message {
+  color: #dc2626;
+  font-size: 12px;
+  margin-top: 4px;
+  display: block;
+}
+
+/* Dimension Inputs */
+.dimension-inputs-calc {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.dimension-inputs-calc input {
+  flex: 1;
+  padding: 10px 14px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 14px;
+  background: #ffffff;
+  color: #111827;
+  outline: none;
+  transition: all 0.2s;
+  text-align: center;
+}
+
+.dimension-inputs-calc input:hover {
+  border-color: #9ca3af;
+}
+
+.dimension-inputs-calc input:focus {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+.dimension-separator {
+  color: #6b7280;
+  font-size: 16px;
+  font-weight: 600;
+  user-select: none;
+}
+
+.dimension-unit {
+  color: #6b7280;
+  font-size: 13px;
+  font-weight: 600;
+  min-width: 20px;
+  user-select: none;
 }

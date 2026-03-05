@@ -36,6 +36,10 @@ const CalculateRates: React.FC = () => {
   const [originatingZip, setOriginatingZip] = useState('');
   const [destinationZip, setDestinationZip] = useState('');
   const [pickupOption, setPickupOption] = useState('dropbox');
+  const [expectedShipDate, setExpectedShipDate] = useState('');
+  const [dimensionLength, setDimensionLength] = useState('');
+  const [dimensionWidth, setDimensionWidth] = useState('');
+  const [dimensionHeight, setDimensionHeight] = useState('');
   const [showRates, setShowRates] = useState(false);
   const [rateType, setRateType] = useState<'ground' | 'express'>('ground');
   const [rates, setRates] = useState<Rate[]>([]);
@@ -43,8 +47,29 @@ const CalculateRates: React.FC = () => {
     weight: false,
     originatingZip: false,
     destinationZip: false,
-    pickupOption: false
+    pickupOption: false,
+    expectedShipDate: false
   });
+
+  // Generate next 7 days for Expected Ship Date dropdown
+  const getNext7Days = () => {
+    const dates = [];
+    const today = new Date();
+    for (let i = 0; i < 7; i++) {
+      const date = new Date(today);
+      date.setDate(today.getDate() + i);
+      const month = String(date.getMonth() + 1).padStart(2, '0');
+      const day = String(date.getDate()).padStart(2, '0');
+      const year = date.getFullYear();
+      dates.push({
+        value: `${month}/${day}/${year}`,
+        label: `${month}/${day}/${year}`
+      });
+    }
+    return dates;
+  };
+
+  const shipDateOptions = getNext7Days();
 
   const generateGroundRates = (): Rate[] => {
     const basePrice = parseFloat(weight) * 3.35;
@@ -121,12 +146,13 @@ const CalculateRates: React.FC = () => {
       weight: !weight,
       originatingZip: !originatingZip,
       destinationZip: !destinationZip,
-      pickupOption: false
+      pickupOption: false,
+      expectedShipDate: !expectedShipDate
     };
     
     setErrors(newErrors);
     
-    if (newErrors.weight || newErrors.originatingZip || newErrors.destinationZip) {
+    if (newErrors.weight || newErrors.originatingZip || newErrors.destinationZip || newErrors.expectedShipDate) {
       return;
     }
     
@@ -140,12 +166,13 @@ const CalculateRates: React.FC = () => {
       weight: !weight,
       originatingZip: !originatingZip,
       destinationZip: !destinationZip,
-      pickupOption: false
+      pickupOption: false,
+      expectedShipDate: !expectedShipDate
     };
     
     setErrors(newErrors);
     
-    if (newErrors.weight || newErrors.originatingZip || newErrors.destinationZip) {
+    if (newErrors.weight || newErrors.originatingZip || newErrors.destinationZip || newErrors.expectedShipDate) {
       return;
     }
     
@@ -235,38 +262,94 @@ const CalculateRates: React.FC = () => {
                 {errors.weight && <span className="error-message">Weight is required.</span>}
               </div>
 
-              <div className="form-group-calc">
-                <label htmlFor="originating-zip">Originating Zip</label>
-                <input
-                  id="originating-zip"
-                  type="text"
-                  value={originatingZip}
-                  onChange={(e) => {
-                    setOriginatingZip(e.target.value);
-                    if (e.target.value) setErrors(prev => ({ ...prev, originatingZip: false }));
-                  }}
-                  placeholder="Enter originating zip code"
-                  maxLength={5}
-                  className={errors.originatingZip ? 'error' : ''}
-                />
-                {errors.originatingZip && <span className="error-message">Originating Zip is required.</span>}
+              <div className="form-group-calc form-group-row-calc">
+                <div className="form-field-half-calc">
+                  <label htmlFor="originating-zip">From Zip</label>
+                  <input
+                    id="originating-zip"
+                    type="text"
+                    value={originatingZip}
+                    onChange={(e) => {
+                      setOriginatingZip(e.target.value);
+                      if (e.target.value) setErrors(prev => ({ ...prev, originatingZip: false }));
+                    }}
+                    placeholder="Enter from zip"
+                    maxLength={5}
+                    className={errors.originatingZip ? 'error' : ''}
+                  />
+                  {errors.originatingZip && <span className="error-message">From Zip is required.</span>}
+                </div>
+
+                <div className="form-field-half-calc">
+                  <label htmlFor="destination-zip">To Zip</label>
+                  <input
+                    id="destination-zip"
+                    type="text"
+                    value={destinationZip}
+                    onChange={(e) => {
+                      setDestinationZip(e.target.value);
+                      if (e.target.value) setErrors(prev => ({ ...prev, destinationZip: false }));
+                    }}
+                    placeholder="Enter to zip"
+                    maxLength={5}
+                    className={errors.destinationZip ? 'error' : ''}
+                  />
+                  {errors.destinationZip && <span className="error-message">To Zip is required.</span>}
+                </div>
               </div>
 
               <div className="form-group-calc">
-                <label htmlFor="destination-zip">Destination Zip</label>
-                <input
-                  id="destination-zip"
-                  type="text"
-                  value={destinationZip}
+                <label htmlFor="expected-ship-date">Expected Ship Date <span className="required-star">*</span></label>
+                <select
+                  id="expected-ship-date"
+                  value={expectedShipDate}
                   onChange={(e) => {
-                    setDestinationZip(e.target.value);
-                    if (e.target.value) setErrors(prev => ({ ...prev, destinationZip: false }));
+                    setExpectedShipDate(e.target.value);
+                    if (e.target.value) setErrors(prev => ({ ...prev, expectedShipDate: false }));
                   }}
-                  placeholder="Enter destination zip code"
-                  maxLength={5}
-                  className={errors.destinationZip ? 'error' : ''}
-                />
-                {errors.destinationZip && <span className="error-message">Destination Zip is required.</span>}
+                  className={errors.expectedShipDate ? 'error' : ''}
+                >
+                  <option value="">Select expected ship date</option>
+                  {shipDateOptions.map((option) => (
+                    <option key={option.value} value={option.value}>
+                      {option.label}
+                    </option>
+                  ))}
+                </select>
+                {errors.expectedShipDate && <span className="error-message">Expected Ship Date is required.</span>}
+              </div>
+
+              <div className="form-group-calc">
+                <label>Dimension (optional)</label>
+                <div className="dimension-inputs-calc">
+                  <input
+                    type="number"
+                    value={dimensionLength}
+                    onChange={(e) => setDimensionLength(e.target.value)}
+                    placeholder="Length"
+                    min="0"
+                    step="0.1"
+                  />
+                  <span className="dimension-separator">×</span>
+                  <input
+                    type="number"
+                    value={dimensionWidth}
+                    onChange={(e) => setDimensionWidth(e.target.value)}
+                    placeholder="Width"
+                    min="0"
+                    step="0.1"
+                  />
+                  <span className="dimension-separator">×</span>
+                  <input
+                    type="number"
+                    value={dimensionHeight}
+                    onChange={(e) => setDimensionHeight(e.target.value)}
+                    placeholder="Height"
+                    min="0"
+                    step="0.1"
+                  />
+                  <span className="dimension-unit">in</span>
+                </div>
               </div>
 
               <div className="form-group-calc">
