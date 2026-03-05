@@ -35,7 +35,8 @@ const CalculateRates: React.FC = () => {
   const [weight, setWeight] = useState('');
   const [originatingZip, setOriginatingZip] = useState('');
   const [destinationZip, setDestinationZip] = useState('');
-  const [pickupOption, setPickupOption] = useState('dropbox');
+  const [pickupOption, setPickupOption] = useState('dropoff');
+  const [signatureOption, setSignatureOption] = useState('no-signature');
   const [expectedShipDate, setExpectedShipDate] = useState('');
   const [dimensionLength, setDimensionLength] = useState('');
   const [dimensionWidth, setDimensionWidth] = useState('');
@@ -51,19 +52,26 @@ const CalculateRates: React.FC = () => {
     expectedShipDate: false
   });
 
-  // Generate next 7 days for Expected Ship Date dropdown
+  // Generate next 7 days for Expected Ship Date dropdown with day name
   const getNext7Days = () => {
     const dates = [];
     const today = new Date();
+    const dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+    const monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+    
     for (let i = 0; i < 7; i++) {
       const date = new Date(today);
       date.setDate(today.getDate() + i);
-      const month = String(date.getMonth() + 1).padStart(2, '0');
-      const day = String(date.getDate()).padStart(2, '0');
+      const dayName = dayNames[date.getDay()];
+      const monthName = monthNames[date.getMonth()];
+      const day = date.getDate();
       const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, '0');
+      const dayStr = String(day).padStart(2, '0');
+      
       dates.push({
-        value: `${month}/${day}/${year}`,
-        label: `${month}/${day}/${year}`
+        value: `${month}/${dayStr}/${year}`,
+        label: `${dayName}, ${monthName} ${day}, ${year}`
       });
     }
     return dates;
@@ -141,27 +149,74 @@ const CalculateRates: React.FC = () => {
     ];
   };
 
-  const handleShowGroundRate = () => {
-    const newErrors = {
-      weight: !weight,
-      originatingZip: !originatingZip,
-      destinationZip: !destinationZip,
-      pickupOption: false,
-      expectedShipDate: !expectedShipDate
-    };
-    
-    setErrors(newErrors);
-    
-    if (newErrors.weight || newErrors.originatingZip || newErrors.destinationZip || newErrors.expectedShipDate) {
-      return;
-    }
-    
-    setRateType('ground');
-    setRates(generateGroundRates());
-    setShowRates(true);
+  const generateAllRates = (): Rate[] => {
+    const groundBasePrice = parseFloat(weight) * 3.35;
+    const groundFuelSurcharge = groundBasePrice * 0.14;
+    const groundTotalCharge = groundBasePrice + groundFuelSurcharge;
+
+    const expressBasePrice = parseFloat(weight) * 14.76;
+    const expressFuelSurcharge = expressBasePrice * 0.14;
+    const expressTotalCharge = expressBasePrice + expressFuelSurcharge;
+
+    return [
+      {
+        type: 'Ground Rate',
+        serviceName: 'LSO Ground',
+        totalCharge: `${groundTotalCharge.toFixed(2)}`,
+        details: [
+          { label: 'Base Price', value: `${groundBasePrice.toFixed(2)}` },
+          { label: 'Fuel Surcharge', value: `${groundFuelSurcharge.toFixed(2)}` },
+          { label: 'Pickup Fee Price', value: '0.00' },
+          { label: 'Service Charge', value: '0.00' },
+          { label: 'Total Charge', value: `${groundTotalCharge.toFixed(2)}` }
+        ],
+        expanded: false
+      },
+      {
+        type: 'Express Rate',
+        serviceName: 'LSO Priority Overnight',
+        totalCharge: `${expressTotalCharge.toFixed(2)}`,
+        details: [
+          { label: 'Base Price', value: `${expressBasePrice.toFixed(2)}` },
+          { label: 'Fuel Surcharge', value: `${expressFuelSurcharge.toFixed(2)}` },
+          { label: 'Pickup Fee Price', value: '0.00' },
+          { label: 'Service Charge', value: '0.00' },
+          { label: 'Total Charge', value: `${expressTotalCharge.toFixed(2)}` }
+        ],
+        expanded: true
+      },
+      {
+        type: 'Express Rate',
+        serviceName: 'LSO Early Overnight',
+        totalCharge: `${(expressTotalCharge * 1.72).toFixed(2)}`,
+        details: [],
+        expanded: false
+      },
+      {
+        type: 'Express Rate',
+        serviceName: 'LSO Economy Next Day',
+        totalCharge: `${(expressTotalCharge * 1.61).toFixed(2)}`,
+        details: [],
+        expanded: false
+      },
+      {
+        type: 'Express Rate',
+        serviceName: 'LSO 2nd Day',
+        totalCharge: `${(expressTotalCharge * 0.47).toFixed(2)}`,
+        details: [],
+        expanded: false
+      },
+      {
+        type: 'Express Rate',
+        serviceName: 'LSO Economy delivery',
+        totalCharge: `${(expressTotalCharge * 0.35).toFixed(2)}`,
+        details: [],
+        expanded: false
+      }
+    ];
   };
 
-  const handleShowExpressRate = () => {
+  const handleShowRate = () => {
     const newErrors = {
       weight: !weight,
       originatingZip: !originatingZip,
@@ -176,8 +231,7 @@ const CalculateRates: React.FC = () => {
       return;
     }
     
-    setRateType('express');
-    setRates(generateExpressRates());
+    setRates(generateAllRates());
     setShowRates(true);
   };
 
@@ -187,16 +241,6 @@ const CalculateRates: React.FC = () => {
     setRates(rates.map((rate, i) => 
       i === index ? { ...rate, expanded: !rate.expanded } : rate
     ));
-  };
-
-  const switchToGroundRate = () => {
-    setRateType('ground');
-    setRates(generateGroundRates());
-  };
-
-  const switchToExpressRate = () => {
-    setRateType('express');
-    setRates(generateExpressRates());
   };
 
   return (
@@ -359,56 +403,92 @@ const CalculateRates: React.FC = () => {
                     <input
                       type="radio"
                       name="pickup"
-                      value="dropbox"
-                      checked={pickupOption === 'dropbox'}
+                      value="dropoff"
+                      checked={pickupOption === 'dropoff'}
                       onChange={(e) => setPickupOption(e.target.value)}
                     />
-                    <span>Use LSO Dropbox</span>
+                    <span>Drop Off</span>
                   </label>
                   <label className="radio-option-calc">
                     <input
                       type="radio"
                       name="pickup"
-                      value="scheduled"
-                      checked={pickupOption === 'scheduled'}
-                      onChange={(e) => setPickupOption(e.target.value)}
-                    />
-                    <span>Regular Scheduled Pickup (Pre-Arranged)</span>
-                  </label>
-                  <label className="radio-option-calc">
-                    <input
-                      type="radio"
-                      name="pickup"
-                      value="schedule"
-                      checked={pickupOption === 'schedule'}
+                      value="schedule-pickup"
+                      checked={pickupOption === 'schedule-pickup'}
                       onChange={(e) => setPickupOption(e.target.value)}
                     />
                     <span>Schedule a Pickup</span>
+                  </label>
+                  <label className="radio-option-calc">
+                    <input
+                      type="radio"
+                      name="pickup"
+                      value="regular-schedule"
+                      checked={pickupOption === 'regular-schedule'}
+                      onChange={(e) => setPickupOption(e.target.value)}
+                    />
+                    <span>Regular Schedule Pickup</span>
                   </label>
                 </div>
                 {errors.pickupOption && <span className="error-message">You must choose Dropoff or Pickup option</span>}
               </div>
 
+              <div className="form-group-calc">
+                <label>Signature Option</label>
+                <div className="radio-group-calc">
+                  <label className="radio-option-calc">
+                    <input
+                      type="radio"
+                      name="signature"
+                      value="no-signature"
+                      checked={signatureOption === 'no-signature'}
+                      onChange={(e) => setSignatureOption(e.target.value)}
+                    />
+                    <span>No Signature</span>
+                  </label>
+                  <label className="radio-option-calc">
+                    <input
+                      type="radio"
+                      name="signature"
+                      value="general-signature"
+                      checked={signatureOption === 'general-signature'}
+                      onChange={(e) => setSignatureOption(e.target.value)}
+                    />
+                    <span>General Signature (Indirect Signature)</span>
+                  </label>
+                  <label className="radio-option-calc">
+                    <input
+                      type="radio"
+                      name="signature"
+                      value="adult-signature"
+                      checked={signatureOption === 'adult-signature'}
+                      onChange={(e) => setSignatureOption(e.target.value)}
+                    />
+                    <span>Adult Signature</span>
+                  </label>
+                  <label className="radio-option-calc">
+                    <input
+                      type="radio"
+                      name="signature"
+                      value="recipient-signature"
+                      checked={signatureOption === 'recipient-signature'}
+                      onChange={(e) => setSignatureOption(e.target.value)}
+                    />
+                    <span>Recipient Signature</span>
+                  </label>
+                </div>
+              </div>
+
               <div className="form-actions-calc">
                 <button 
-                  className="btn-show-ground-calc"
-                  onClick={handleShowGroundRate}
-                  type="button"
-                >
-                  <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" style={{ marginRight: '8px' }}>
-                    <path d="M8 12L3 7h10l-5 5z"/>
-                  </svg>
-                  Show ground rate
-                </button>
-                <button 
-                  className="btn-show-express-calc"
-                  onClick={handleShowExpressRate}
+                  className="btn-show-rate-calc"
+                  onClick={handleShowRate}
                   type="button"
                 >
                   <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" style={{ marginRight: '8px' }}>
                     <path d="M13 8l-5-5v10l5-5z"/>
                   </svg>
-                  Show express rate
+                  Show rate
                 </button>
               </div>
             </div>
@@ -463,32 +543,6 @@ const CalculateRates: React.FC = () => {
                       )}
                     </div>
                   ))}
-
-                  <div className="rate-switch-btn">
-                    {rateType === 'express' ? (
-                      <button 
-                        className="btn-switch" 
-                        onClick={switchToGroundRate}
-                        type="button"
-                      >
-                        <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" style={{ marginRight: '8px' }}>
-                          <path d="M8 12L3 7h10l-5 5z"/>
-                        </svg>
-                        Show ground rate
-                      </button>
-                    ) : (
-                      <button 
-                        className="btn-switch" 
-                        onClick={switchToExpressRate}
-                        type="button"
-                      >
-                        <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" style={{ marginRight: '8px' }}>
-                          <path d="M13 8l-5-5v10l5-5z"/>
-                        </svg>
-                        Show express rate
-                      </button>
-                    )}
-                  </div>
                 </div>
               ) : (
                 <div className="rates-placeholder">
