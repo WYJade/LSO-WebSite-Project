@@ -1,68 +1,231 @@
 .billing-page {
-  padding: 2rem;
+  padding: 0;
+  margin: 0;
+  min-height: auto;
+  background: #f9fafb;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Feature Cards Section */
+.billing-features {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 24px;
+  padding: 40px 60px;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.feature-card {
+  background: white;
+  border-radius: 16px;
+  padding: 40px 32px;
+  text-align: center;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  transition: all 0.3s ease;
+  border: 1px solid rgba(59, 130, 246, 0.1);
+  position: relative;
+  overflow: hidden;
+}
+
+.feature-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #3b82f6, #60a5fa);
+  transform: scaleX(0);
+  transition: transform 0.3s ease;
+}
+
+.feature-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 12px 40px rgba(59, 130, 246, 0.2);
+}
+
+.feature-card:hover::before {
+  transform: scaleX(1);
+}
+
+.feature-icon {
+  font-size: 56px;
+  margin-bottom: 20px;
+  display: inline-block;
+  transition: transform 0.3s ease;
+}
+
+.feature-card:hover .feature-icon {
+  transform: scale(1.1) rotate(5deg);
+}
+
+.feature-title {
+  font-size: 20px;
+  font-weight: 600;
+  color: #1f2937;
+  margin: 0 0 12px 0;
+}
+
+.feature-description {
+  font-size: 15px;
+  color: #6b7280;
+  line-height: 1.6;
+  margin: 0;
+}
+
+/* Coming Soon Banner */
+.coming-soon-banner {
+  margin: 40px 60px 60px;
+  background: white;
+  border-radius: 20px;
+  padding: 60px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+  position: relative;
+  overflow: hidden;
+}
+
+.coming-soon-banner::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 6px;
+  background: linear-gradient(90deg, #3b82f6, #8b5cf6, #ec4899);
+}
+
+.banner-content {
+  max-width: 900px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.banner-badge {
+  display: inline-block;
+  padding: 8px 20px;
+  background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+  color: white;
+  border-radius: 50px;
+  font-size: 14px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 24px;
+  box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
+}
+
+.banner-title {
+  font-size: 36px;
+  font-weight: 700;
+  color: #1f2937;
+  margin: 0 0 20px 0;
+  letter-spacing: -0.5px;
+}
+
+.banner-description {
+  font-size: 16px;
+  color: #6b7280;
+  line-height: 1.8;
+  margin: 0 0 40px 0;
+}
+
+.banner-features {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 20px;
+  margin-top: 40px;
+}
+
+.banner-feature-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 20px;
+  background: #f0f9ff;
+  border-radius: 12px;
+  font-size: 15px;
+  color: #1f2937;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.banner-feature-item:hover {
+  background: #dbeafe;
+  transform: translateX(5px);
+}
+
+.check-icon {
+  width: 24px;
+  height: 24px;
+  background: linear-gradient(135deg, #3b82f6, #60a5fa);
+  color: white;
+  border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  min-height: 400px;
-}
-
-.coming-soon-container {
-  text-align: center;
-  max-width: 500px;
-  padding: 3rem;
-  background: #ffffff;
-  border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-}
-
-.coming-soon-icon {
-  font-size: 80px;
-  margin-bottom: 1.5rem;
-}
-
-.coming-soon-container h2 {
-  font-size: 32px;
-  font-weight: 600;
-  color: #333;
-  margin-bottom: 1rem;
-}
-
-.coming-soon-message {
-  font-size: 20px;
-  font-weight: 500;
-  color: #003087;
-  margin-bottom: 1rem;
-}
-
-.coming-soon-description {
-  font-size: 16px;
-  color: #666;
-  line-height: 1.6;
+  font-size: 14px;
+  font-weight: bold;
+  flex-shrink: 0;
 }
 
 /* Responsive Design */
-@media (max-width: 767px) {
-  .billing-page {
-    padding: 1rem;
+@media (max-width: 1024px) {
+  .billing-features {
+    grid-template-columns: repeat(2, 1fr);
+    padding: 40px;
   }
 
-  .coming-soon-container {
-    padding: 2rem 1.5rem;
+  .coming-soon-banner {
+    margin: 40px;
+    padding: 40px;
+  }
+}
+
+@media (max-width: 768px) {
+  .billing-hero {
+    padding: 60px 30px;
   }
 
-  .coming-soon-icon {
-    font-size: 60px;
+  .hero-title {
+    font-size: 36px;
   }
 
-  .coming-soon-container h2 {
-    font-size: 24px;
-  }
-
-  .coming-soon-message {
+  .hero-subtitle {
     font-size: 18px;
   }
 
-  .coming-soon-description {
+  .hero-icon {
+    font-size: 64px;
+  }
+
+  .billing-features {
+    grid-template-columns: 1fr;
+    padding: 30px 20px;
+    gap: 20px;
+  }
+
+  .feature-card {
+    padding: 32px 24px;
+  }
+
+  .coming-soon-banner {
+    margin: 30px 20px;
+    padding: 40px 24px;
+  }
+
+  .banner-title {
+    font-size: 28px;
+  }
+
+  .banner-features {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .banner-feature-item {
+    padding: 14px 16px;
     font-size: 14px;
   }
 }

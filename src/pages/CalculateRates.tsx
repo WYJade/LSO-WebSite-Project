@@ -1,9 +1,4 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import NavigationBar from '../components/NavigationBar';
-import Footer from '../components/Footer';
-import { MenuItem } from '../types/components';
-import { User, UserRole } from '../types/models';
 import './CalculateRates.css';
 
 interface RateDetail {
@@ -20,17 +15,6 @@ interface Rate {
 }
 
 const CalculateRates: React.FC = () => {
-  const navigate = useNavigate();
-  
-  const currentUser: User = {
-    id: '1',
-    firstName: 'Andy',
-    lastName: 'Smith',
-    email: 'andy.smith@example.com',
-    role: UserRole.ADMIN,
-    language: 'EN',
-    region: 'US',
-  };
 
   const [weight, setWeight] = useState('');
   const [originatingZip, setOriginatingZip] = useState('');
@@ -245,23 +229,6 @@ const CalculateRates: React.FC = () => {
 
   return (
     <div className="calculate-rates-page">
-      <NavigationBar
-        currentUser={currentUser}
-        onLogoClick={() => navigate('/')}
-        onMenuItemClick={(item: MenuItem) => navigate(item.href)}
-        onSearch={(query: string) => console.log('Search:', query)}
-        onLanguageChange={(lang: string) => console.log('Language:', lang)}
-      />
-
-      {/* Breadcrumb */}
-      <div className="breadcrumb-calc">
-        <div className="breadcrumb-inner-calc">
-          <a href="/">Home</a>
-          <span className="separator">›</span>
-          <span className="current">Calculate rates</span>
-        </div>
-      </div>
-
       {/* Main Content */}
       <div className="rates-content-calc">
         <div className="rates-container-calc">
@@ -557,29 +524,6 @@ const CalculateRates: React.FC = () => {
           </div>
         </div>
       </div>
-
-      {/* Help Section */}
-      <div className="help-section-calc">
-        <div className="help-container-calc">
-          <div className="help-column-calc">
-            <p className="help-label-calc">FOR QUESTIONS OR ISSUES</p>
-            <h2 className="help-title-calc">
-              <span className="help-icon-calc">🎧</span> HELP & SUPPORT
-            </h2>
-            <button className="btn-help-calc">Get help or get in touch</button>
-          </div>
-          <div className="help-divider-calc"></div>
-          <div className="help-column-calc">
-            <p className="help-label-calc">WAS THIS PAGE HELPFUL?</p>
-            <h2 className="help-title-calc">
-              <span className="help-icon-calc">💬</span> YOUR FEEDBACK
-            </h2>
-            <button className="btn-feedback-calc">Send us a message</button>
-          </div>
-        </div>
-      </div>
-
-      <Footer showNewsletter={false} />
     </div>
   );
 };

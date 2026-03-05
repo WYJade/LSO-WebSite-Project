@@ -7,20 +7,34 @@ type PreferencesTab = 'user-settings' | 'preferences';
 const Preferences: React.FC = () => {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<PreferencesTab>('user-settings');
+  
+  // Account Information
   const [accountNumber, setAccountNumber] = useState('');
-  const [oldEmail, setOldEmail] = useState('');
-  const [newEmail, setNewEmail] = useState('');
+  const [firstName, setFirstName] = useState('John');
+  const [lastName, setLastName] = useState('Doe');
+  const [currentEmail, setCurrentEmail] = useState('john.doe@example.com');
+  const [currentPassword] = useState('••••••••');
+  
+  // Dialog states
+  const [showEmailDialog, setShowEmailDialog] = useState(false);
+  const [showPasswordDialog, setShowPasswordDialog] = useState(false);
+  
+  // Email dialog fields
+  const [emailDialogCurrent, setEmailDialogCurrent] = useState('');
+  const [emailDialogNew, setEmailDialogNew] = useState('');
+  
+  // Password dialog fields
+  const [passwordDialogCurrent, setPasswordDialogCurrent] = useState('');
+  const [passwordDialogNew, setPasswordDialogNew] = useState('');
+  const [showPasswordDialogCurrent, setShowPasswordDialogCurrent] = useState(false);
+  const [showPasswordDialogNew, setShowPasswordDialogNew] = useState(false);
+  
+  // Preferences
   const [billingRefRequired, setBillingRefRequired] = useState(false);
-  const [useSavedBillingRef, setUseSavedBillingRef] = useState(false);
-  const [emailDeliveryNotification, setEmailDeliveryNotification] = useState(false);
-  const [printPublishedRates, setPrintPublishedRates] = useState(true);
   const [defaultService, setDefaultService] = useState('Next Day');
   const [printTo, setPrintTo] = useState('Plain Paper');
-  const [oldPassword, setOldPassword] = useState('');
-  const [newPassword, setNewPassword] = useState('');
-  const [showOldPassword, setShowOldPassword] = useState(false);
-  const [showNewPassword, setShowNewPassword] = useState(false);
-  const [emailError, setEmailError] = useState(false);
+  
+  // Toast
   const [showSuccessToast, setShowSuccessToast] = useState(false);
   const [successMessage, setSuccessMessage] = useState('');
 
@@ -33,39 +47,57 @@ const Preferences: React.FC = () => {
   };
 
   const handleBackToOverview = () => {
-    navigate(-1); // Go back to previous page
+    navigate(-1);
   };
 
   const handleUpdateAccount = () => {
-    if (oldEmail && newEmail) {
-      // Validate email format
-      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-      if (!emailRegex.test(oldEmail) || !emailRegex.test(newEmail)) {
-        setEmailError(true);
-        alert('Please enter valid email addresses');
-        return;
-      }
-    }
-    setEmailError(false);
-    showSuccessNotification('Account information updated successfully!');
+    showSuccessNotification('账户信息更新成功！');
   };
 
   const handleUpdatePreferences = () => {
-    showSuccessNotification('Shipping preferences updated successfully!');
+    showSuccessNotification('偏好设置更新成功！');
   };
 
-  const handleUpdatePassword = () => {
-    if (!oldPassword || !newPassword) {
-      alert('Please fill in both password fields');
+  const handleOpenEmailDialog = () => {
+    setEmailDialogCurrent('');
+    setEmailDialogNew('');
+    setShowEmailDialog(true);
+  };
+
+  const handleOpenPasswordDialog = () => {
+    setPasswordDialogCurrent('');
+    setPasswordDialogNew('');
+    setShowPasswordDialogCurrent(false);
+    setShowPasswordDialogNew(false);
+    setShowPasswordDialog(true);
+  };
+
+  const handleChangeEmail = () => {
+    if (!emailDialogCurrent || !emailDialogNew) {
+      alert('请填写所有字段');
       return;
     }
-    if (newPassword.length < 8) {
-      alert('New password must be at least 8 characters');
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(emailDialogCurrent) || !emailRegex.test(emailDialogNew)) {
+      alert('请输入有效的邮箱地址');
       return;
     }
-    showSuccessNotification('Password updated successfully!');
-    setOldPassword('');
-    setNewPassword('');
+    setCurrentEmail(emailDialogNew);
+    setShowEmailDialog(false);
+    showSuccessNotification('邮箱更新成功！');
+  };
+
+  const handleChangePassword = () => {
+    if (!passwordDialogCurrent || !passwordDialogNew) {
+      alert('请填写所有字段');
+      return;
+    }
+    if (passwordDialogNew.length < 8) {
+      alert('新密码至少需要8个字符');
+      return;
+    }
+    setShowPasswordDialog(false);
+    showSuccessNotification('密码更新成功！');
   };
 
   const renderUserSettings = () => (
@@ -74,87 +106,80 @@ const Preferences: React.FC = () => {
         {/* Left Column */}
         <div className="compact-column">
           <div className="preferences-section-compact">
-            <h3>Account Information</h3>
+            <h3>账户信息</h3>
             <div className="form-group">
-              <label>Account Number</label>
+              <label>账户编号</label>
               <input
                 type="text"
                 value={accountNumber}
                 onChange={(e) => setAccountNumber(e.target.value)}
-                placeholder="Enter account number"
+                placeholder="输入账户编号"
               />
             </div>
             <div className="form-group">
-              <label>Old email address</label>
+              <label>名字</label>
               <input
-                type="email"
-                className={emailError ? 'error' : ''}
-                value={oldEmail}
-                onChange={(e) => {
-                  setOldEmail(e.target.value);
-                  setEmailError(false);
-                }}
-                placeholder="current@email.com"
+                type="text"
+                value={firstName}
+                onChange={(e) => setFirstName(e.target.value)}
+                placeholder="输入名字"
               />
             </div>
             <div className="form-group">
-              <label>New email address</label>
+              <label>姓氏</label>
               <input
-                type="email"
-                className={emailError ? 'error' : ''}
-                value={newEmail}
-                onChange={(e) => {
-                  setNewEmail(e.target.value);
-                  setEmailError(false);
-                }}
-                placeholder="new@email.com"
+                type="text"
+                value={lastName}
+                onChange={(e) => setLastName(e.target.value)}
+                placeholder="输入姓氏"
               />
+            </div>
+            <div className="form-group">
+              <label>邮箱地址</label>
+              <div className="readonly-field-wrapper">
+                <input
+                  type="text"
+                  value={currentEmail}
+                  readOnly
+                  className="readonly-field"
+                />
+                <button
+                  type="button"
+                  className="edit-icon-btn"
+                  onClick={handleOpenEmailDialog}
+                  title="修改邮箱"
+                >
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                </button>
+              </div>
+            </div>
+            <div className="form-group">
+              <label>密码</label>
+              <div className="readonly-field-wrapper">
+                <input
+                  type="password"
+                  value={currentPassword}
+                  readOnly
+                  className="readonly-field"
+                />
+                <button
+                  type="button"
+                  className="edit-icon-btn"
+                  onClick={handleOpenPasswordDialog}
+                  title="修改密码"
+                >
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                </button>
+              </div>
             </div>
             <button className="update-btn-compact" onClick={handleUpdateAccount}>
-              Update
-            </button>
-          </div>
-
-          <div className="preferences-section-compact">
-            <h3>Change Password</h3>
-            <div className="form-group password-group">
-              <label>Old Password</label>
-              <div className="password-input-wrapper">
-                <input
-                  type={showOldPassword ? 'text' : 'password'}
-                  value={oldPassword}
-                  onChange={(e) => setOldPassword(e.target.value)}
-                  placeholder="Enter old password"
-                />
-                <button
-                  type="button"
-                  className="password-toggle"
-                  onClick={() => setShowOldPassword(!showOldPassword)}
-                >
-                  {showOldPassword ? '👁️' : '👁️‍🗨️'}
-                </button>
-              </div>
-            </div>
-            <div className="form-group password-group">
-              <label>New Password</label>
-              <div className="password-input-wrapper">
-                <input
-                  type={showNewPassword ? 'text' : 'password'}
-                  value={newPassword}
-                  onChange={(e) => setNewPassword(e.target.value)}
-                  placeholder="Enter new password"
-                />
-                <button
-                  type="button"
-                  className="password-toggle"
-                  onClick={() => setShowNewPassword(!showNewPassword)}
-                >
-                  {showNewPassword ? '👁️' : '👁️‍🗨️'}
-                </button>
-              </div>
-            </div>
-            <button className="update-btn-compact" onClick={handleUpdatePassword}>
-              Update
+              更新
             </button>
           </div>
         </div>
@@ -162,7 +187,7 @@ const Preferences: React.FC = () => {
         {/* Right Column */}
         <div className="compact-column">
           <div className="preferences-section-compact">
-            <h3>Shipping Preferences</h3>
+            <h3>配送偏好</h3>
             <div className="checkbox-group-compact">
               <label className="checkbox-label">
                 <input
@@ -170,61 +195,37 @@ const Preferences: React.FC = () => {
                   checked={billingRefRequired}
                   onChange={(e) => setBillingRefRequired(e.target.checked)}
                 />
-                <span>Billing reference required</span>
-              </label>
-              <label className="checkbox-label">
-                <input
-                  type="checkbox"
-                  checked={useSavedBillingRef}
-                  onChange={(e) => setUseSavedBillingRef(e.target.checked)}
-                />
-                <span>Use saved billing ref</span>
-              </label>
-              <label className="checkbox-label">
-                <input
-                  type="checkbox"
-                  checked={emailDeliveryNotification}
-                  onChange={(e) => setEmailDeliveryNotification(e.target.checked)}
-                />
-                <span>Email delivery notification</span>
-              </label>
-              <label className="checkbox-label">
-                <input
-                  type="checkbox"
-                  checked={printPublishedRates}
-                  onChange={(e) => setPrintPublishedRates(e.target.checked)}
-                />
-                <span>Print published rates</span>
+                <span>需要账单参考号</span>
               </label>
             </div>
 
             <div className="form-group">
-              <label>Default Service</label>
+              <label>默认服务</label>
               <select
                 value={defaultService}
                 onChange={(e) => setDefaultService(e.target.value)}
               >
-                <option value="Next Day">Next Day</option>
-                <option value="2nd Day">2nd Day</option>
-                <option value="By 10:30am">By 10:30am</option>
-                <option value="ECommerce">ECommerce</option>
-                <option value="By 8:30am">By 8:30am</option>
-                <option value="By 3:00pm">By 3:00pm</option>
+                <option value="Next Day">次日达</option>
+                <option value="2nd Day">两日达</option>
+                <option value="By 10:30am">上午10:30前</option>
+                <option value="ECommerce">电商专递</option>
+                <option value="By 8:30am">上午8:30前</option>
+                <option value="By 3:00pm">下午3:00前</option>
               </select>
             </div>
             <div className="form-group">
-              <label>Print to</label>
+              <label>打印至</label>
               <select
                 value={printTo}
                 onChange={(e) => setPrintTo(e.target.value)}
               >
-                <option value="Plain Paper">Plain Paper</option>
-                <option value="4 x 5 in Label">4 x 5 in Label</option>
-                <option value="4 x 6.5 in Label w/ Receipt">4 x 6.5 in Label w/ Receipt</option>
+                <option value="Plain Paper">普通纸张</option>
+                <option value="4 x 5 in Label">4 x 5 英寸标签</option>
+                <option value="4 x 6.5 in Label w/ Receipt">4 x 6.5 英寸标签（含收据）</option>
               </select>
             </div>
             <button className="update-btn-compact" onClick={handleUpdatePreferences}>
-              Update
+              更新
             </button>
           </div>
         </div>
@@ -235,8 +236,8 @@ const Preferences: React.FC = () => {
   const renderPreferences = () => (
     <div className="preferences-content">
       <div className="preferences-section">
-        <h3>Your Preferences</h3>
-        <p className="placeholder-text">General preferences configuration coming soon...</p>
+        <h3>您的偏好</h3>
+        <p className="placeholder-text">通用偏好设置即将推出...</p>
       </div>
     </div>
   );
@@ -245,12 +246,12 @@ const Preferences: React.FC = () => {
     <div className="preferences-page">
       <div className="preferences-header">
         <div className="header-content">
-          <h1>Your Preferences</h1>
+          <h1>您的偏好设置</h1>
           <button className="back-to-overview-btn" onClick={handleBackToOverview}>
             <svg className="back-icon" width="20" height="20" viewBox="0 0 24 24" fill="none">
               <path d="M19 12H5M5 12L12 19M5 12L12 5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
             </svg>
-            Back to Overview
+            返回概览
           </button>
         </div>
       </div>
@@ -260,13 +261,13 @@ const Preferences: React.FC = () => {
           className={`tab-btn ${activeTab === 'user-settings' ? 'active' : ''}`}
           onClick={() => setActiveTab('user-settings')}
         >
-          User settings
+          用户设置
         </button>
         <button
           className={`tab-btn ${activeTab === 'preferences' ? 'active' : ''}`}
           onClick={() => setActiveTab('preferences')}
         >
-          Your Preferences
+          您的偏好
         </button>
       </div>
 
@@ -274,6 +275,112 @@ const Preferences: React.FC = () => {
         {activeTab === 'user-settings' && renderUserSettings()}
         {activeTab === 'preferences' && renderPreferences()}
       </div>
+
+      {/* Email Change Dialog */}
+      {showEmailDialog && (
+        <div className="dialog-overlay" onClick={() => setShowEmailDialog(false)}>
+          <div className="dialog-box" onClick={(e) => e.stopPropagation()}>
+            <div className="dialog-header">
+              <h3>修改邮箱地址</h3>
+              <button className="dialog-close" onClick={() => setShowEmailDialog(false)}>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                  <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+              </button>
+            </div>
+            <div className="dialog-body">
+              <div className="form-group">
+                <label>当前邮箱地址</label>
+                <input
+                  type="email"
+                  value={emailDialogCurrent}
+                  onChange={(e) => setEmailDialogCurrent(e.target.value)}
+                  placeholder="输入当前邮箱"
+                />
+              </div>
+              <div className="form-group">
+                <label>新邮箱地址</label>
+                <input
+                  type="email"
+                  value={emailDialogNew}
+                  onChange={(e) => setEmailDialogNew(e.target.value)}
+                  placeholder="输入新邮箱"
+                />
+              </div>
+            </div>
+            <div className="dialog-footer">
+              <button className="dialog-btn-cancel" onClick={() => setShowEmailDialog(false)}>
+                取消
+              </button>
+              <button className="dialog-btn-confirm" onClick={handleChangeEmail}>
+                修改邮箱
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Password Change Dialog */}
+      {showPasswordDialog && (
+        <div className="dialog-overlay" onClick={() => setShowPasswordDialog(false)}>
+          <div className="dialog-box" onClick={(e) => e.stopPropagation()}>
+            <div className="dialog-header">
+              <h3>修改密码</h3>
+              <button className="dialog-close" onClick={() => setShowPasswordDialog(false)}>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                  <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+              </button>
+            </div>
+            <div className="dialog-body">
+              <div className="form-group password-group">
+                <label>当前密码</label>
+                <div className="password-input-wrapper">
+                  <input
+                    type={showPasswordDialogCurrent ? 'text' : 'password'}
+                    value={passwordDialogCurrent}
+                    onChange={(e) => setPasswordDialogCurrent(e.target.value)}
+                    placeholder="输入当前密码"
+                  />
+                  <button
+                    type="button"
+                    className="password-toggle"
+                    onClick={() => setShowPasswordDialogCurrent(!showPasswordDialogCurrent)}
+                  >
+                    {showPasswordDialogCurrent ? '👁️' : '👁️‍🗨️'}
+                  </button>
+                </div>
+              </div>
+              <div className="form-group password-group">
+                <label>新密码</label>
+                <div className="password-input-wrapper">
+                  <input
+                    type={showPasswordDialogNew ? 'text' : 'password'}
+                    value={passwordDialogNew}
+                    onChange={(e) => setPasswordDialogNew(e.target.value)}
+                    placeholder="输入新密码（至少8个字符）"
+                  />
+                  <button
+                    type="button"
+                    className="password-toggle"
+                    onClick={() => setShowPasswordDialogNew(!showPasswordDialogNew)}
+                  >
+                    {showPasswordDialogNew ? '👁️' : '👁️‍🗨️'}
+                  </button>
+                </div>
+              </div>
+            </div>
+            <div className="dialog-footer">
+              <button className="dialog-btn-cancel" onClick={() => setShowPasswordDialog(false)}>
+                取消
+              </button>
+              <button className="dialog-btn-confirm" onClick={handleChangePassword}>
+                修改密码
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Success Toast Notification */}
       {showSuccessToast && (

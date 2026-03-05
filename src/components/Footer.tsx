@@ -1,32 +1,9 @@
 import React from 'react';
 import './Footer.css';
 
-const Footer: React.FC<{ showNewsletter?: boolean }> = ({ showNewsletter = true }) => {
+const Footer: React.FC = () => {
   return (
     <footer className="footer">
-      {/* Newsletter Section */}
-      {showNewsletter && (
-        <div className="newsletter-section">
-          <div className="newsletter-banner">
-            <div className="newsletter-content-center">
-              <span className="newsletter-label">NEWSLETTER</span>
-              <h2 className="newsletter-title">
-                <svg className="lso-icon-inline" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg">
-                  <ellipse cx="26" cy="18" rx="21" ry="8" fill="#1E3A8A" transform="rotate(-22 26 18)"/>
-                  <ellipse cx="30" cy="30" rx="24" ry="9" fill="#2563EB" transform="rotate(3 30 30)"/>
-                  <circle cx="26" cy="44" r="9" fill="#0EA5E9"/>
-                </svg>
-                Get the latest updates from us
-              </h2>
-              <form className="newsletter-form-inline">
-                <input type="email" placeholder="Enter your email address" />
-                <button type="submit">Subscribe</button>
-              </form>
-            </div>
-          </div>
-        </div>
-      )}
-
       {/* Main Footer */}
       <div className="footer-main">
         <div className="footer-container">

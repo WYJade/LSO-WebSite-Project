@@ -93,6 +93,7 @@ export interface AccountUser {
   email: string;
   firstName: string;
   lastName: string;
+  accountNumber: string;
   role: UserRole;
   status: UserStatus;
   invitedAt: Date;
@@ -104,5 +105,6 @@ export interface NewUserData {
   email: string;
   firstName: string;
   lastName: string;
+  accountNumber: string;
   role: UserRole;
 }

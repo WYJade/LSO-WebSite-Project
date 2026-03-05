@@ -1,24 +1,8 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import NavigationBar from '../components/NavigationBar';
-import Footer from '../components/Footer';
-import { MenuItem } from '../types/components';
-import { User, UserRole } from '../types/models';
 import './ShipWithAccount.css';
 
 const ShipWithAccount: React.FC = () => {
-  const navigate = useNavigate();
   const [currentStep, setCurrentStep] = useState(1);
-
-  const currentUser: User = {
-    id: '1',
-    firstName: 'Andy',
-    lastName: 'Smith',
-    email: 'andy.smith@example.com',
-    role: UserRole.ADMIN,
-    language: 'EN',
-    region: 'US',
-  };
 
   const steps = [
     { number: 1, title: 'Check service area' },
@@ -42,34 +26,6 @@ const ShipWithAccount: React.FC = () => {
 
   return (
     <div className="ship-with-account-page">
-      {/* <TopBar /> */}
-      <NavigationBar
-        currentUser={currentUser}
-        onLogoClick={() => navigate('/')}
-        onMenuItemClick={(item: MenuItem) => navigate(item.href)}
-        onSearch={(query: string) => console.log('Search:', query)}
-        onLanguageChange={(lang: string) => console.log('Language:', lang)}
-      />
-
-      {/* Hero Banner */}
-      <div className="shipping-hero">
-        <div className="hero-overlay">
-          <div className="hero-content">
-            <p className="hero-subtitle">SERVICES</p>
-            <h1 className="hero-title">SHIP WITH ACCOUNT</h1>
-          </div>
-        </div>
-      </div>
-
-      {/* Breadcrumb */}
-      <div className="breadcrumb-container">
-        <div className="breadcrumb">
-          <a href="/" onClick={(e) => { e.preventDefault(); navigate('/'); }}>Home</a>
-          <span className="separator">›</span>
-          <span className="current">Ship With Account</span>
-        </div>
-      </div>
-
       {/* Main Content */}
       <div className="ship-content-wrapper">
         <div className="ship-content">
@@ -398,8 +354,6 @@ const ShipWithAccount: React.FC = () => {
           </div>
         </div>
       </div>
-
-      <Footer />
     </div>
   );
 };
