@@ -174,7 +174,7 @@ const CalculateRates: React.FC = () => {
       },
       {
         type: 'Express Rate',
-        serviceName: 'LSO Priority Overnight',
+        serviceName: 'LSO Priority Next Day',
         totalCharge: `${expressTotalCharge.toFixed(2)}`,
         details: [
           { label: 'Base Price', value: `${expressBasePrice.toFixed(2)}` },
@@ -187,7 +187,7 @@ const CalculateRates: React.FC = () => {
       },
       {
         type: 'Express Rate',
-        serviceName: 'LSO Early Overnight',
+        serviceName: 'LSO Early Next Day',
         totalCharge: `${(expressTotalCharge * 1.72).toFixed(2)}`,
         details: [],
         expanded: false
