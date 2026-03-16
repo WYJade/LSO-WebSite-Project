@@ -11,7 +11,7 @@ import Reports from './Reports';
 import Billing from './Billing';
 import Footer from '../components/Footer';
 import { MenuItem } from '../types/components';
-import { User, Address, AccountUser, NewUserData } from '../types/models';
+import { User, Address, AccountUser, NewUserData, UserStatus } from '../types/models';
 
 interface DashboardProps {
   currentUser: User;
@@ -65,17 +65,25 @@ const Dashboard: React.FC<DashboardProps> = ({ currentUser }) => {
 
   const handleAddUser = (user: NewUserData) => {
     const newUser: AccountUser = {
-      ...user,
       id: Date.now().toString(),
-      status: 'invited' as any,
+      loginUsername: user.loginUsername,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      email: user.email,
+      accountNumber: user.accountNumber,
+      role: user.role,
+      status: UserStatus.ACTIVE,
       invitedAt: new Date(),
     };
     setUsers([...users, newUser]);
-    console.log('Invitation email sent to:', user.email);
   };
 
-  const handleRemoveUser = (userId: string) => {
-    setUsers(users.filter((u) => u.id !== userId));
+  const handleToggleUserStatus = (userId: string) => {
+    setUsers(users.map(user => 
+      user.id === userId 
+        ? { ...user, status: user.status === UserStatus.ACTIVE ? UserStatus.INACTIVE : UserStatus.ACTIVE }
+        : user
+    ));
   };
 
   const renderModuleContent = () => {
@@ -89,7 +97,7 @@ const Dashboard: React.FC<DashboardProps> = ({ currentUser }) => {
           <UserManagement
             users={users}
             onAddUser={handleAddUser}
-            onRemoveUser={handleRemoveUser}
+            onToggleStatus={handleToggleUserStatus}
           />
         );
       case 'address-book':

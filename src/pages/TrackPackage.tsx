@@ -19,6 +19,7 @@ const TrackPackage: React.FC = () => {
   const [trackingResults, setTrackingResults] = useState<TrackingResult[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(10);
+  const [error, setError] = useState('');
   
   // Dialog states
   const [showExportDialog, setShowExportDialog] = useState(false);
@@ -30,16 +31,28 @@ const TrackPackage: React.FC = () => {
   const [filterServiceType, setFilterServiceType] = useState<string[]>([]);
 
   const handleTrackingSearch = () => {
+    setError('');
+    
     if (!trackingInput.trim()) {
-      alert('Please enter at least one tracking number');
+      setError('Please enter at least one tracking number');
       return;
     }
 
     // Parse multiple tracking numbers (comma or newline separated)
     const trackingNumbers = trackingInput
-      .split(/[,\n]/)
+      .split(/[,\n]+/)  // Split by one or more commas or newlines
       .map(num => num.trim())
       .filter(num => num.length > 0);
+
+    if (trackingNumbers.length === 0) {
+      setError('Please enter at least one valid tracking number');
+      return;
+    }
+
+    if (trackingNumbers.length > 30) {
+      setError('Maximum 30 tracking numbers allowed');
+      return;
+    }
 
     // Mock tracking results based on input
     const cities = ['Los Angeles', 'New York', 'Chicago', 'Houston', 'Phoenix', 'Philadelphia'];
@@ -70,7 +83,7 @@ const TrackPackage: React.FC = () => {
   const totalPages = Math.ceil(trackingResults.length / itemsPerPage);
 
   const handleCardClick = (trackingNumber: string) => {
-    navigate(`/shipment-details/${trackingNumber}`);
+    navigate(`/dashboard/shipment-details/${trackingNumber}`);
   };
 
   const handleExport = (format: string) => {
@@ -106,22 +119,34 @@ const TrackPackage: React.FC = () => {
     <div className="track-package-page">
       <div className="track-content-wrapper">
         <div className="track-content">
-          {/* Search Bar */}
-          <div className="tracking-search-section">
-            <h2 className="tracking-title">Shipment Tracking</h2>
-            <div className="tracking-search-bar">
-              <input
-                type="text"
-                className="tracking-search-input"
+          {/* Page Title */}
+          <div className="page-title-section">
+            <h1 className="page-title">Track Your Shipments</h1>
+          </div>
+
+          {/* Search Box */}
+          <div className="tracking-search-box-wrapper">
+            <div className="tracking-search-box-container">
+              <textarea
+                className="tracking-search-textarea"
                 placeholder="Enter up to 30 tracking numbers, separated by commas"
                 value={trackingInput}
                 onChange={(e) => setTrackingInput(e.target.value)}
-                onKeyPress={(e) => e.key === 'Enter' && handleTrackingSearch()}
+                rows={3}
               />
-              <button className="tracking-search-btn" onClick={handleTrackingSearch}>
+              <button className="tracking-search-button" onClick={handleTrackingSearch}>
+                <svg className="search-icon" width="20" height="20" viewBox="0 0 24 24" fill="none">
+                  <circle cx="11" cy="11" r="8" stroke="currentColor" strokeWidth="2"/>
+                  <path d="M21 21l-4.35-4.35" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+                </svg>
                 Search
               </button>
             </div>
+            {error && (
+              <div className="tracking-error-message">
+                {error}
+              </div>
+            )}
           </div>
 
           {/* Empty State */}

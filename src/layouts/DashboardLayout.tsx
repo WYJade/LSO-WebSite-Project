@@ -15,7 +15,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ currentUser }) => {
   const navigate = useNavigate();
 
   const handleLogoClick = () => {
-    navigate('/overview');
+    navigate('/');
   };
 
   const handleMenuItemClick = (menuItem: MenuItem) => {
@@ -41,13 +41,15 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ currentUser }) => {
         onSearch={handleSearch}
         onLanguageChange={handleLanguageChange}
       />
-      <div className="dashboard-body">
-        <Sidebar currentUser={currentUser} />
-        <main className="content-area">
-          <Outlet />
-        </main>
+      <div className="dashboard-container">
+        <div className="dashboard-body">
+          <Sidebar currentUser={currentUser} />
+          <main className="content-area">
+            <Outlet />
+          </main>
+        </div>
+        <Footer />
       </div>
-      <Footer />
     </div>
   );
 };

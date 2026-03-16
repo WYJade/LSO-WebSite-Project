@@ -1,104 +1,154 @@
 import React, { useState } from 'react';
 import { UserManagementProps } from '../types/components';
-import { NewUserData, UserRole, AccountUser } from '../types/models';
+import { NewUserData, UserRole, UserStatus, AccountUser } from '../types/models';
 import './UserManagement.css';
 
-const UserManagement: React.FC<UserManagementProps> = ({
-  users,
-  onAddUser,
-  onRemoveUser,
-}) => {
+// Mock company info auto-populated for US company
+const COMPANY_INFO = {
+  accountNumber: 'ACC-001234',
+  companyName: 'LSO Logistics Inc.',
+  companyPhone: '(214) 352-8600',
+  addressOne: '2500 Regent Blvd',
+  bldgSite: 'Suite 200',
+  city: 'Dallas',
+  state: 'TX',
+  zip: '75261',
+};
+
+const emptyForm: NewUserData = {
+  loginUsername: '', firstName: '', lastName: '', email: '',
+  password: '', confirmPassword: '',
+  billingRefRequired: false, userAdmin: false, showOnlyUserShipment: false,
+  accountNumber: COMPANY_INFO.accountNumber,
+  companyName: COMPANY_INFO.companyName,
+  companyPhone: COMPANY_INFO.companyPhone,
+  addressOne: COMPANY_INFO.addressOne,
+  bldgSite: COMPANY_INFO.bldgSite,
+  city: COMPANY_INFO.city,
+  state: COMPANY_INFO.state,
+  zip: COMPANY_INFO.zip,
+  role: UserRole.STANDARD_USER,
+};
+
+type TouchedFields = { [K in keyof NewUserData]?: boolean };
+
+const UserManagement: React.FC<UserManagementProps> = ({ users, onAddUser, onToggleStatus }) => {
   const [showDialog, setShowDialog] = useState(false);
   const [editingUser, setEditingUser] = useState<AccountUser | null>(null);
-  const [formData, setFormData] = useState<NewUserData>({
-    email: '',
-    firstName: '',
-    lastName: '',
-    accountNumber: '',
-    role: UserRole.USER,
-  });
-  const [emailError, setEmailError] = useState<string | null>(null);
+  const [formData, setFormData] = useState<NewUserData>({ ...emptyForm });
+  const [touched, setTouched] = useState<TouchedFields>({});
+  const [submitAttempted, setSubmitAttempted] = useState(false);
+  const [confirmDialog, setConfirmDialog] = useState<{ show: boolean; user: AccountUser | null }>({ show: false, user: null });
 
-  const validateEmail = (email: string): boolean => {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return emailRegex.test(email);
+  const validateEmail = (email: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+
+  const requiredFields: (keyof NewUserData)[] = [
+    'loginUsername','firstName','lastName','email','password','confirmPassword'
+  ];
+
+  const getFieldError = (field: keyof NewUserData): string | null => {
+    const val = formData[field];
+    if (requiredFields.includes(field) && typeof val === 'string' && !val.trim()) return 'Required';
+    if (field === 'email' && typeof val === 'string' && val && !validateEmail(val)) return 'Invalid email';
+    if (field === 'password' && typeof val === 'string' && val && val.length < 8) return 'Min 8 characters';
+    if (field === 'confirmPassword' && formData.confirmPassword && formData.confirmPassword !== formData.password) return 'Passwords do not match';
+    return null;
   };
 
-  const handleEmailChange = (email: string) => {
-    setFormData({ ...formData, email });
-    if (email && !validateEmail(email)) {
-      setEmailError('Invalid email format');
-    } else {
-      setEmailError(null);
-    }
-  };
+  const showError = (field: keyof NewUserData) => (touched[field] || submitAttempted) && !!getFieldError(field);
+  const handleBlur = (field: keyof NewUserData) => setTouched(p => ({ ...p, [field]: true }));
+  const setField = (field: keyof NewUserData, value: string | boolean) => setFormData(p => ({ ...p, [field]: value }));
 
   const handleAddNewUser = () => {
     setEditingUser(null);
-    setFormData({
-      email: '',
-      firstName: '',
-      lastName: '',
-      accountNumber: '',
-      role: UserRole.USER,
-    });
-    setEmailError(null);
+    setFormData({ ...emptyForm });
+    setTouched({});
+    setSubmitAttempted(false);
     setShowDialog(true);
   };
 
   const handleEditUser = (user: AccountUser) => {
     setEditingUser(user);
-    setFormData({
-      email: user.email,
-      firstName: user.firstName,
-      lastName: user.lastName,
-      accountNumber: user.accountNumber,
-      role: user.role,
-    });
-    setEmailError(null);
+    setFormData({ ...emptyForm, loginUsername: user.loginUsername, email: user.email, firstName: user.firstName, lastName: user.lastName, accountNumber: user.accountNumber, role: user.role });
+    setTouched({});
+    setSubmitAttempted(false);
     setShowDialog(true);
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!validateEmail(formData.email)) {
-      setEmailError('Invalid email format');
-      return;
-    }
-    
+    setSubmitAttempted(true);
+    if (requiredFields.some(f => !!getFieldError(f))) return;
     if (editingUser) {
-      // Update existing user
-      // In a real app, you would call an update function here
       console.log('Updating user:', editingUser.id, formData);
     } else {
-      // Add new user
       onAddUser(formData);
     }
-    
     handleCloseDialog();
   };
 
   const handleCloseDialog = () => {
     setShowDialog(false);
     setEditingUser(null);
-    setFormData({
-      email: '',
-      firstName: '',
-      lastName: '',
-      accountNumber: '',
-      role: UserRole.USER,
-    });
-    setEmailError(null);
+    setFormData({ ...emptyForm });
+    setTouched({});
+    setSubmitAttempted(false);
   };
+
+  const handleToggleClick = (user: AccountUser) => {
+    setConfirmDialog({ show: true, user });
+  };
+
+  const handleConfirmToggle = () => {
+    if (confirmDialog.user) {
+      onToggleStatus(confirmDialog.user.id);
+    }
+    setConfirmDialog({ show: false, user: null });
+  };
+
+  const handleCancelToggle = () => {
+    setConfirmDialog({ show: false, user: null });
+  };
+
+  const renderInput = (field: keyof NewUserData, label: string, opts?: { type?: string; required?: boolean; placeholder?: string }) => {
+    const { type = 'text', required = true, placeholder } = opts || {};
+    const error = showError(field) ? getFieldError(field) : null;
+    return (
+      <div className={`form-field ${error ? 'has-error' : ''}`}>
+        <label htmlFor={field}>{label}{required && <span className="required-star">*</span>}</label>
+        <input id={field} type={type} value={formData[field] as string}
+          onChange={(e) => setField(field, e.target.value)}
+          onBlur={() => handleBlur(field)}
+          placeholder={placeholder || `Enter ${label.toLowerCase()}`}
+          autoComplete="off" />
+        {error && <span className="error-message">{error}</span>}
+      </div>
+    );
+  };
+
+  const renderCheckbox = (field: keyof NewUserData, label: string) => (
+    <label className="checkbox-field">
+      <input type="checkbox" checked={formData[field] as boolean} onChange={(e) => setField(field, e.target.checked)} />
+      <span>{label}</span>
+    </label>
+  );
+
+  const renderReadonlyField = (label: string, value: string) => (
+    <div className="readonly-field">
+      <span className="readonly-label">{label}</span>
+      <span className="readonly-value">{value}</span>
+    </div>
+  );
+
+  const getRoleLabel = (role: UserRole) => role === UserRole.ADMIN ? 'Admin' : 'Standard User';
+
+  const isDisabling = confirmDialog.user?.status === UserStatus.ACTIVE;
 
   return (
     <div className="user-management" data-testid="user-management">
       <div className="user-management-header">
         <h2>User Management</h2>
-        <button
-          className="add-user-button"
-          onClick={handleAddNewUser}
-        >
+        <button className="add-user-button" onClick={handleAddNewUser}>
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" style={{ marginRight: '8px' }}>
             <path d="M12 5v14M5 12h14" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
           </svg>
@@ -110,52 +160,39 @@ const UserManagement: React.FC<UserManagementProps> = ({
         <table>
           <thead>
             <tr>
+              <th>Login / Username</th>
               <th>First Name</th>
               <th>Last Name</th>
-              <th>Email</th>
+              <th>Email Address</th>
               <th>Account Number</th>
               <th>Role</th>
-              <th>Status</th>
+              <th>User Status</th>
               <th>Actions</th>
             </tr>
           </thead>
           <tbody>
             {users.map((user) => (
               <tr key={user.id} data-testid={`user-${user.id}`}>
+                <td>{user.loginUsername}</td>
                 <td>{user.firstName}</td>
                 <td>{user.lastName}</td>
                 <td>{user.email}</td>
                 <td>{user.accountNumber}</td>
-                <td>
-                  <span className={`role-badge ${user.role}`}>
-                    {user.role}
-                  </span>
-                </td>
-                <td>
-                  <span className={`status-badge ${user.status}`}>
-                    {user.status}
-                  </span>
-                </td>
+                <td><span className={`role-badge ${user.role}`}>{getRoleLabel(user.role)}</span></td>
+                <td><span className={`status-badge ${user.status}`}>{user.status === UserStatus.ACTIVE ? 'Active' : 'Inactive'}</span></td>
                 <td>
                   <div className="action-buttons">
-                    <button
-                      className="edit-button"
-                      onClick={() => handleEditUser(user)}
-                      title="Edit user"
-                    >
-                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                    <button className="edit-button" onClick={() => handleEditUser(user)} title="Edit user">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
                         <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                         <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                       </svg>
                     </button>
                     <button
-                      className="remove-button"
-                      onClick={() => onRemoveUser(user.id)}
-                      title="Remove user"
+                      className={`toggle-status-button ${user.status === UserStatus.ACTIVE ? 'disable' : 'enable'}`}
+                      onClick={() => handleToggleClick(user)}
                     >
-                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-                        <path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                      </svg>
+                      {user.status === UserStatus.ACTIVE ? 'Disable' : 'Enable'}
                     </button>
                   </div>
                 </td>
@@ -165,10 +202,42 @@ const UserManagement: React.FC<UserManagementProps> = ({
         </table>
       </div>
 
+      {/* Enable/Disable Confirmation Dialog */}
+      {confirmDialog.show && confirmDialog.user && (
+        <div className="dialog-overlay" onClick={handleCancelToggle}>
+          <div className="confirm-dialog" onClick={(e) => e.stopPropagation()}>
+            <div className="confirm-dialog-header">
+              <h3>{isDisabling ? 'Disable User' : 'Enable User'}</h3>
+              <button className="dialog-close" onClick={handleCancelToggle}>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+                  <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+              </button>
+            </div>
+            <div className="confirm-dialog-body">
+              <div className="confirm-icon">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none">
+                  <circle cx="12" cy="12" r="10" fill="#F59E0B"/>
+                  <path d="M12 8v4M12 16h.01" stroke="white" strokeWidth="2" strokeLinecap="round"/>
+                </svg>
+              </div>
+              <p>
+                Are you sure you want to {isDisabling ? 'disable' : 'enable'} the user<br/>
+                "{confirmDialog.user.email}"?
+              </p>
+            </div>
+            <div className="confirm-dialog-footer">
+              <button className="confirm-btn-cancel" onClick={handleCancelToggle}>Cancel</button>
+              <button className="confirm-btn-ok" onClick={handleConfirmToggle}>Confirm</button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Add/Edit User Dialog */}
       {showDialog && (
         <div className="dialog-overlay" onClick={handleCloseDialog}>
-          <div className="dialog-box" onClick={(e) => e.stopPropagation()}>
+          <div className="dialog-box dialog-wide" onClick={(e) => e.stopPropagation()}>
             <div className="dialog-header">
               <h3>{editingUser ? 'Edit User' : 'Add New User'}</h3>
               <button className="dialog-close" onClick={handleCloseDialog}>
@@ -178,83 +247,52 @@ const UserManagement: React.FC<UserManagementProps> = ({
               </button>
             </div>
             <form onSubmit={handleSubmit}>
-              <div className="dialog-body">
-                <div className="form-field">
-                  <label htmlFor="firstName">First Name</label>
-                  <input
-                    id="firstName"
-                    type="text"
-                    value={formData.firstName}
-                    onChange={(e) =>
-                      setFormData({ ...formData, firstName: e.target.value })
-                    }
-                    placeholder="Enter first name"
-                    required
-                  />
+              <div className="dialog-body dialog-body-columns">
+                <div className="dialog-column">
+                  <h4 className="column-title">User Information</h4>
+                  <div className="fields-row">
+                    {renderInput('loginUsername', 'Login / Username')}
+                    {renderInput('email', 'Email Address', { type: 'email' })}
+                  </div>
+                  <div className="fields-row">
+                    {renderInput('firstName', 'First Name')}
+                    {renderInput('lastName', 'Last Name')}
+                  </div>
+                  <div className="fields-row">
+                    {renderInput('password', 'Password', { type: 'password' })}
+                    {renderInput('confirmPassword', 'Confirm Password', { type: 'password' })}
+                  </div>
+                  <div className="checkbox-group-inline">
+                    {renderCheckbox('billingRefRequired', 'Billing Reference Required')}
+                    {renderCheckbox('userAdmin', 'User Admin')}
+                    {renderCheckbox('showOnlyUserShipment', 'Show only user shipment')}
+                  </div>
                 </div>
-                <div className="form-field">
-                  <label htmlFor="lastName">Last Name</label>
-                  <input
-                    id="lastName"
-                    type="text"
-                    value={formData.lastName}
-                    onChange={(e) =>
-                      setFormData({ ...formData, lastName: e.target.value })
-                    }
-                    placeholder="Enter last name"
-                    required
-                  />
-                </div>
-                <div className="form-field">
-                  <label htmlFor="email">Email</label>
-                  <input
-                    id="email"
-                    type="email"
-                    value={formData.email}
-                    onChange={(e) => handleEmailChange(e.target.value)}
-                    placeholder="Enter email address"
-                    required
-                  />
-                  {emailError && (
-                    <span className="error-message" data-testid="email-error">
-                      {emailError}
-                    </span>
-                  )}
-                </div>
-                <div className="form-field">
-                  <label htmlFor="accountNumber">Account Number</label>
-                  <input
-                    id="accountNumber"
-                    type="text"
-                    value={formData.accountNumber}
-                    onChange={(e) =>
-                      setFormData({ ...formData, accountNumber: e.target.value })
-                    }
-                    placeholder="Enter account number"
-                    required
-                  />
-                </div>
-                <div className="form-field">
-                  <label htmlFor="role">Role</label>
-                  <select
-                    id="role"
-                    value={formData.role}
-                    onChange={(e) =>
-                      setFormData({ ...formData, role: e.target.value as UserRole })
-                    }
-                  >
-                    <option value={UserRole.VIEWER}>Viewer</option>
-                    <option value={UserRole.USER}>User</option>
-                    <option value={UserRole.ADMIN}>Admin</option>
-                  </select>
+                <div className="column-divider"></div>
+                <div className="dialog-column">
+                  <h4 className="column-title">Company Information</h4>
+                  <div className="fields-row">
+                    {renderReadonlyField('Account Number', COMPANY_INFO.accountNumber)}
+                    {renderReadonlyField('Company Name', COMPANY_INFO.companyName)}
+                  </div>
+                  <div className="fields-row">
+                    {renderReadonlyField('Company Phone', COMPANY_INFO.companyPhone)}
+                    {renderReadonlyField('Address One', COMPANY_INFO.addressOne)}
+                  </div>
+                  <div className="fields-row">
+                    {renderReadonlyField('Bldg Site', COMPANY_INFO.bldgSite)}
+                    {renderReadonlyField('City', COMPANY_INFO.city)}
+                  </div>
+                  <div className="fields-row">
+                    {renderReadonlyField('State', COMPANY_INFO.state)}
+                    {renderReadonlyField('Zip', COMPANY_INFO.zip)}
+                  </div>
                 </div>
               </div>
               <div className="dialog-footer">
-                <button type="button" className="dialog-btn-cancel" onClick={handleCloseDialog}>
-                  Cancel
-                </button>
-                <button type="submit" className="dialog-btn-confirm" disabled={!!emailError}>
-                  {editingUser ? 'Update User' : 'Send Invitation'}
+                <button type="button" className="dialog-btn-cancel" onClick={handleCloseDialog}>Cancel</button>
+                <button type="submit" className="dialog-btn-confirm">
+                  {editingUser ? 'Update User' : 'Request Membership Login'}
                 </button>
               </div>
             </form>

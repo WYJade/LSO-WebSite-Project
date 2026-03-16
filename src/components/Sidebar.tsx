@@ -29,26 +29,26 @@ const Sidebar: React.FC<SidebarProps> = ({ currentUser }) => {
   const menuItems: MenuItem[] = [
     {
       id: 'overview',
-      label: 'Overview',
-      path: '/overview',
+      label: 'View Account',
+      path: '/dashboard/overview',
       icon: (
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
           <path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z" fill="currentColor"/>
         </svg>
       ),
       submenu: [
-        { id: 'track', label: 'Track Shipments', path: '/tracking' },
-        { id: 'create', label: 'Create Shipment', path: '/ship-with-account' },
-        { id: 'schedule', label: 'Schedule Pickup', path: '/schedule-pickup' },
-        { id: 'manage', label: 'Manage Pickup', path: '/cancel-pickup' },
-        { id: 'rate', label: 'Rate', path: '/calculate-rates' },
-        { id: 'preferences', label: 'Your Preferences', path: '/preferences' },
+        { id: 'track', label: 'Track Shipments', path: '/dashboard/tracking' },
+        { id: 'create', label: 'Create Shipment', path: '/dashboard/ship-with-account' },
+        { id: 'schedule', label: 'Schedule Pickup', path: '/dashboard/schedule-pickup' },
+        { id: 'manage', label: 'Manage Pickup', path: '/dashboard/cancel-pickup' },
+        { id: 'rate', label: 'Rate', path: '/dashboard/calculate-rates' },
+        { id: 'preferences', label: 'My Profile', path: '/dashboard/preferences' },
       ],
     },
     {
       id: 'claim',
       label: 'Claim',
-      path: '/claim',
+      path: '/dashboard/claim',
       icon: (
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
           <path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H6l-2 2V4h16v12z" fill="currentColor"/>
@@ -58,7 +58,7 @@ const Sidebar: React.FC<SidebarProps> = ({ currentUser }) => {
     {
       id: 'admin',
       label: 'Admin',
-      path: '/admin',
+      path: '/dashboard/admin',
       icon: (
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
           <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z" fill="currentColor"/>
@@ -68,7 +68,7 @@ const Sidebar: React.FC<SidebarProps> = ({ currentUser }) => {
     {
       id: 'address-book',
       label: 'Address book',
-      path: '/address-book',
+      path: '/dashboard/address-book',
       icon: (
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
           <path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 14H4V6h16v12zM6 10h2v2H6zm0 4h8v2H6zm10-4h2v6h-2zm-6 0h4v2h-4z" fill="currentColor"/>
@@ -78,7 +78,7 @@ const Sidebar: React.FC<SidebarProps> = ({ currentUser }) => {
     {
       id: 'report',
       label: 'Report',
-      path: '/reports',
+      path: '/dashboard/reports',
       icon: (
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
           <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z" fill="currentColor"/>
@@ -88,7 +88,7 @@ const Sidebar: React.FC<SidebarProps> = ({ currentUser }) => {
     {
       id: 'billing',
       label: 'Billing',
-      path: '/billing',
+      path: '/dashboard/billing',
       icon: (
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
           <path d="M20 4H4c-1.11 0-1.99.89-1.99 2L2 18c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V6c0-1.11-.89-2-2-2zm0 14H4v-6h16v6zm0-10H4V6h16v2z" fill="currentColor"/>
@@ -117,8 +117,11 @@ const Sidebar: React.FC<SidebarProps> = ({ currentUser }) => {
   }, [location.pathname]);
 
   const handleMenuClick = (menuItem: MenuItem) => {
+    // Always navigate to the menu item's path
+    navigate(menuItem.path);
+    
+    // If it has a submenu, also toggle expansion
     if (menuItem.submenu) {
-      // Toggle submenu expansion
       setExpandedMenus((prev) => {
         const newSet = new Set(prev);
         if (newSet.has(menuItem.id)) {
@@ -128,9 +131,6 @@ const Sidebar: React.FC<SidebarProps> = ({ currentUser }) => {
         }
         return newSet;
       });
-    } else {
-      // Navigate to page
-      navigate(menuItem.path);
     }
   };
 

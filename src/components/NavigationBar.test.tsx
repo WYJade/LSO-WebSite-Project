@@ -9,7 +9,7 @@ describe('NavigationBar Component', () => {
     firstName: 'John',
     lastName: 'Doe',
     email: 'john@example.com',
-    role: UserRole.USER,
+    role: UserRole.STANDARD_USER,
     language: 'EN',
     region: 'US',
   };

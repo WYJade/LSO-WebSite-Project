@@ -12,6 +12,7 @@ const NavigationBar: React.FC<NavigationBarProps> = ({
   const [showShippingDropdown, setShowShippingDropdown] = useState(false);
   const [showServicesDropdown, setShowServicesDropdown] = useState(false);
   const [showAboutDropdown, setShowAboutDropdown] = useState(false);
+  const [showUserDropdown, setShowUserDropdown] = useState(false);
 
   const menuItems: MenuItem[] = [
     { id: 'shipping', label: 'SHIPPING', href: '/shipping' },
@@ -125,12 +126,40 @@ const NavigationBar: React.FC<NavigationBarProps> = ({
         </div>
 
         <div className="nav-right">
-          <div className="user-account">
+          <div 
+            className="user-account"
+            onMouseEnter={() => setShowUserDropdown(true)}
+            onMouseLeave={() => setShowUserDropdown(false)}
+          >
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
               <circle cx="12" cy="8" r="4" stroke="#666" strokeWidth="2"/>
               <path d="M4 20c0-4 3.5-7 8-7s8 3 8 7" stroke="#666" strokeWidth="2" strokeLinecap="round"/>
             </svg>
             <span className="user-name">{currentUser?.firstName || 'ANDY'} ▼</span>
+            
+            {showUserDropdown && (
+              <div className="user-dropdown-menu">
+                <div className="user-dropdown-items">
+                  <a href="/dashboard/ship-with-account" className="user-dropdown-item">
+                    Create Shipment
+                  </a>
+                  <a href="/dashboard/schedule-pickup" className="user-dropdown-item">
+                    Schedule Pickup
+                  </a>
+                  <a href="/dashboard/preferences" className="user-dropdown-item">
+                    My Profile
+                  </a>
+                  <a href="/dashboard/overview" className="user-dropdown-item">
+                    View Account
+                  </a>
+                </div>
+                <div className="user-dropdown-footer">
+                  <a href="/" className="user-dropdown-signout">
+                    Sign out
+                  </a>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </div>

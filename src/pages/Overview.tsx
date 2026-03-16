@@ -24,9 +24,9 @@ const Overview: React.FC<OverviewProps> = ({ onNavigate }) => {
       return;
     }
 
-    // Parse comma-separated tracking numbers
+    // Parse tracking numbers separated by commas or newlines
     const numbers = trackingInput
-      .split(',')
+      .split(/[,\n]+/)  // Split by comma or newline
       .map(n => n.trim())
       .filter(n => n.length > 0);
 
@@ -103,7 +103,7 @@ const Overview: React.FC<OverviewProps> = ({ onNavigate }) => {
   };
 
   const handleTrackingCardClick = (trackingNumber: string) => {
-    handleNavigate(`/shipment-details/${trackingNumber}`);
+    handleNavigate(`/dashboard/shipment-details/${trackingNumber}`);
   };
 
   const actionCards = [
@@ -111,31 +111,31 @@ const Overview: React.FC<OverviewProps> = ({ onNavigate }) => {
       id: 'create-shipment',
       title: 'Create Shipment',
       icon: '📦',
-      path: '/ship-with-account',
+      path: '/dashboard/ship-with-account',
     },
     {
       id: 'schedule-pickup',
       title: 'Schedule Pickup',
       icon: '🚚',
-      path: '/schedule-pickup',
+      path: '/dashboard/schedule-pickup',
     },
     {
       id: 'manage-pickup',
       title: 'Manage Pickup',
       icon: '📋',
-      path: '/cancel-pickup',
+      path: '/dashboard/cancel-pickup',
     },
     {
       id: 'rate',
-      title: 'Rate',
+      title: 'Shipping Rate & Transit Time',
       icon: '💰',
-      path: '/calculate-rates',
+      path: '/dashboard/calculate-rates',
     },
     {
       id: 'preferences',
-      title: 'Your Preferences',
+      title: 'View Account',
       icon: '⚙️',
-      path: '/preferences',
+      path: '/dashboard/preferences',
     },
   ];
 

@@ -61,5 +61,5 @@ export interface AddressBookProps {
 export interface UserManagementProps {
   users: AccountUser[];
   onAddUser: (user: NewUserData) => void;
-  onRemoveUser: (userId: string) => void;
+  onToggleStatus: (userId: string) => void;
 }

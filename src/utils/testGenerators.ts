@@ -8,7 +8,7 @@ export const userGenerator = () =>
     firstName: fc.string({ minLength: 1, maxLength: 50 }),
     lastName: fc.string({ minLength: 1, maxLength: 50 }),
     email: fc.emailAddress(),
-    role: fc.constantFrom(UserRole.ADMIN, UserRole.USER, UserRole.VIEWER),
+    role: fc.constantFrom(UserRole.ADMIN, UserRole.STANDARD_USER),
     language: fc.constantFrom('EN', 'ZH', 'ES'),
     region: fc.constantFrom('US', 'CN', 'EU'),
   }) as fc.Arbitrary<User>;

@@ -7,8 +7,8 @@
 /* Tracking Search Section */
 .tracking-search-section {
   background: #ffffff;
-  padding: 24px;
-  margin-bottom: 16px;
+  padding: 20px 24px;
+  margin-bottom: 12px;
   border-radius: 8px;
   border: 1px solid #e5e7eb;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
@@ -18,7 +18,7 @@
   font-size: 18px;
   font-weight: 600;
   color: #1f2937;
-  margin: 0 0 16px 0;
+  margin: 0 0 14px 0;
 }
 
 .tracking-search-box {
@@ -81,7 +81,7 @@
 /* Tracking Results Section */
 .tracking-results-section {
   background: #ffffff;
-  margin-bottom: 16px;
+  margin-bottom: 12px;
   border-radius: 8px;
   border: 1px solid #e5e7eb;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
@@ -438,7 +438,7 @@
 /* Action Cards Section */
 .action-cards-section {
   background: #ffffff;
-  padding: 24px;
+  padding: 20px 24px;
   border-radius: 8px;
   border: 1px solid #e5e7eb;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
@@ -448,7 +448,7 @@
   font-size: 18px;
   font-weight: 600;
   color: #1f2937;
-  margin: 0 0 16px 0;
+  margin: 0 0 14px 0;
 }
 
 .action-cards-grid {
@@ -1161,7 +1161,7 @@
   display: grid;
   grid-template-columns: repeat(5, 1fr);
   gap: 1.2rem;
-  max-width: 1200px;
+  width: 100%;
 }
 
 .action-card {

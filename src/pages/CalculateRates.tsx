@@ -36,28 +36,39 @@ const CalculateRates: React.FC = () => {
     expectedShipDate: false
   });
 
-  // Generate next 7 days for Expected Ship Date dropdown with day name
+  // Generate next 7 business days (excluding Sundays) for Expected Ship Date dropdown
   const getNext7Days = () => {
     const dates = [];
     const today = new Date();
     const dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
     const monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
     
-    for (let i = 0; i < 7; i++) {
+    let daysAdded = 0;
+    let daysChecked = 0;
+    
+    while (daysAdded < 7 && daysChecked < 14) { // Check up to 14 days to ensure we get 7 non-Sunday dates
       const date = new Date(today);
-      date.setDate(today.getDate() + i);
-      const dayName = dayNames[date.getDay()];
-      const monthName = monthNames[date.getMonth()];
-      const day = date.getDate();
-      const year = date.getFullYear();
-      const month = String(date.getMonth() + 1).padStart(2, '0');
-      const dayStr = String(day).padStart(2, '0');
+      date.setDate(today.getDate() + daysChecked);
+      const dayOfWeek = date.getDay();
       
-      dates.push({
-        value: `${month}/${dayStr}/${year}`,
-        label: `${dayName}, ${monthName} ${day}, ${year}`
-      });
+      // Skip Sunday (0)
+      if (dayOfWeek !== 0) {
+        const dayName = dayNames[dayOfWeek];
+        const monthName = monthNames[date.getMonth()];
+        const day = date.getDate();
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const dayStr = String(day).padStart(2, '0');
+        
+        dates.push({
+          value: `${month}/${dayStr}/${year}`,
+          label: `${dayName}, ${monthName} ${day}, ${year}`
+        });
+        daysAdded++;
+      }
+      daysChecked++;
     }
+    
     return dates;
   };
 

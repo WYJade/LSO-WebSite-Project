@@ -1,8 +1,7 @@
 // User Role Enum
 export enum UserRole {
   ADMIN = 'admin',
-  USER = 'user',
-  VIEWER = 'viewer',
+  STANDARD_USER = 'standard_user',
 }
 
 // Shipment Status Enum
@@ -16,7 +15,6 @@ export enum ShipmentStatus {
 
 // User Status Enum
 export enum UserStatus {
-  INVITED = 'invited',
   ACTIVE = 'active',
   INACTIVE = 'inactive',
 }
@@ -90,6 +88,7 @@ export interface Package {
 // Account User Model
 export interface AccountUser {
   id: string;
+  loginUsername: string;
   email: string;
   firstName: string;
   lastName: string;
@@ -102,9 +101,22 @@ export interface AccountUser {
 
 // New User Data Model
 export interface NewUserData {
-  email: string;
+  loginUsername: string;
   firstName: string;
   lastName: string;
+  email: string;
+  password: string;
+  confirmPassword: string;
+  billingRefRequired: boolean;
+  userAdmin: boolean;
+  showOnlyUserShipment: boolean;
   accountNumber: string;
+  companyName: string;
+  companyPhone: string;
+  addressOne: string;
+  bldgSite: string;
+  city: string;
+  state: string;
+  zip: string;
   role: UserRole;
 }

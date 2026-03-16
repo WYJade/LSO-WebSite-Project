@@ -260,6 +260,7 @@ const Reports: React.FC = () => {
                 <button className="date-action-btn" onClick={handleReloadDates}>Reload dates</button>
               </div>
             </div>
+            <p className="helper-text date-range-helper">📅 Maximum date range: 90 days</p>
           </div>
 
           {/* Date Range Type Selection */}
@@ -307,7 +308,6 @@ const Reports: React.FC = () => {
                 <span>Last Event Date</span>
               </label>
             </div>
-            <p className="helper-text">📅 Maximum date range: 90 days</p>
           </div>
 
           <div className="report-options-section">
