@@ -42,15 +42,29 @@ const UserManagement: React.FC<UserManagementProps> = ({ users, onAddUser, onTog
 
   const validateEmail = (email: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 
-  const requiredFields: (keyof NewUserData)[] = [
-    'loginUsername','firstName','lastName','email','password','confirmPassword'
+  const passwordRules = [
+    { label: 'lowercase', test: (v: string) => /[a-z]/.test(v) },
+    { label: 'uppercase', test: (v: string) => /[A-Z]/.test(v) },
+    { label: 'number', test: (v: string) => /[0-9]/.test(v) },
+    { label: 'special char', test: (v: string) => /[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]/.test(v) },
+    { label: '8+ chars', test: (v: string) => v.length >= 8 },
   ];
+
+  const isPasswordValid = (pw: string) => passwordRules.every(r => r.test(pw));
+
+  const getRequiredFields = (): (keyof NewUserData)[] => {
+    if (editingUser) {
+      return ['firstName', 'lastName', 'password', 'confirmPassword'];
+    }
+    return ['loginUsername', 'firstName', 'lastName', 'email', 'password', 'confirmPassword'];
+  };
 
   const getFieldError = (field: keyof NewUserData): string | null => {
     const val = formData[field];
-    if (requiredFields.includes(field) && typeof val === 'string' && !val.trim()) return 'Required';
+    const required = getRequiredFields();
+    if (required.includes(field) && typeof val === 'string' && !val.trim()) return 'Required';
     if (field === 'email' && typeof val === 'string' && val && !validateEmail(val)) return 'Invalid email';
-    if (field === 'password' && typeof val === 'string' && val && val.length < 8) return 'Min 8 characters';
+    if (field === 'password' && typeof val === 'string' && val && !isPasswordValid(val)) return 'Password does not meet requirements';
     if (field === 'confirmPassword' && formData.confirmPassword && formData.confirmPassword !== formData.password) return 'Passwords do not match';
     return null;
   };
@@ -78,7 +92,7 @@ const UserManagement: React.FC<UserManagementProps> = ({ users, onAddUser, onTog
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setSubmitAttempted(true);
-    if (requiredFields.some(f => !!getFieldError(f))) return;
+    if (getRequiredFields().some(f => !!getFieldError(f))) return;
     if (editingUser) {
       console.log('Updating user:', editingUser.id, formData);
     } else {
@@ -119,7 +133,7 @@ const UserManagement: React.FC<UserManagementProps> = ({ users, onAddUser, onTog
         <input id={field} type={type} value={formData[field] as string}
           onChange={(e) => setField(field, e.target.value)}
           onBlur={() => handleBlur(field)}
-          placeholder={placeholder || `Enter ${label.toLowerCase()}`}
+          placeholder={placeholder || `Enter ${label.toLowerCase().replace(' *', '')}`}
           autoComplete="off" />
         {error && <span className="error-message">{error}</span>}
       </div>
@@ -223,7 +237,7 @@ const UserManagement: React.FC<UserManagementProps> = ({ users, onAddUser, onTog
               </div>
               <p>
                 Are you sure you want to {isDisabling ? 'disable' : 'enable'} the user<br/>
-                "{confirmDialog.user.email}"?
+                "{confirmDialog.user.loginUsername}"?
               </p>
             </div>
             <div className="confirm-dialog-footer">
@@ -251,17 +265,51 @@ const UserManagement: React.FC<UserManagementProps> = ({ users, onAddUser, onTog
                 <div className="dialog-column">
                   <h4 className="column-title">User Information</h4>
                   <div className="fields-row">
-                    {renderInput('loginUsername', 'Login / Username')}
-                    {renderInput('email', 'Email Address', { type: 'email' })}
+                    {editingUser
+                      ? renderReadonlyField('Login / Username *', formData.loginUsername)
+                      : renderInput('loginUsername', 'Login / Username', { placeholder: 'Enter your username' })}
+                    {editingUser
+                      ? renderReadonlyField('Email Address *', formData.email)
+                      : renderInput('email', 'Email Address', { type: 'email', placeholder: 'Enter your email address' })}
                   </div>
                   <div className="fields-row">
-                    {renderInput('firstName', 'First Name')}
-                    {renderInput('lastName', 'Last Name')}
+                    {renderInput('firstName', 'First Name', { placeholder: 'Enter first name' })}
+                    {renderInput('lastName', 'Last Name', { placeholder: 'Enter last name' })}
                   </div>
                   <div className="fields-row">
-                    {renderInput('password', 'Password', { type: 'password' })}
-                    {renderInput('confirmPassword', 'Confirm Password', { type: 'password' })}
+                    {renderInput('password', editingUser ? 'Current Password' : 'Password', { type: 'password', placeholder: editingUser ? 'Enter current password' : 'Enter password' })}
+                    {renderInput('confirmPassword', editingUser ? 'New Password' : 'Confirm Password', { type: 'password', placeholder: editingUser ? 'Enter new password' : 'Enter confirm password' })}
                   </div>
+                  {/* Password requirements hint */}
+                  {(formData.password || touched.password || submitAttempted) && (
+                    <div className="password-rules">
+                      <p className="password-rules-title">Password must contain:</p>
+                      <div className="password-rules-list">
+                        {passwordRules.map((rule) => (
+                          <span key={rule.label} className={`password-rule ${formData.password && rule.test(formData.password) ? 'met' : 'unmet'}`}>
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none">
+                              {formData.password && rule.test(formData.password) ? (
+                                <path d="M20 6L9 17l-5-5" stroke="#10B981" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"/>
+                              ) : (
+                                <circle cx="12" cy="12" r="5" fill="#cbd5e1"/>
+                              )}
+                            </svg>
+                            {rule.label}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                  {/* Password mismatch hint */}
+                  {formData.confirmPassword && formData.confirmPassword !== formData.password && (
+                    <div className="password-mismatch-hint">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
+                        <circle cx="12" cy="12" r="10" stroke="#EF4444" strokeWidth="2"/>
+                        <path d="M15 9l-6 6M9 9l6 6" stroke="#EF4444" strokeWidth="2" strokeLinecap="round"/>
+                      </svg>
+                      <span>Password must contain at least one lowercase letter, one uppercase letter, one number, and one special character</span>
+                    </div>
+                  )}
                   <div className="checkbox-group-inline">
                     {renderCheckbox('billingRefRequired', 'Billing Reference Required')}
                     {renderCheckbox('userAdmin', 'User Admin')}

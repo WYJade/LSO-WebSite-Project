@@ -368,6 +368,71 @@
   margin-left: 2px;
 }
 
+/* Password rules */
+.password-rules {
+  margin-top: -4px;
+  margin-bottom: 8px;
+  padding: 10px 14px;
+  background: #f8fafc;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+}
+
+.password-rules-title {
+  font-size: 11px;
+  font-weight: 600;
+  color: #475569;
+  margin: 0 0 6px 0;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+.password-rules-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 12px;
+}
+
+.password-rule {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 12px;
+  font-weight: 500;
+  transition: color 0.2s;
+}
+
+.password-rule.met {
+  color: #10B981;
+}
+
+.password-rule.unmet {
+  color: #94a3b8;
+}
+
+.password-mismatch-hint {
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+  margin-top: -2px;
+  margin-bottom: 8px;
+  padding: 8px 12px;
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  border-radius: 6px;
+}
+
+.password-mismatch-hint svg {
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.password-mismatch-hint span {
+  font-size: 12px;
+  color: #dc2626;
+  line-height: 1.4;
+}
+
 /* Checkboxes */
 .checkbox-group-inline {
   display: flex;
