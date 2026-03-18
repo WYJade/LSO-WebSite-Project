@@ -1,6 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { AddressBookProps } from '../types/components';
 import { Address } from '../types/models';
+import Toast, { useToast } from './Toast';
 import './AddressBook.css';
 
 // Extended Address interface with quickcode and company
@@ -31,6 +32,7 @@ const AddressBook: React.FC<AddressBookProps> = ({
   const [exportFormat, setExportFormat] = useState<'csv' | 'xls'>('csv');
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   
+  const { toast, showToast } = useToast();
   const itemsPerPage = 10;
 
   // Sample data for demonstration
@@ -240,7 +242,7 @@ const AddressBook: React.FC<AddressBookProps> = ({
     if (!formData.quickCode || !formData.recipientName || !formData.phone || 
         !formData.addressLine1 || !formData.city || !formData.state || 
         !formData.postalCode || !formData.country) {
-      alert('Please fill in all required fields');
+      showToast('Please fill in all required fields.', 'warning');
       return;
     }
 
@@ -268,6 +270,11 @@ const AddressBook: React.FC<AddressBookProps> = ({
     setDialogMode('none');
     setFormData({});
     setEditingAddress(null);
+    showToast(
+      editingAddress
+        ? `Address "${addressData.recipientName}" updated successfully.`
+        : `Address "${addressData.recipientName}" added successfully.`
+    );
   };
 
   const handleCancelDialog = () => {
@@ -279,7 +286,7 @@ const AddressBook: React.FC<AddressBookProps> = ({
 
   const handleDelete = () => {
     if (selectedAddresses.size === 0) {
-      alert('Please select at least one address to delete');
+      showToast('Please select at least one address to delete.', 'warning');
       return;
     }
     
@@ -289,13 +296,15 @@ const AddressBook: React.FC<AddressBookProps> = ({
     });
 
     if (hasInUse) {
-      alert('Cannot delete addresses that are in use by active shipments');
+      showToast('Cannot delete addresses that are in use by active shipments.', 'error');
       return;
     }
 
     if (window.confirm(`Are you sure you want to delete ${selectedAddresses.size} address(es)?`)) {
       selectedAddresses.forEach(id => onDelete(id));
+      const count = selectedAddresses.size;
       setSelectedAddresses(new Set());
+      showToast(`${count} address(es) deleted successfully.`);
     }
   };
 
@@ -313,15 +322,14 @@ const AddressBook: React.FC<AddressBookProps> = ({
 
   const handleImportConfirm = () => {
     if (!selectedFile) {
-      alert('Please select a file to import');
+      showToast('Please select a file to import.', 'warning');
       return;
     }
 
-    // Simulate import process
     console.log(`Importing ${selectedFile.name} with option: ${importOption}`);
-    alert(`Successfully imported addresses from ${selectedFile.name}`);
     setDialogMode('none');
     setSelectedFile(null);
+    showToast(`Addresses imported from "${selectedFile.name}" successfully.`);
   };
 
   const handleExport = () => {
@@ -330,11 +338,10 @@ const AddressBook: React.FC<AddressBookProps> = ({
   };
 
   const handleExportConfirm = () => {
-    // Simulate export process
     const filename = `address_book.${exportFormat}`;
     console.log(`Exporting addresses as ${filename}`);
-    alert(`Successfully exported ${filteredAddresses.length} addresses as ${filename}`);
     setDialogMode('none');
+    showToast(`${filteredAddresses.length} addresses exported as ${filename} successfully.`);
   };
 
   return (
@@ -737,6 +744,8 @@ const AddressBook: React.FC<AddressBookProps> = ({
           </div>
         </div>
       )}
+
+      <Toast show={toast.show} message={toast.message} type={toast.type} />
     </div>
   );
 };

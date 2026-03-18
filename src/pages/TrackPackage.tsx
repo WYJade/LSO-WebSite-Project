@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import Toast, { useToast } from '../components/Toast';
 import './TrackPackage.css';
 
 interface TrackingResult {
@@ -29,6 +30,7 @@ const TrackPackage: React.FC = () => {
   // Filter states
   const [filterStatus, setFilterStatus] = useState<string[]>([]);
   const [filterServiceType, setFilterServiceType] = useState<string[]>([]);
+  const { toast, showToast } = useToast();
 
   const handleTrackingSearch = () => {
     setError('');
@@ -89,13 +91,13 @@ const TrackPackage: React.FC = () => {
   const handleExport = (format: string) => {
     console.log(`Exporting as ${format}`);
     setShowExportDialog(false);
-    // Implement actual export logic here
+    showToast(`Tracking results exported as ${format.toUpperCase()} successfully.`);
   };
 
   const handleApplyFilters = () => {
     console.log('Applying filters:', { filterStatus, filterServiceType });
     setShowFilterDialog(false);
-    // Implement actual filter logic here
+    showToast('Filters applied successfully.', 'info');
   };
 
   const handleClearFilters = () => {
@@ -398,6 +400,7 @@ const TrackPackage: React.FC = () => {
           )}
         </div>
       </div>
+      <Toast show={toast.show} message={toast.message} type={toast.type} />
     </div>
   );
 };

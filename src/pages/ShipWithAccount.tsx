@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
+import Toast, { useToast } from '../components/Toast';
 import './ShipWithAccount.css';
 
 const ShipWithAccount: React.FC = () => {
   const [currentStep, setCurrentStep] = useState(1);
+  const { toast, showToast } = useToast();
 
   const steps = [
     { number: 1, title: 'Check service area' },
@@ -346,7 +348,7 @@ const ShipWithAccount: React.FC = () => {
                   Next →
                 </button>
               ) : (
-                <button className="nav-btn create-btn" onClick={() => alert('Airbill created successfully!')}>
+                <button className="nav-btn create-btn" onClick={() => { showToast('Airbill created successfully. Your shipment is ready.'); setCurrentStep(1); }}>
                   Create Airbill
                 </button>
               )}
@@ -354,6 +356,7 @@ const ShipWithAccount: React.FC = () => {
           </div>
         </div>
       </div>
+      <Toast show={toast.show} message={toast.message} type={toast.type} />
     </div>
   );
 };

@@ -79,6 +79,8 @@ const ForgotPassword: React.FC = () => {
   ];
   const isPwValid = (v: string) => pwRules.every(r => r.test(v));
 
+  const [changingPw, setChangingPw] = useState(false);
+
   const handlePasswordSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setPwSubmitAttempted(true);
@@ -86,8 +88,14 @@ const ForgotPassword: React.FC = () => {
     setCpTouched(true);
     if (!password) return;
     if (!isPwValid(password)) return;
+    if (!confirmPassword) return;
     if (password !== confirmPassword) return;
-    setStep('success');
+    // Show brief loading then success
+    setChangingPw(true);
+    setTimeout(() => {
+      setChangingPw(false);
+      setStep('success');
+    }, 1200);
   };
 
   const titleIcon = (
@@ -271,7 +279,17 @@ const ForgotPassword: React.FC = () => {
                 )}
               </div>
 
-              <button type="submit" className="submit-btn">Change Password</button>
+              <button type="submit" className="submit-btn" disabled={changingPw}>
+                {changingPw ? (
+                  <span className="btn-loading">
+                    <svg className="spinner" width="18" height="18" viewBox="0 0 24 24" fill="none">
+                      <circle cx="12" cy="12" r="10" stroke="rgba(255,255,255,0.3)" strokeWidth="3"/>
+                      <path d="M12 2a10 10 0 019.95 9" stroke="white" strokeWidth="3" strokeLinecap="round"/>
+                    </svg>
+                    Updating password...
+                  </span>
+                ) : 'Change Password'}
+              </button>
             </form>
           </div>
         )}

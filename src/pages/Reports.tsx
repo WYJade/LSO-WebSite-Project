@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import Toast, { useToast } from '../components/Toast';
 import './Reports.css';
 
 const Reports: React.FC = () => {
@@ -35,6 +36,7 @@ const Reports: React.FC = () => {
   const [shipmentScope, setShipmentScope] = useState<string>('all-shipments');
   const [include3rdParty, setInclude3rdParty] = useState<boolean>(true);
   const [selectedStatuses, setSelectedStatuses] = useState<string[]>([]);
+  const { toast, showToast } = useToast();
 
   // Mock report data
   const generateMockReportData = () => {
@@ -112,7 +114,7 @@ const Reports: React.FC = () => {
   };
 
   const handleHelp = () => {
-    alert('Help: This page allows you to generate reports for your shipments. Select a date range and report options, then click "Run report" to generate your report.');
+    showToast('This page allows you to generate reports for your shipments. Select a date range and options, then click "Run report".', 'info');
   };
 
   const handleShipAnother = () => {
@@ -127,12 +129,12 @@ const Reports: React.FC = () => {
       const daysDiff = Math.floor((toDate.getTime() - fromDate.getTime()) / (1000 * 60 * 60 * 24));
       
       if (daysDiff > 90) {
-        alert('Date range cannot exceed 90 days. Please adjust your date selection.');
+        showToast('Date range cannot exceed 90 days. Please adjust your date selection.', 'warning');
         return;
       }
       
       if (daysDiff < 0) {
-        alert('End date must be after start date.');
+        showToast('End date must be after start date.', 'warning');
         return;
       }
     }
@@ -169,13 +171,12 @@ const Reports: React.FC = () => {
 
   const handleExportCSV = () => {
     console.log('Exporting report as CSV...');
-    // Simulate CSV export with visual feedback
     const button = document.querySelector('.export-csv-btn');
     if (button) {
       button.textContent = 'EXPORTING...';
       setTimeout(() => {
         button.textContent = 'EXPORT CSV';
-        alert(`Successfully exported ${reportData.length} records to CSV`);
+        showToast(`${reportData.length} records exported to CSV successfully.`);
       }, 1500);
     }
   };
@@ -497,6 +498,7 @@ const Reports: React.FC = () => {
           </div>
         </div>
       )}
+      <Toast show={toast.show} message={toast.message} type={toast.type} />
     </div>
   );
 };
