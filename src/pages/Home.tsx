@@ -1,6 +1,10 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './Home.css';
+
+const MAX_ATTEMPTS_BEFORE_CAPTCHA = 3;
+const MAX_ATTEMPTS_TOTAL = 6;
+const LOCKOUT_DURATION = 5 * 60 * 1000; // 5 minutes
 
 const Home: React.FC = () => {
   const navigate = useNavigate();
@@ -9,6 +13,179 @@ const Home: React.FC = () => {
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [authMode, setAuthMode] = useState<'login' | 'signup'>('login');
   const dropdownRef = useRef<HTMLDivElement>(null);
+
+  // Login state
+  const [loginUsername, setLoginUsername] = useState('');
+  const [loginPassword, setLoginPassword] = useState('');
+  const [loginError, setLoginError] = useState('');
+  const [failedAttempts, setFailedAttempts] = useState(0);
+  const [isLockedOut, setIsLockedOut] = useState(false);
+  const [lockoutEndTime, setLockoutEndTime] = useState<number | null>(null);
+  const [lockoutRemaining, setLockoutRemaining] = useState('');
+  const [captchaVerified, setCaptchaVerified] = useState(false);
+  const [showCaptcha, setShowCaptcha] = useState(false);
+
+  // Slider captcha state
+  const sliderTrackRef = useRef<HTMLDivElement>(null);
+  const [sliderPos, setSliderPos] = useState(0);
+  const [isDragging, setIsDragging] = useState(false);
+  const [captchaStatus, setCaptchaStatus] = useState<'idle' | 'success' | 'fail'>('idle');
+
+  // Lockout countdown timer
+  useEffect(() => {
+    if (!isLockedOut || !lockoutEndTime) return;
+    const interval = setInterval(() => {
+      const remaining = lockoutEndTime - Date.now();
+      if (remaining <= 0) {
+        setIsLockedOut(false);
+        setLockoutEndTime(null);
+        setLockoutRemaining('');
+        setFailedAttempts(0);
+        setCaptchaVerified(false);
+        setShowCaptcha(false);
+        setCaptchaStatus('idle');
+        setSliderPos(0);
+        setLoginError('');
+      } else {
+        const mins = Math.floor(remaining / 60000);
+        const secs = Math.floor((remaining % 60000) / 1000);
+        setLockoutRemaining(`${mins}:${secs.toString().padStart(2, '0')}`);
+      }
+    }, 1000);
+    return () => clearInterval(interval);
+  }, [isLockedOut, lockoutEndTime]);
+
+  // Slider captcha drag handlers
+  const handleSliderMouseDown = (e: React.MouseEvent) => {
+    if (captchaStatus === 'success') return;
+    setIsDragging(true);
+    setCaptchaStatus('idle');
+  };
+
+  const handleSliderMouseMove = useCallback((e: MouseEvent) => {
+    if (!isDragging || !sliderTrackRef.current) return;
+    const rect = sliderTrackRef.current.getBoundingClientRect();
+    const maxX = rect.width - 44;
+    let x = e.clientX - rect.left - 22;
+    x = Math.max(0, Math.min(x, maxX));
+    setSliderPos(x);
+  }, [isDragging]);
+
+  const handleSliderMouseUp = useCallback(() => {
+    if (!isDragging || !sliderTrackRef.current) return;
+    setIsDragging(false);
+    const rect = sliderTrackRef.current.getBoundingClientRect();
+    const maxX = rect.width - 44;
+    const threshold = maxX * 0.85;
+    if (sliderPos >= threshold) {
+      setSliderPos(maxX);
+      setCaptchaStatus('success');
+      setCaptchaVerified(true);
+    } else {
+      setCaptchaStatus('fail');
+      setTimeout(() => { setSliderPos(0); setCaptchaStatus('idle'); }, 500);
+    }
+  }, [isDragging, sliderPos]);
+
+  useEffect(() => {
+    if (isDragging) {
+      window.addEventListener('mousemove', handleSliderMouseMove);
+      window.addEventListener('mouseup', handleSliderMouseUp);
+    }
+    return () => {
+      window.removeEventListener('mousemove', handleSliderMouseMove);
+      window.removeEventListener('mouseup', handleSliderMouseUp);
+    };
+  }, [isDragging, handleSliderMouseMove, handleSliderMouseUp]);
+
+  // Touch support for slider
+  const handleSliderTouchStart = () => {
+    if (captchaStatus === 'success') return;
+    setIsDragging(true);
+    setCaptchaStatus('idle');
+  };
+
+  const handleSliderTouchMove = useCallback((e: TouchEvent) => {
+    if (!isDragging || !sliderTrackRef.current) return;
+    const rect = sliderTrackRef.current.getBoundingClientRect();
+    const maxX = rect.width - 44;
+    let x = e.touches[0].clientX - rect.left - 22;
+    x = Math.max(0, Math.min(x, maxX));
+    setSliderPos(x);
+  }, [isDragging]);
+
+  const handleSliderTouchEnd = useCallback(() => {
+    if (!isDragging || !sliderTrackRef.current) return;
+    setIsDragging(false);
+    const rect = sliderTrackRef.current.getBoundingClientRect();
+    const maxX = rect.width - 44;
+    const threshold = maxX * 0.85;
+    if (sliderPos >= threshold) {
+      setSliderPos(maxX);
+      setCaptchaStatus('success');
+      setCaptchaVerified(true);
+    } else {
+      setCaptchaStatus('fail');
+      setTimeout(() => { setSliderPos(0); setCaptchaStatus('idle'); }, 500);
+    }
+  }, [isDragging, sliderPos]);
+
+  useEffect(() => {
+    if (isDragging) {
+      window.addEventListener('touchmove', handleSliderTouchMove);
+      window.addEventListener('touchend', handleSliderTouchEnd);
+    }
+    return () => {
+      window.removeEventListener('touchmove', handleSliderTouchMove);
+      window.removeEventListener('touchend', handleSliderTouchEnd);
+    };
+  }, [isDragging, handleSliderTouchMove, handleSliderTouchEnd]);
+
+  const handleLogin = () => {
+    setLoginError('');
+
+    if (isLockedOut) return;
+
+    if (!loginUsername.trim() || !loginPassword.trim()) {
+      setLoginError('Please enter both username and password.');
+      return;
+    }
+
+    // Show captcha requirement after 3 failed attempts
+    if (failedAttempts >= MAX_ATTEMPTS_BEFORE_CAPTCHA && !captchaVerified) {
+      setLoginError('Please complete the verification below before signing in.');
+      setShowCaptcha(true);
+      return;
+    }
+
+    // Simulate login validation (demo: username=admin, password=admin123)
+    const isValid = loginUsername === 'admin' && loginPassword === 'admin123';
+
+    if (isValid) {
+      setFailedAttempts(0);
+      setCaptchaVerified(false);
+      setShowCaptcha(false);
+      navigate('/dashboard/overview');
+    } else {
+      const newAttempts = failedAttempts + 1;
+      setFailedAttempts(newAttempts);
+      setCaptchaVerified(false);
+      setCaptchaStatus('idle');
+      setSliderPos(0);
+
+      if (newAttempts >= MAX_ATTEMPTS_TOTAL) {
+        setIsLockedOut(true);
+        setLockoutEndTime(Date.now() + LOCKOUT_DURATION);
+        setLoginError('You have exceeded the maximum number of failed login attempts. Please try again in 5 minutes.');
+        setShowCaptcha(false);
+      } else if (newAttempts >= MAX_ATTEMPTS_BEFORE_CAPTCHA) {
+        setLoginError(`Invalid username or password. (${MAX_ATTEMPTS_TOTAL - newAttempts} attempts remaining)`);
+        setShowCaptcha(true);
+      } else {
+        setLoginError(`Invalid username or password. (${MAX_ATTEMPTS_BEFORE_CAPTCHA - newAttempts} attempts before verification required)`);
+      }
+    }
+  };
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -129,23 +306,62 @@ const Home: React.FC = () => {
 
                   {authMode === 'login' && (
                     <div className="auth-form">
+                      {isLockedOut && (
+                        <div className="login-lockout-banner">
+                          <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                            <circle cx="12" cy="12" r="10" stroke="#dc2626" strokeWidth="2"/>
+                            <path d="M12 8v4m0 4h.01" stroke="#dc2626" strokeWidth="2" strokeLinecap="round"/>
+                          </svg>
+                          <div>
+                            <p className="lockout-text">You have exceeded the maximum number of failed login attempts. Please try again in 5 minutes.</p>
+                            {lockoutRemaining && <p className="lockout-timer">Time remaining: {lockoutRemaining}</p>}
+                          </div>
+                        </div>
+                      )}
+
+                      {loginError && !isLockedOut && (
+                        <div className="login-error-banner">
+                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                            <circle cx="12" cy="12" r="10" stroke="#dc2626" strokeWidth="2"/>
+                            <path d="M12 8v4m0 4h.01" stroke="#dc2626" strokeWidth="2" strokeLinecap="round"/>
+                          </svg>
+                          <span>{loginError}</span>
+                        </div>
+                      )}
+
                       <div className="auth-form-group">
-                        <div className="auth-input-wrapper">
+                        <div className={`auth-input-wrapper ${isLockedOut ? 'input-disabled' : ''}`}>
                           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" className="input-icon">
                             <circle cx="12" cy="12" r="3" stroke="#999" strokeWidth="2"/>
                             <path d="M12 1v6m0 6v6M1 12h6m6 0h6" stroke="#999" strokeWidth="2"/>
                           </svg>
-                          <input type="text" placeholder="Username" className="auth-input" />
+                          <input
+                            type="text"
+                            placeholder="Username"
+                            className="auth-input"
+                            value={loginUsername}
+                            onChange={(e) => { setLoginUsername(e.target.value); setLoginError(''); }}
+                            disabled={isLockedOut}
+                            onKeyDown={(e) => e.key === 'Enter' && handleLogin()}
+                          />
                         </div>
                       </div>
 
                       <div className="auth-form-group">
-                        <div className="auth-input-wrapper">
+                        <div className={`auth-input-wrapper ${isLockedOut ? 'input-disabled' : ''}`}>
                           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" className="input-icon">
                             <rect x="3" y="11" width="18" height="11" rx="2" stroke="#999" strokeWidth="2"/>
                             <path d="M7 11V7a5 5 0 0110 0v4" stroke="#999" strokeWidth="2"/>
                           </svg>
-                          <input type="password" placeholder="Password" className="auth-input" />
+                          <input
+                            type="password"
+                            placeholder="Password"
+                            className="auth-input"
+                            value={loginPassword}
+                            onChange={(e) => { setLoginPassword(e.target.value); setLoginError(''); }}
+                            disabled={isLockedOut}
+                            onKeyDown={(e) => e.key === 'Enter' && handleLogin()}
+                          />
                           <button className="password-toggle-btn">
                             <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
                               <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" stroke="#999" strokeWidth="2"/>
@@ -162,6 +378,39 @@ const Home: React.FC = () => {
                         </p>
                       </div>
 
+                      {/* Slider Captcha */}
+                      {showCaptcha && !isLockedOut && (
+                        <div className="slider-captcha-container">
+                          <div className="slider-captcha-label">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" stroke="#0EA5E9" strokeWidth="2"/>
+                            </svg>
+                            <span>Drag the slider to verify you are human</span>
+                          </div>
+                          <div
+                            className={`slider-captcha-track ${captchaStatus === 'success' ? 'captcha-success' : ''} ${captchaStatus === 'fail' ? 'captcha-fail' : ''}`}
+                            ref={sliderTrackRef}
+                          >
+                            <div className="slider-captcha-fill" style={{ width: sliderPos + 22 }}></div>
+                            <div className="slider-captcha-text">
+                              {captchaStatus === 'success' ? '✓ Verified' : captchaStatus === 'fail' ? 'Try again' : 'Slide to verify →'}
+                            </div>
+                            <div
+                              className={`slider-captcha-thumb ${isDragging ? 'dragging' : ''}`}
+                              style={{ left: sliderPos }}
+                              onMouseDown={handleSliderMouseDown}
+                              onTouchStart={handleSliderTouchStart}
+                            >
+                              {captchaStatus === 'success' ? (
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M20 6L9 17l-5-5" stroke="#fff" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                              ) : (
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M9 18l6-6-6-6" stroke="#0d3b66" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/><path d="M5 18l6-6-6-6" stroke="#0d3b66" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                              )}
+                            </div>
+                          </div>
+                        </div>
+                      )}
+
                       <div className="auth-form-footer">
                         <label className="remember-me">
                           <input type="checkbox" />
@@ -172,8 +421,12 @@ const Home: React.FC = () => {
                         </a>
                       </div>
 
-                      <button className="auth-submit-btn" onClick={() => navigate('/dashboard/overview')}>
-                        Sign in
+                      <button
+                        className={`auth-submit-btn ${isLockedOut ? 'btn-disabled' : ''}`}
+                        onClick={handleLogin}
+                        disabled={isLockedOut}
+                      >
+                        {isLockedOut ? 'Account Locked' : 'Sign in'}
                       </button>
                     </div>
                   )}
