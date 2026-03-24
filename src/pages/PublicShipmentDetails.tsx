@@ -19,9 +19,9 @@ const PublicShipmentDetails: React.FC = () => {
     trackingNumber: trackingNumber || 'qwee',
     status: 'Delivered',
     serviceType: 'LSO Ground™',
-    createTime: '2025-12-16 19:25 CST',
+    createTime: '12/16/2025 07:25 PM CST',
     trackingStatus: 'Delivered',
-    deliveryDate: '2025-12-16 19:25',
+    deliveryDate: '12/16/2025 07:25 PM',
     billingRef: 'REF23456',
     weight: '25.6 lbs',
     dimensions: '12 in × 8 in × 6 in',
@@ -41,7 +41,7 @@ const PublicShipmentDetails: React.FC = () => {
       { status: 'Data Transmitted', time: '01/08/2025 06:28 PM', location: 'NEW YORK' },
       { status: 'Picked Up', time: '01/08/2025 11:20 PM', location: 'NEW YORK' },
       { status: 'Inbound scan at destination', time: '01/09/2025 12:15 AM', location: 'LOS ANGELES' },
-      { status: 'Delivered', time: '2025-12-16 19:25', location: 'LOS ANGELES' }
+      { status: 'Delivered', time: '12/16/2025 07:25 PM', location: 'LOS ANGELES' }
     ]
   };
 
@@ -60,14 +60,14 @@ const PublicShipmentDetails: React.FC = () => {
             </div>
           </div>
           <div className="public-nav-center">
-            <button className="public-nav-link">SHIPPING</button>
-            <button className="public-nav-link">SERVICES</button>
-            <button className="public-nav-link active">TRACKING</button>
-            <button className="public-nav-link">ABOUT US</button>
+            <button className="public-nav-link">Shipping</button>
+            <button className="public-nav-link">Services</button>
+            <button className="public-nav-link active">Tracking</button>
+            <button className="public-nav-link">About Us</button>
           </div>
           <div className="public-nav-right">
             <button className="public-login-btn" onClick={handleBackToHome}>
-              LOGIN / SIGN UP
+              Login / Sign Up
             </button>
           </div>
         </div>
@@ -99,41 +99,41 @@ const PublicShipmentDetails: React.FC = () => {
           <div className="public-three-column-layout">
             {/* Column 1: Shipment Information */}
             <div className="public-column">
-              <h2 className="column-title">SHIPMENT INFORMATION</h2>
+              <h2 className="column-title">Shipment Information</h2>
               <div className="column-content">
                 <div className="info-item">
-                  <span className="info-item-label">CREATE TIME</span>
+                  <span className="info-item-label">Create Time</span>
                   <span className="info-item-value">{shipmentData.createTime}</span>
                 </div>
                 <div className="info-item">
-                  <span className="info-item-label">TRACKING STATUS</span>
+                  <span className="info-item-label">Tracking Status</span>
                   <span className="info-item-value">{shipmentData.trackingStatus}</span>
                 </div>
                 <div className="info-item">
-                  <span className="info-item-label">SERVICE TYPE</span>
+                  <span className="info-item-label">Service Type</span>
                   <span className="info-item-value">{shipmentData.serviceType}</span>
                 </div>
                 <div className="info-item">
-                  <span className="info-item-label">BILLING REF</span>
+                  <span className="info-item-label">Billing Ref</span>
                   <span className="info-item-value">{shipmentData.billingRef}</span>
                 </div>
                 <div className="info-item">
-                  <span className="info-item-label">WEIGHT</span>
+                  <span className="info-item-label">Weight</span>
                   <span className="info-item-value">{shipmentData.weight}</span>
                 </div>
                 <div className="info-item">
-                  <span className="info-item-label">DIMENSIONS</span>
+                  <span className="info-item-label">Dimensions</span>
                   <span className="info-item-value">{shipmentData.dimensions}</span>
                 </div>
 
-                <h3 className="subsection-title">SENDER</h3>
+                <h3 className="subsection-title">Sender</h3>
                 <div className="person-block">
                   <div className="person-name">{shipmentData.sender.name}</div>
                   <div className="person-address">{shipmentData.sender.address}</div>
                   <div className="person-address">{shipmentData.sender.city}</div>
                 </div>
 
-                <h3 className="subsection-title">RECEIVER</h3>
+                <h3 className="subsection-title">Receiver</h3>
                 <div className="person-block">
                   <div className="person-name">{shipmentData.receiver.name}</div>
                   <div className="person-address">{shipmentData.receiver.address}</div>
@@ -144,18 +144,18 @@ const PublicShipmentDetails: React.FC = () => {
 
             {/* Column 2: Delivery Information */}
             <div className="public-column">
-              <h2 className="column-title">DELIVERY INFORMATION</h2>
+              <h2 className="column-title">Delivery Information</h2>
               <div className="column-content">
                 <div className="info-item">
-                  <span className="info-item-label">DELIVERY DATE</span>
+                  <span className="info-item-label">Delivery Date</span>
                   <span className="info-item-value">{shipmentData.deliveryDate}</span>
                 </div>
                 <div className="info-item">
-                  <span className="info-item-label">SIGNED BY</span>
+                  <span className="info-item-label">Signed By</span>
                   <span className="info-item-value">{shipmentData.signedBy}</span>
                 </div>
                 <div className="info-item">
-                  <span className="info-item-label">BILLING REF</span>
+                  <span className="info-item-label">Billing Ref</span>
                   <span className="info-item-value">{shipmentData.billingRef}</span>
                 </div>
                 <div className="delivery-links">
@@ -167,7 +167,7 @@ const PublicShipmentDetails: React.FC = () => {
 
             {/* Column 3: Tracking History */}
             <div className="public-column">
-              <h2 className="column-title">TRACKING HISTORY</h2>
+              <h2 className="column-title">Tracking History</h2>
               <div className="column-content">
                 <div className="history-timeline">
                   {shipmentData.trackingHistory.map((event, index) => (

@@ -53,7 +53,7 @@ const PublicTracking: React.FC = () => {
       trackingNumber: num,
       serviceType: serviceTypes[i % serviceTypes.length],
       status: statuses[i % statuses.length],
-      deliveredTime: i % 2 === 0 ? `2024/2/${String(Math.floor(Math.random() * 28) + 1).padStart(2, '0')} ${String(Math.floor(Math.random() * 24)).padStart(2, '0')}:${String(Math.floor(Math.random() * 60)).padStart(2, '0')}:00` : undefined,
+      deliveredTime: i % 2 === 0 ? `${String(Math.floor(Math.random() * 12) + 1).padStart(2, '0')}/${String(Math.floor(Math.random() * 28) + 1).padStart(2, '0')}/2024 ${String(Math.floor(Math.random() * 12) + 1).padStart(2, '0')}:${String(Math.floor(Math.random() * 60)).padStart(2, '0')} ${Math.random() > 0.5 ? 'AM' : 'PM'}` : undefined,
       fromCity: cities[i % cities.length],
       toCity: cities[(i + 2) % cities.length],
       sender: names[i % names.length],
@@ -87,14 +87,14 @@ const PublicTracking: React.FC = () => {
             </div>
           </div>
           <div className="public-nav-center">
-            <button className="public-nav-link">SHIPPING</button>
-            <button className="public-nav-link">SERVICES</button>
-            <button className="public-nav-link active">TRACKING</button>
-            <button className="public-nav-link">ABOUT US</button>
+            <button className="public-nav-link">Shipping</button>
+            <button className="public-nav-link">Services</button>
+            <button className="public-nav-link active">Tracking</button>
+            <button className="public-nav-link">About Us</button>
           </div>
           <div className="public-nav-right">
             <button className="public-login-btn" onClick={handleBackToHome}>
-              LOGIN / SIGN UP
+              Login / Sign Up
             </button>
           </div>
         </div>
@@ -274,8 +274,8 @@ const PublicTracking: React.FC = () => {
                   <path d="M12 6v6l4 2" stroke="#0066CC" strokeWidth="2" strokeLinecap="round"/>
                 </svg>
               </div>
-              <h3 className="footer-card-title">HELP & SUPPORT</h3>
-              <p className="footer-card-text">FOR QUESTIONS OR ISSUES</p>
+              <h3 className="footer-card-title">Help & Support</h3>
+              <p className="footer-card-text">For Questions Or Issues</p>
               <button className="footer-card-btn">Get help or get in touch</button>
             </div>
 
@@ -285,8 +285,8 @@ const PublicTracking: React.FC = () => {
                   <path d="M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.38 8.38 0 01-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 01-.9-3.8 8.5 8.5 0 014.7-7.6 8.38 8.38 0 013.8-.9h.5a8.48 8.48 0 018 8v.5z" stroke="#0066CC" strokeWidth="2" strokeLinecap="round"/>
                 </svg>
               </div>
-              <h3 className="footer-card-title">YOUR FEEDBACK</h3>
-              <p className="footer-card-text">WAS THIS PAGE HELPFUL?</p>
+              <h3 className="footer-card-title">Your Feedback</h3>
+              <p className="footer-card-text">Was This Page Helpful?</p>
               <button className="footer-card-btn">Send us a message</button>
             </div>
           </div>

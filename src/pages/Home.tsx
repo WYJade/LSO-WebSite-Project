@@ -56,7 +56,7 @@ const Home: React.FC = () => {
       <div className="home-top-bar">
         <div className="top-bar-content">
           <div className="top-bar-left">
-            <span className="top-bar-badge">SHIP WITH LSO NOW</span>
+            <span className="top-bar-badge">Ship With LSO Now</span>
           </div>
           <div className="top-bar-right">
             <a href="#" className="top-link">
@@ -84,10 +84,10 @@ const Home: React.FC = () => {
           </div>
           
           <nav className="main-nav">
-            <div className="nav-item">SHIPPING ▼</div>
-            <div className="nav-item">SERVICES ▼</div>
-            <div className="nav-item" onClick={() => navigate('/tracking')}>TRACKING</div>
-            <div className="nav-item">ABOUT US ▼</div>
+            <div className="nav-item">Shipping ▼</div>
+            <div className="nav-item">Services ▼</div>
+            <div className="nav-item" onClick={() => navigate('/tracking')}>Tracking</div>
+            <div className="nav-item">About Us ▼</div>
           </nav>
 
           <div className="header-actions">
@@ -192,9 +192,9 @@ const Home: React.FC = () => {
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
                 <path d="M12 2L15 8L22 9L17 14L18 21L12 18L6 21L7 14L2 9L9 8L12 2Z" fill="#0EA5E9"/>
               </svg>
-              <span>IT'S ALL IN THE DELIVERY</span>
+              <span>It's All In The Delivery</span>
             </div>
-            <h1 className="hero-title">LEADING OVERNIGHT DELIVERY &<br/>SHIPPING COMPANY</h1>
+            <h1 className="hero-title">Leading Overnight Delivery &<br/>Shipping Company</h1>
           </div>
 
           {/* Action Tabs and Card */}

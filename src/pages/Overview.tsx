@@ -265,7 +265,7 @@ const Overview: React.FC<OverviewProps> = ({ onNavigate }) => {
                     </span>
                   </div>
                   {result.status === 'Delivered' && result.deliveredTime && (
-                    <div className="result-sign-time">Delivered time: {result.deliveredTime.toLocaleString()}</div>
+                    <div className="result-sign-time">Delivered Time: {result.deliveredTime.toLocaleString('en-US', { month: '2-digit', day: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit', hour12: true, timeZone: 'America/Chicago' })} CST</div>
                   )}
                 </div>
                 <div className="result-route">

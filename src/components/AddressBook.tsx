@@ -409,16 +409,16 @@ const AddressBook: React.FC<AddressBookProps> = ({
                   onChange={handleSelectAll}
                 />
               </th>
-              <th>QUICKCODE</th>
-              <th>NAME</th>
-              <th>PHONE</th>
-              <th>COMPANY</th>
-              <th>ADDRESS</th>
-              <th>CITY</th>
-              <th>STATE</th>
-              <th>COUNTRY</th>
-              <th>ZIP</th>
-              <th>ACTIONS</th>
+              <th>Quickcode</th>
+              <th>Name</th>
+              <th>Phone</th>
+              <th>Company</th>
+              <th>Address</th>
+              <th>City</th>
+              <th>State</th>
+              <th>Country</th>
+              <th>Zip</th>
+              <th>Actions</th>
             </tr>
           </thead>
           <tbody>
@@ -518,7 +518,7 @@ const AddressBook: React.FC<AddressBookProps> = ({
             <div className="dialog-body">
               <div className="form-row">
                 <div className="form-group">
-                  <label>To quick code *</label>
+                  <label>To quick code <span className="required-star">*</span></label>
                   <input
                     type="text"
                     value={formData.quickCode || ''}
@@ -527,7 +527,7 @@ const AddressBook: React.FC<AddressBookProps> = ({
                   />
                 </div>
                 <div className="form-group">
-                  <label>Name *</label>
+                  <label>Name <span className="required-star">*</span></label>
                   <input
                     type="text"
                     value={formData.recipientName || ''}
@@ -538,7 +538,7 @@ const AddressBook: React.FC<AddressBookProps> = ({
               </div>
               <div className="form-row">
                 <div className="form-group">
-                  <label>Phone *</label>
+                  <label>Phone <span className="required-star">*</span></label>
                   <input
                     type="tel"
                     value={formData.phone || ''}
@@ -547,7 +547,7 @@ const AddressBook: React.FC<AddressBookProps> = ({
                   />
                 </div>
                 <div className="form-group">
-                  <label>Address 1 *</label>
+                  <label>Address 1 <span className="required-star">*</span></label>
                   <input
                     type="text"
                     value={formData.addressLine1 || ''}
@@ -558,7 +558,7 @@ const AddressBook: React.FC<AddressBookProps> = ({
               </div>
               <div className="form-row">
                 <div className="form-group">
-                  <label>City *</label>
+                  <label>City <span className="required-star">*</span></label>
                   <input
                     type="text"
                     value={formData.city || ''}
@@ -588,7 +588,7 @@ const AddressBook: React.FC<AddressBookProps> = ({
                   />
                 </div>
                 <div className="form-group">
-                  <label>Country *</label>
+                  <label>Country <span className="required-star">*</span></label>
                   <input
                     type="text"
                     value={formData.country || ''}
@@ -599,7 +599,7 @@ const AddressBook: React.FC<AddressBookProps> = ({
               </div>
               <div className="form-row">
                 <div className="form-group">
-                  <label>Zip *</label>
+                  <label>Zip <span className="required-star">*</span></label>
                   <input
                     type="text"
                     value={formData.postalCode || ''}
@@ -619,7 +619,7 @@ const AddressBook: React.FC<AddressBookProps> = ({
               </div>
               <div className="form-row">
                 <div className="form-group">
-                  <label>State *</label>
+                  <label>State <span className="required-star">*</span></label>
                   <input
                     type="text"
                     value={formData.state || ''}

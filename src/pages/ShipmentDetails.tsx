@@ -13,8 +13,8 @@ const ShipmentDetails: React.FC = () => {
     serviceType: 'LSO Ground™',
     airbillNo: 'QY326068',
     trackingStatus: 'Delivered',
-    deliveryDate: '2025-12-16 19:25',
-    createTime: '2025-12-16 19:25 CST',
+    deliveryDate: '12/16/2025 07:25 PM',
+    createTime: '12/16/2025 07:25 PM CST',
     billingRef: 'REF123456',
     length: '12 in',
     width: '8 in',
@@ -42,7 +42,7 @@ const ShipmentDetails: React.FC = () => {
       { status: 'Data Transmitted', date: '01/08/2025 06:28 PM', location: 'NEW YORK' },
       { status: 'Picked Up', date: '01/08/2025 11:20 PM', location: 'NEW YORK' },
       { status: 'Inbound scan at destination', date: '01/09/2025 12:15 AM', location: 'LOS ANGELES' },
-      { status: 'Delivered', date: '2025-12-16 19:25', location: 'LOS ANGELES' }
+      { status: 'Delivered', date: '12/16/2025 07:25 PM', location: 'LOS ANGELES' }
     ]
   };
 
@@ -94,27 +94,27 @@ const ShipmentDetails: React.FC = () => {
               <h3 className="card-title">Shipment Information</h3>
               <div className="info-grid">
                 <div className="info-row">
-                  <span className="info-label">CREATE TIME</span>
+                  <span className="info-label">Create Time</span>
                   <span className="info-value">{shipmentData.createTime}</span>
                 </div>
                 <div className="info-row">
-                  <span className="info-label">TRACKING STATUS</span>
+                  <span className="info-label">Tracking Status</span>
                   <span className="info-value">{shipmentData.trackingStatus}</span>
                 </div>
                 <div className="info-row">
-                  <span className="info-label">SERVICE TYPE</span>
+                  <span className="info-label">Service Type</span>
                   <span className="info-value">{shipmentData.serviceType}</span>
                 </div>
                 <div className="info-row">
-                  <span className="info-label">BILLING REF</span>
+                  <span className="info-label">Billing Ref</span>
                   <span className="info-value">{shipmentData.billingRef}</span>
                 </div>
                 <div className="info-row">
-                  <span className="info-label">WEIGHT</span>
+                  <span className="info-label">Weight</span>
                   <span className="info-value">{shipmentData.weight}</span>
                 </div>
                 <div className="info-row">
-                  <span className="info-label">DIMENSIONS</span>
+                  <span className="info-label">Dimensions</span>
                   <span className="info-value">{shipmentData.length} × {shipmentData.width} × {shipmentData.height}</span>
                 </div>
               </div>
@@ -151,11 +151,11 @@ const ShipmentDetails: React.FC = () => {
               <h3 className="card-title">Delivery Info</h3>
               <div className="info-grid">
                 <div className="info-row">
-                  <span className="info-label">DELIVERY DATE</span>
+                  <span className="info-label">Delivery Date</span>
                   <span className="info-value">{shipmentData.deliveryDate}</span>
                 </div>
                 <div className="info-row">
-                  <span className="info-label">SIGNED BY</span>
+                  <span className="info-label">Signed By</span>
                   <span className="info-value">{shipmentData.signedBy}</span>
                 </div>
               </div>

@@ -15,10 +15,10 @@ const NavigationBar: React.FC<NavigationBarProps> = ({
   const [showUserDropdown, setShowUserDropdown] = useState(false);
 
   const menuItems: MenuItem[] = [
-    { id: 'shipping', label: 'SHIPPING', href: '/shipping' },
-    { id: 'services', label: 'SERVICES', href: '/services' },
-    { id: 'tracking', label: 'TRACKING', href: '/tracking' },
-    { id: 'about', label: 'ABOUT US', href: '/about' },
+    { id: 'shipping', label: 'Shipping', href: '/shipping' },
+    { id: 'services', label: 'Services', href: '/services' },
+    { id: 'tracking', label: 'Tracking', href: '/tracking' },
+    { id: 'about', label: 'About Us', href: '/about' },
   ];
 
   return (
@@ -93,13 +93,13 @@ const NavigationBar: React.FC<NavigationBarProps> = ({
                           />
                           <h3 className="content-title">Lone Star Overnight Announces Annual GRI And Peak Surcharge 2023</h3>
                           <a href="/learn-more" className="content-link">
-                            FIND OUT MORE →
+                            Find Out More →
                           </a>
                         </div>
                       </div>
                     </div>
                     <div className="mega-menu-footer">
-                      <span>TRY SEARCH BY WHERE YOU PLAN TO MAKE YOUR SHIPMENTS</span>
+                      <span>Try Search By Where You Plan To Make Your Shipments</span>
                       <span className="footer-arrow">→</span>
                     </div>
                   </div>

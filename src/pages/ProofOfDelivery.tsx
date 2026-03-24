@@ -32,7 +32,7 @@ const ProofOfDelivery: React.FC = () => {
       airbillNo: `Z${100 + i}D0V${i}`,
       trackingStatus: 'Delivered',
       serviceType: serviceTypes[i % serviceTypes.length],
-      deliveryDate: `02/${String(Math.floor(Math.random() * 28) + 1).padStart(2, '0')}/2026`,
+      deliveryDate: `02/${String(Math.floor(Math.random() * 28) + 1).padStart(2, '0')}/2026 ${String(Math.floor(Math.random() * 12) + 1).padStart(2, '0')}:${String(Math.floor(Math.random() * 60)).padStart(2, '0')} ${Math.random() > 0.5 ? 'AM' : 'PM'}`,
       deliveryAddress: addresses[i % addresses.length],
       signedBy: signedByNames[i % signedByNames.length],
       signatureUrl: 'https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf',

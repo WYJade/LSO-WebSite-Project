@@ -6,7 +6,7 @@ const TopBar: React.FC = () => {
     <div className="top-bar">
       <div className="top-bar-container">
         <div className="top-bar-left">
-          <button className="ship-now-btn">SHIP WITH LSO NOW</button>
+          <button className="ship-now-btn">Ship With LSO Now</button>
         </div>
         <div className="top-bar-right">
           <a href="/alerts" className="top-bar-link">

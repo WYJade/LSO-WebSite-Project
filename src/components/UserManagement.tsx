@@ -200,6 +200,19 @@ const UserManagement: React.FC<UserManagementProps> = ({ users, onAddUser, onTog
   );
 
   const getRoleLabel = (role: UserRole) => role === UserRole.ADMIN ? 'Admin' : 'Standard User';
+
+  const formatDateTime = (date?: Date) => {
+    if (!date) return '--';
+    const m = String(date.getMonth() + 1).padStart(2, '0');
+    const d = String(date.getDate()).padStart(2, '0');
+    const y = date.getFullYear();
+    let h = date.getHours();
+    const ampm = h >= 12 ? 'PM' : 'AM';
+    h = h % 12 || 12;
+    const min = String(date.getMinutes()).padStart(2, '0');
+    return `${m}/${d}/${y} ${String(h).padStart(2, '0')}:${min} ${ampm}`;
+  };
+
   const isDisabling = confirmDialog.user?.status === UserStatus.ACTIVE;
 
   return (
@@ -245,9 +258,10 @@ const UserManagement: React.FC<UserManagementProps> = ({ users, onAddUser, onTog
                   <th>First Name</th>
                   <th>Last Name</th>
                   <th>Email Address</th>
-                  <th>Account Number</th>
+                  <th>Customer Code</th>
                   <th>Role</th>
                   <th>User Status</th>
+                  <th>Create Time</th>
                   <th>Actions</th>
                 </tr>
               </thead>
@@ -261,6 +275,7 @@ const UserManagement: React.FC<UserManagementProps> = ({ users, onAddUser, onTog
                     <td>{user.accountNumber}</td>
                     <td><span className={`role-badge ${user.role}`}>{getRoleLabel(user.role)}</span></td>
                     <td><span className={`status-badge ${user.status}`}>{user.status === UserStatus.ACTIVE ? 'Active' : 'Inactive'}</span></td>
+                    <td>{formatDateTime(user.invitedAt)}</td>
                     <td>
                       <div className="action-buttons">
                         <button className="edit-button" onClick={() => handleEditUser(user)} title="Edit user">
@@ -295,11 +310,11 @@ const UserManagement: React.FC<UserManagementProps> = ({ users, onAddUser, onTog
               </div>
               <div>
                 <h2>{COMPANY_INFO.companyName}</h2>
-                <p className="company-info-subtitle">Account #{COMPANY_INFO.accountNumber}</p>
+                <p className="company-info-subtitle">Customer Code: {COMPANY_INFO.accountNumber}</p>
               </div>
             </div>
             <div className="company-info-grid">
-              {renderReadonlyField('Account Number', COMPANY_INFO.accountNumber)}
+              {renderReadonlyField('Customer Code', COMPANY_INFO.accountNumber)}
               {renderReadonlyField('Company Name', COMPANY_INFO.companyName)}
               {renderReadonlyField('Company Phone', COMPANY_INFO.companyPhone)}
               {renderReadonlyField('Address One', COMPANY_INFO.addressOne)}

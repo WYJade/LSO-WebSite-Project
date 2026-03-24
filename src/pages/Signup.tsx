@@ -116,7 +116,7 @@ const Signup: React.FC = () => {
             <div className="signup-form">
               <div className="form-row">
                 <div className="form-col">
-                  <label>First Name*</label>
+                  <label>First Name<span className="required-star">*</span></label>
                   <input
                     type="text"
                     name="firstName"
@@ -126,7 +126,7 @@ const Signup: React.FC = () => {
                   />
                 </div>
                 <div className="form-col">
-                  <label>Last Name*</label>
+                  <label>Last Name<span className="required-star">*</span></label>
                   <input
                     type="text"
                     name="lastName"
@@ -139,7 +139,7 @@ const Signup: React.FC = () => {
 
               <div className="form-row">
                 <div className="form-col">
-                  <label>Business Name*</label>
+                  <label>Business Name<span className="required-star">*</span></label>
                   <input
                     type="text"
                     name="businessName"
@@ -149,7 +149,7 @@ const Signup: React.FC = () => {
                   />
                 </div>
                 <div className="form-col">
-                  <label>Contact Number*</label>
+                  <label>Contact Number<span className="required-star">*</span></label>
                   <input
                     type="tel"
                     name="contactNumber"
@@ -162,7 +162,7 @@ const Signup: React.FC = () => {
 
               <div className="form-row">
                 <div className="form-col">
-                  <label>Login/Username*</label>
+                  <label>Login/Username<span className="required-star">*</span></label>
                   <input
                     type="text"
                     name="username"
@@ -172,7 +172,7 @@ const Signup: React.FC = () => {
                   />
                 </div>
                 <div className="form-col">
-                  <label>Email*</label>
+                  <label>Email<span className="required-star">*</span></label>
                   <input
                     type="email"
                     name="email"
@@ -185,7 +185,7 @@ const Signup: React.FC = () => {
 
               <div className="form-row">
                 <div className="form-col">
-                  <label>Password*</label>
+                  <label>Password<span className="required-star">*</span></label>
                   <div className="password-input-group">
                     <input
                       type={showPassword ? 'text' : 'password'}
@@ -205,7 +205,7 @@ const Signup: React.FC = () => {
                   <p className="field-hint">Password must be 6-9 characters and is case-sensitive.</p>
                 </div>
                 <div className="form-col">
-                  <label>Verify Password*</label>
+                  <label>Verify Password<span className="required-star">*</span></label>
                   <div className="password-input-group">
                     <input
                       type={showVerifyPassword ? 'text' : 'password'}
@@ -227,7 +227,7 @@ const Signup: React.FC = () => {
 
               <div className="form-row">
                 <div className="form-col">
-                  <label>Country/Territory*</label>
+                  <label>Country/Territory<span className="required-star">*</span></label>
                   <select name="country" value={formData.country} onChange={handleInputChange}>
                     <option value="United States">United States</option>
                     <option value="Canada">Canada</option>
@@ -235,7 +235,7 @@ const Signup: React.FC = () => {
                   </select>
                 </div>
                 <div className="form-col">
-                  <label>Address*</label>
+                  <label>Address<span className="required-star">*</span></label>
                   <input
                     type="text"
                     name="address"
@@ -258,7 +258,7 @@ const Signup: React.FC = () => {
                   />
                 </div>
                 <div className="form-col-third">
-                  <label>City*</label>
+                  <label>City<span className="required-star">*</span></label>
                   <input
                     type="text"
                     name="city"
@@ -268,7 +268,7 @@ const Signup: React.FC = () => {
                   />
                 </div>
                 <div className="form-col-third">
-                  <label>State*</label>
+                  <label>State<span className="required-star">*</span></label>
                   <select name="state" value={formData.state} onChange={handleInputChange}>
                     <option value="">State</option>
                     <option value="CA">California</option>
@@ -277,7 +277,7 @@ const Signup: React.FC = () => {
                   </select>
                 </div>
                 <div className="form-col-third">
-                  <label>Zip*</label>
+                  <label>Zip<span className="required-star">*</span></label>
                   <input
                     type="text"
                     name="zip"
@@ -290,7 +290,7 @@ const Signup: React.FC = () => {
 
               <div className="form-row">
                 <div className="form-col">
-                  <label>No. of packages you plan to ship a day*</label>
+                  <label>No. of packages you plan to ship a day<span className="required-star">*</span></label>
                   <select name="packagesPerDay" value={formData.packagesPerDay} onChange={handleInputChange}>
                     <option value="">Please select</option>
                     <option value="1-10">1-10</option>
@@ -313,7 +313,7 @@ const Signup: React.FC = () => {
 
               <div className="form-row">
                 <div className="form-col-full">
-                  <label>How did you hear about LSO?*</label>
+                  <label>How did you hear about LSO?<span className="required-star">*</span></label>
                   <select name="hearAbout" value={formData.hearAbout} onChange={handleInputChange}>
                     <option value="">Please select</option>
                     <option value="search">Search Engine</option>
@@ -351,7 +351,7 @@ const Signup: React.FC = () => {
 
                 <div className="form-row">
                   <div className="form-col">
-                    <label>First Name*</label>
+                    <label>First Name<span className="required-star">*</span></label>
                     <input
                       type="text"
                       name="cardFirstName"
@@ -361,7 +361,7 @@ const Signup: React.FC = () => {
                     />
                   </div>
                   <div className="form-col">
-                    <label>Last Name*</label>
+                    <label>Last Name<span className="required-star">*</span></label>
                     <input
                       type="text"
                       name="cardLastName"
@@ -374,7 +374,7 @@ const Signup: React.FC = () => {
 
                 <div className="form-row">
                   <div className="form-col">
-                    <label>Card Billing Address*</label>
+                    <label>Card Billing Address<span className="required-star">*</span></label>
                     <input
                       type="text"
                       name="cardBillingAddress"
@@ -384,7 +384,7 @@ const Signup: React.FC = () => {
                     />
                   </div>
                   <div className="form-col">
-                    <label>Card Billing Zipcode*</label>
+                    <label>Card Billing Zipcode<span className="required-star">*</span></label>
                     <input
                       type="text"
                       name="cardBillingZip"
@@ -397,7 +397,7 @@ const Signup: React.FC = () => {
 
                 <div className="form-row">
                   <div className="form-col">
-                    <label>Card Number*</label>
+                    <label>Card Number<span className="required-star">*</span></label>
                     <input
                       type="text"
                       name="cardNumber"
@@ -407,7 +407,7 @@ const Signup: React.FC = () => {
                     />
                   </div>
                   <div className="form-col">
-                    <label>Card Expiration Date*</label>
+                    <label>Card Expiration Date<span className="required-star">*</span></label>
                     <input
                       type="text"
                       name="cardExpiration"
@@ -420,7 +420,7 @@ const Signup: React.FC = () => {
 
                 <div className="form-row">
                   <div className="form-col">
-                    <label>Phone Number*</label>
+                    <label>Phone Number<span className="required-star">*</span></label>
                     <input
                       type="tel"
                       name="phoneNumber"
@@ -430,7 +430,7 @@ const Signup: React.FC = () => {
                     />
                   </div>
                   <div className="form-col">
-                    <label>Email Address*</label>
+                    <label>Email Address<span className="required-star">*</span></label>
                     <input
                       type="email"
                       name="cardEmail"

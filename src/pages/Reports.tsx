@@ -89,9 +89,12 @@ const Reports: React.FC = () => {
     const month = String(date.getMonth() + 1).padStart(2, '0');
     const day = String(date.getDate()).padStart(2, '0');
     const year = date.getFullYear();
-    const hours = String(date.getHours()).padStart(2, '0');
+    let hours = date.getHours();
+    const ampm = hours >= 12 ? 'PM' : 'AM';
+    hours = hours % 12;
+    if (hours === 0) hours = 12;
     const minutes = String(date.getMinutes()).padStart(2, '0');
-    return `${month}/${day}/${year} ${hours}:${minutes} CST`;
+    return `${month}/${day}/${year} ${String(hours).padStart(2, '0')}:${minutes} ${ampm} CST`;
   };
 
   const handleClearDate = () => {
@@ -173,9 +176,9 @@ const Reports: React.FC = () => {
     console.log('Exporting report as CSV...');
     const button = document.querySelector('.export-csv-btn');
     if (button) {
-      button.textContent = 'EXPORTING...';
+      button.textContent = 'Exporting...';
       setTimeout(() => {
-        button.textContent = 'EXPORT CSV';
+        button.textContent = 'Export CSV';
         showToast(`${reportData.length} records exported to CSV successfully.`);
       }, 1500);
     }
@@ -416,7 +419,7 @@ const Reports: React.FC = () => {
 
           {reportData.length === 0 ? (
             <div className="report-no-results">
-              <p>NO REPORT FOUND ON THE SPECIFIED DATE</p>
+              <p>No Report Found On The Specified Date</p>
             </div>
           ) : (
             <div className="report-table-container">
@@ -492,8 +495,8 @@ const Reports: React.FC = () => {
               ← Back to Reports
             </button>
             <div className="results-action-buttons">
-              <button className="print-report-btn" onClick={handlePrint}>PRINT</button>
-              <button className="export-csv-btn" onClick={handleExportCSV}>EXPORT CSV</button>
+              <button className="print-report-btn" onClick={handlePrint}>Print</button>
+              <button className="export-csv-btn" onClick={handleExportCSV}>Export CSV</button>
             </div>
           </div>
         </div>

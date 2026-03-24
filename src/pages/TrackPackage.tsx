@@ -65,7 +65,7 @@ const TrackPackage: React.FC = () => {
     const mockResults: TrackingResult[] = trackingNumbers.map((num, i) => ({
       trackingNumber: num,
       serviceType: serviceTypes[i % serviceTypes.length],
-      deliveredTime: `2024/2/${String(Math.floor(Math.random() * 28) + 1).padStart(2, '0')} ${String(Math.floor(Math.random() * 24)).padStart(2, '0')}:${String(Math.floor(Math.random() * 60)).padStart(2, '0')}:00`,
+      deliveredTime: `${String(Math.floor(Math.random() * 12) + 1).padStart(2, '0')}/${String(Math.floor(Math.random() * 28) + 1).padStart(2, '0')}/2024 ${String(Math.floor(Math.random() * 12) + 1).padStart(2, '0')}:${String(Math.floor(Math.random() * 60)).padStart(2, '0')} ${Math.random() > 0.5 ? 'AM' : 'PM'}`,
       fromCity: cities[i % cities.length],
       toCity: cities[(i + 2) % cities.length],
       sender: names[i % names.length],
@@ -327,7 +327,7 @@ const TrackPackage: React.FC = () => {
                 </div>
                 <div className="dialog-body">
                   <div className="filter-section">
-                    <h4 className="filter-section-title">STATUS</h4>
+                    <h4 className="filter-section-title">Status</h4>
                     <div className="filter-options">
                       {['Created', 'Picked Up', 'Inbound scan at destination', 'Out For Delivery', 'Delivered', 'Return to Shipper', 'Discarded', 'Lost', 'Delay Exception'].map(status => (
                         <label key={status} className="filter-checkbox">
@@ -343,7 +343,7 @@ const TrackPackage: React.FC = () => {
                   </div>
                   
                   <div className="filter-section">
-                    <h4 className="filter-section-title">SERVICE TYPE</h4>
+                    <h4 className="filter-section-title">Service Type</h4>
                     <div className="filter-options">
                       {['LSO Priority Next Day™', 'LSO Early Next Day™', 'LSO Economy Next Day™', 'LSO Ground™', 'LSO 2nd Day™', 'LSO E-Commerce Delivery™'].map(serviceType => (
                         <label key={serviceType} className="filter-checkbox">

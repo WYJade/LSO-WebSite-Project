@@ -476,9 +476,9 @@ const CalculateRates: React.FC = () => {
               {showRates ? (
                 <div className="rates-display">
                   <div className="rates-header-row">
-                    <div className="rate-col">RATE</div>
-                    <div className="type-col">TYPE</div>
-                    <div className="charge-col">TOTAL CHARGE</div>
+                    <div className="rate-col">Rate</div>
+                    <div className="type-col">Type</div>
+                    <div className="charge-col">Total Charge</div>
                   </div>
 
                   {rates.map((rate, index) => (

@@ -275,7 +275,6 @@
   font-size: 11px;
   font-weight: 700;
   color: #6b7280;
-  text-transform: uppercase;
   letter-spacing: 1px;
   border: 1px solid #e5e7eb;
 }
@@ -555,7 +554,6 @@
 .help-label-calc {
   font-size: 12px;
   color: #9ca3af;
-  text-transform: uppercase;
   letter-spacing: 1px;
   margin: 0 0 15px 0;
   font-weight: 600;
