@@ -239,17 +239,65 @@
   color: #003087;
 }
 
+.actions-col {
+  text-align: center;
+  width: 70px;
+}
+
+.address-table th.actions-col {
+  text-align: center;
+}
+
+.address-table td.actions-col {
+  text-align: center;
+}
+
 .edit-icon-btn {
   background: none;
-  border: none;
-  font-size: 1.2rem;
+  border: 1px solid #d0d0d0;
+  border-radius: 4px;
+  padding: 5px 8px;
   cursor: pointer;
-  padding: 0.25rem 0.5rem;
-  transition: transform 0.2s;
+  transition: all 0.2s;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .edit-icon-btn:hover {
-  transform: scale(1.2);
+  border-color: #0d6eaa;
+  background: #f0f6fc;
+  transform: scale(1.05);
+}
+
+/* Form validation */
+.ab-input-error {
+  border-color: #dc2626 !important;
+  background: #fef2f2 !important;
+}
+
+.ab-field-error {
+  font-size: 0.8rem;
+  color: #dc2626;
+  margin-top: 2px;
+}
+
+.ab-select {
+  padding: 0.7rem;
+  border: 1px solid #ced4da;
+  border-radius: 4px;
+  font-size: 0.95rem;
+  transition: border-color 0.3s;
+  background: #fff;
+  width: 100%;
+  box-sizing: border-box;
+  font-family: inherit;
+}
+
+.ab-select:focus {
+  outline: none;
+  border-color: #003087;
+  box-shadow: 0 0 0 2px rgba(0, 48, 135, 0.1);
 }
 
 .pagination-controls {
@@ -384,7 +432,14 @@
 }
 
 .address-form-dialog {
-  width: 700px;
+  width: 900px;
+}
+
+.form-row-3col {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 1rem;
+  margin-bottom: 1rem;
 }
 
 .import-dialog,
@@ -683,6 +738,10 @@
   }
 
   .form-row {
+    grid-template-columns: 1fr;
+  }
+
+  .form-row-3col {
     grid-template-columns: 1fr;
   }
 

@@ -139,6 +139,7 @@ const NavigationBar: React.FC<NavigationBarProps> = ({
             
             {showUserDropdown && (
               <div className="user-dropdown-menu">
+                <div className="user-dropdown-topline"></div>
                 <div className="user-dropdown-items">
                   <a href="/dashboard/ship-with-account" className="user-dropdown-item">
                     Create Shipment
@@ -146,14 +147,20 @@ const NavigationBar: React.FC<NavigationBarProps> = ({
                   <a href="/dashboard/schedule-pickup" className="user-dropdown-item">
                     Schedule Pickup
                   </a>
+                  <a href="/dashboard/calculate-rates" className="user-dropdown-item">
+                    Shipping Rate &amp; Transit Time
+                  </a>
                   <a href="/dashboard/preferences" className="user-dropdown-item">
                     My Profile
                   </a>
-                  <a href="/dashboard/overview" className="user-dropdown-item">
+                  <a href="/dashboard/tracking" className="user-dropdown-item">
                     View Account
                   </a>
                 </div>
                 <div className="user-dropdown-footer">
+                  <a href="/dashboard/tracking" className="user-dropdown-manage">
+                    Manage your account
+                  </a>
                   <a href="/" className="user-dropdown-signout">
                     Sign out
                   </a>

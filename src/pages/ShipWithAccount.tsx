@@ -76,6 +76,19 @@ const ShipWithAccount: React.FC = () => {
   const [promotionCode, setPromotionCode] = useState('');
   const [thirdPartyBilling, setThirdPartyBilling] = useState('');
   const [lsoPickup, setLsoPickup] = useState(false);
+  const [precisionHint, setPrecisionHint] = useState('');
+
+  // Limit numeric input to 3 decimal places, auto-truncate excess
+  const limitPrecision = (value: string, setter: (v: string) => void) => {
+    if (value === '' || value === '.') { setter(value); return; }
+    const match = value.match(/^(\d*\.?\d{0,3})/);
+    const truncated = match ? match[1] : value;
+    if (truncated !== value) {
+      setPrecisionHint('Up to 3 decimal places allowed. Extra digits have been removed.');
+      setTimeout(() => setPrecisionHint(''), 3000);
+    }
+    setter(truncated);
+  };
 
   // Envelope logic: auto-fill and disable weight/dimensions
   useEffect(() => {
@@ -114,12 +127,30 @@ const ShipWithAccount: React.FC = () => {
     return { service: service || 'LSO Ground™', basePrice, serviceCharge, insuranceCharge, fuelSurcharge, totalCharge };
   };
 
+  // LSO service area: Texas, Oklahoma, Louisiana, Arkansas, New Mexico and parts of surrounding states
+  const lsoServiceZipPrefixes = [
+    '700','701','702','703','704','705','706','707','708','709','710','711','712','713','714',
+    '716','717','718','719','720','721','722','723','724','725','726','727','728','729',
+    '730','731','733','734','735','736','737','738','739','740','741','743','744','745','746','747','748','749',
+    '750','751','752','753','754','755','756','757','758','759','760','761','762','763','764','765','766','767','768','769',
+    '770','771','772','773','774','775','776','777','778','779','780','781','782','783','784','785','786','787','788','789',
+    '790','791','792','793','794','795','796','797','798','799',
+    '870','871','872','873','874','875','876','877','878','879',
+    '880','881','882','883','884','885',
+  ];
+  const isZipInServiceArea = (zip: string) => {
+    if (!zip || zip.length < 3) return true; // don't validate incomplete zips
+    return lsoServiceZipPrefixes.includes(zip.substring(0, 3));
+  };
+
   const validateStep1 = () => {
     const errors: Record<string, string> = {};
     if (!originatingZip.trim()) errors.originatingZip = 'Originating Zip is required';
     else if (!/^\d{5}$/.test(originatingZip.trim())) errors.originatingZip = 'Please enter a valid 5-digit zip code';
+    else if (!isZipInServiceArea(originatingZip.trim())) errors.originatingZip = 'LSO does not offer service to that Originating Zip';
     if (!destinationZip.trim()) errors.destinationZip = 'Destination Zip is required';
     else if (!/^\d{5}$/.test(destinationZip.trim())) errors.destinationZip = 'Please enter a valid 5-digit zip code';
+    else if (!isZipInServiceArea(destinationZip.trim())) errors.destinationZip = 'LSO does not offer service to that Destination Zip';
     if (!service) errors.service = 'Service is required';
     if (!weight.trim()) errors.weight = 'Weight is required';
     else if (parseFloat(weight) <= 0) errors.weight = 'Weight must be greater than 0';
@@ -228,121 +259,132 @@ const ShipWithAccount: React.FC = () => {
 
             {/* ===== STEP 1: Check Service Area ===== */}
             {currentStep === 1 && (
-              <div className="step-form">
-                <div className="form-header-row">
-                  <h2>Check Service Area</h2>
-                  <span className="required-notice"><span className="required-star">*</span>required fields</span>
-                </div>
-                <div className="form-row-2col">
-                  <div className="form-field">
-                    <label>Originating Zip<span className="required-star">*</span></label>
-                    <input type="text" value={originatingZip} onChange={(e) => { setOriginatingZip(e.target.value); setStep1Errors(p => ({...p, originatingZip: ''})); }} maxLength={5} className={step1Errors.originatingZip ? 'input-error' : ''} />
-                    {step1Errors.originatingZip && <span className="field-error">{step1Errors.originatingZip}</span>}
+              <div className={`step-form ${showSummary ? 'step1-with-summary' : ''}`}>
+                <div className="step1-form-area">
+                  <div className="form-header-row">
+                    <h2>Check Service Area</h2>
+                    <span className="required-notice"><span className="required-star">*</span>required fields</span>
                   </div>
-                  <div className="form-field">
-                    <div className="label-with-action">
-                      <label>To Quick Code</label>
-                      <button type="button" className="refresh-btn" onClick={() => {}}>🔄 Refresh</button>
+                  <div className="form-row-4col">
+                    <div className="form-field">
+                      <label>Originating Zip<span className="required-star">*</span></label>
+                      <input type="text" value={originatingZip} onChange={(e) => { setOriginatingZip(e.target.value); setStep1Errors(p => ({...p, originatingZip: ''})); }} maxLength={5} className={step1Errors.originatingZip ? 'input-error' : ''} />
+                      {step1Errors.originatingZip && <span className="field-error">{step1Errors.originatingZip}</span>}
                     </div>
-                    <select value={toQuickCode} onChange={(e) => setToQuickCode(e.target.value)} className="form-select-field">
-                      <option value="">Select or type to add new Quick Code</option>
-                      <option value="HOME01">HOME01</option>
-                      <option value="OFFICE">OFFICE</option>
-                    </select>
-                  </div>
-                </div>
-                <div className="form-row-2col">
-                  <div className="form-field">
-                    <label>Destination Zip<span className="required-star">*</span></label>
-                    <input type="text" value={destinationZip} onChange={(e) => { setDestinationZip(e.target.value); setStep1Errors(p => ({...p, destinationZip: ''})); }} maxLength={5} className={step1Errors.destinationZip ? 'input-error' : ''} />
-                    {step1Errors.destinationZip && <span className="field-error">{step1Errors.destinationZip}</span>}
-                  </div>
-                  <div className="form-field">
-                    <label>Country<span className="required-star">*</span></label>
-                    <select value={country} onChange={(e) => setCountry(e.target.value)} className="form-select-field">
-                      <option value="Mexico">Mexico</option>
-                      <option value="United States">United States</option>
-                    </select>
-                  </div>
-                </div>
-                <div className="service-box">
-                  <div className="form-field">
-                    <label>Service selected<span className="required-star">*</span></label>
-                    <select value={service} onChange={(e) => { setService(e.target.value); setStep1Errors(p => ({...p, service: ''})); }} className={`form-select-field ${step1Errors.service ? 'input-error' : ''}`}>
-                      <option value="">Select service</option>
-                      <option value="LSO Priority Next Day™">LSO Priority Next Day™</option>
-                      <option value="LSO Early Next Day™">LSO Early Next Day™</option>
-                      <option value="LSO Economy Next Day™">LSO Economy Next Day™</option>
-                      <option value="LSO Ground™">LSO Ground™</option>
-                      <option value="LSO 2nd Day™">LSO 2nd Day™</option>
-                      <option value="LSO E-Commerce Delivery™">LSO E-Commerce Delivery™</option>
-                    </select>
-                    {step1Errors.service && <span className="field-error">{step1Errors.service}</span>}
-                  </div>
-                  <div className="service-box-footer">
-                    <label className="checkbox-inline">
-                      <input type="checkbox" checked={useSimplePricing} onChange={(e) => setUseSimplePricing(e.target.checked)} />
-                      <span>Use <a href="/calculate-rates" className="link-blue">Simple Pricing</a></span>
-                    </label>
-                    <span className="pricing-link">Go to pricing page <a href="/calculate-rates" className="link-blue">here</a></span>
-                  </div>
-                </div>
-                <div className="form-row-2col">
-                  <div className="form-field">
-                    <label>Weight<span className="required-star">*</span></label>
-                    <div className="input-with-suffix">
-                      <input type="number" value={weight} onChange={(e) => { setWeight(e.target.value); setStep1Errors(p => ({...p, weight: ''})); }} min="0" step="0.1" className={step1Errors.weight ? 'input-error' : ''} disabled={isEnvelope} />
-                      <span className="input-suffix">lbs.</span>
-                    </div>
-                    {step1Errors.weight && <span className="field-error">{step1Errors.weight}</span>}
-                  </div>
-                  <div className="form-field">
-                    <label>Dimensions<span className="required-star">*</span></label>
-                    <div className="dimension-row">
-                      <input type="number" value={dimLength} onChange={(e) => { setDimLength(e.target.value); setStep1Errors(p => ({...p, dimensions: ''})); }} min="0" className={step1Errors.dimensions ? 'input-error' : ''} disabled={isEnvelope} />
-                      <span className="dim-x">x</span>
-                      <input type="number" value={dimWidth} onChange={(e) => { setDimWidth(e.target.value); setStep1Errors(p => ({...p, dimensions: ''})); }} min="0" className={step1Errors.dimensions ? 'input-error' : ''} disabled={isEnvelope} />
-                      <span className="dim-x">x</span>
-                      <input type="number" value={dimHeight} onChange={(e) => { setDimHeight(e.target.value); setStep1Errors(p => ({...p, dimensions: ''})); }} min="0" className={step1Errors.dimensions ? 'input-error' : ''} disabled={isEnvelope} />
-                      <span className="dim-unit">in.</span>
-                    </div>
-                    {step1Errors.dimensions && <span className="field-error">{step1Errors.dimensions}</span>}
-                  </div>
-                </div>
-                <div className="envelope-row">
-                  <label className="checkbox-inline">
-                    <input type="checkbox" checked={isEnvelope} onChange={(e) => setIsEnvelope(e.target.checked)} />
-                    <span>Envelope</span>
-                  </label>
-                </div>
-                <div className="form-row-2col">
-                  <div className="form-field">
-                    <label>Declared Value<span className="required-star">*</span></label>
-                    <div className="input-with-prefix">
-                      <span className="input-prefix">$</span>
-                      <input type="number" value={declaredValue} onChange={(e) => { setDeclaredValue(e.target.value); setStep1Errors(p => ({...p, declaredValue: ''})); }} min="0" step="0.01" className={step1Errors.declaredValue ? 'input-error' : ''} />
-                    </div>
-                    {step1Errors.declaredValue && <span className="field-error">{step1Errors.declaredValue}</span>}
-                  </div>
-                  {showSummary && (
-                    <div className="summary-panel">
-                      <div className="summary-title">Summary</div>
-                      <div className="summary-body">
-                        <div className="summary-row"><span>Service selected</span><span className="summary-val">{summary.service}</span></div>
-                        <div className="summary-row"><span>Estimated base price</span><span className="summary-val">${summary.basePrice.toFixed(2)}</span></div>
-                        <div className="summary-row"><span>Estimated service charge</span><span className="summary-val">${summary.serviceCharge.toFixed(2)}</span></div>
-                        <div className="summary-row"><span>Estimated additional insurance charge</span><span className="summary-val">${summary.insuranceCharge.toFixed(2)}</span></div>
-                        <div className="summary-row"><span>Estimated fuel surcharge</span><span className="summary-val">${summary.fuelSurcharge.toFixed(2)}</span></div>
-                        <div className="summary-row summary-total"><span>Estimated total charge</span><span className="summary-val">${summary.totalCharge.toFixed(2)}</span></div>
+                    <div className="form-field">
+                      <div className="label-with-action">
+                        <label>To Quick Code</label>
+                        <button type="button" className="refresh-btn" onClick={() => {}}>🔄 Refresh</button>
                       </div>
+                      <select value={toQuickCode} onChange={(e) => setToQuickCode(e.target.value)} className="form-select-field">
+                        <option value="">Select Quick Code</option>
+                        <option value="HOME01">HOME01</option>
+                        <option value="OFFICE">OFFICE</option>
+                      </select>
+                    </div>
+                    <div className="form-field">
+                      <label>Destination Zip<span className="required-star">*</span></label>
+                      <input type="text" value={destinationZip} onChange={(e) => { setDestinationZip(e.target.value); setStep1Errors(p => ({...p, destinationZip: ''})); }} maxLength={5} className={step1Errors.destinationZip ? 'input-error' : ''} />
+                      {step1Errors.destinationZip && <span className="field-error">{step1Errors.destinationZip}</span>}
+                    </div>
+                    <div className="form-field">
+                      <label>Country<span className="required-star">*</span></label>
+                      <select value={country} onChange={(e) => setCountry(e.target.value)} className="form-select-field">
+                        <option value="Mexico">Mexico</option>
+                        <option value="United States">United States</option>
+                      </select>
+                    </div>
+                  </div>
+                  <div className="service-box">
+                    <div className="form-field">
+                      <label>Service selected<span className="required-star">*</span></label>
+                      <select value={service} onChange={(e) => { setService(e.target.value); setStep1Errors(p => ({...p, service: ''})); }} className={`form-select-field ${step1Errors.service ? 'input-error' : ''}`}>
+                        <option value="">Select service</option>
+                        <option value="LSO Priority Next Day™">LSO Priority Next Day™</option>
+                        <option value="LSO Early Next Day™">LSO Early Next Day™</option>
+                        <option value="LSO Economy Next Day™">LSO Economy Next Day™</option>
+                        <option value="LSO Ground™">LSO Ground™</option>
+                        <option value="LSO 2nd Day™">LSO 2nd Day™</option>
+                        <option value="LSO E-Commerce Delivery™">LSO E-Commerce Delivery™</option>
+                      </select>
+                      {step1Errors.service && <span className="field-error">{step1Errors.service}</span>}
+                    </div>
+                    <div className="service-box-footer">
+                      <label className="checkbox-inline">
+                        <input type="checkbox" checked={useSimplePricing} onChange={(e) => setUseSimplePricing(e.target.checked)} />
+                        <span>Use <a href="/calculate-rates" className="link-blue">Simple Pricing</a></span>
+                      </label>
+                      <span className="pricing-link">Go to pricing page <a href="/calculate-rates" className="link-blue">here</a></span>
+                    </div>
+                  </div>
+                  <div className="form-row-3col-wde">
+                    <div className="form-field">
+                      <label>Weight<span className="required-star">*</span></label>
+                      <div className="input-with-suffix">
+                        <input type="text" inputMode="decimal" value={weight} onChange={(e) => { limitPrecision(e.target.value, setWeight); setStep1Errors(p => ({...p, weight: ''})); }} className={step1Errors.weight ? 'input-error' : ''} disabled={isEnvelope} />
+                        <span className="input-suffix">lbs.</span>
+                      </div>
+                      {step1Errors.weight && <span className="field-error">{step1Errors.weight}</span>}
+                    </div>
+                    <div className="form-field">
+                      <label>Dimensions<span className="required-star">*</span></label>
+                      <div className="dimension-row">
+                        <input type="text" inputMode="decimal" value={dimLength} onChange={(e) => { limitPrecision(e.target.value, setDimLength); setStep1Errors(p => ({...p, dimensions: ''})); }} className={step1Errors.dimensions ? 'input-error' : ''} disabled={isEnvelope} />
+                        <span className="dim-x">x</span>
+                        <input type="text" inputMode="decimal" value={dimWidth} onChange={(e) => { limitPrecision(e.target.value, setDimWidth); setStep1Errors(p => ({...p, dimensions: ''})); }} className={step1Errors.dimensions ? 'input-error' : ''} disabled={isEnvelope} />
+                        <span className="dim-x">x</span>
+                        <input type="text" inputMode="decimal" value={dimHeight} onChange={(e) => { limitPrecision(e.target.value, setDimHeight); setStep1Errors(p => ({...p, dimensions: ''})); }} className={step1Errors.dimensions ? 'input-error' : ''} disabled={isEnvelope} />
+                        <span className="dim-unit">in.</span>
+                      </div>
+                      {step1Errors.dimensions && <span className="field-error">{step1Errors.dimensions}</span>}
+                    </div>
+                    <div className="form-field">
+                      <label>&nbsp;</label>
+                      <label className="checkbox-inline" style={{ marginTop: '8px' }}>
+                        <input type="checkbox" checked={isEnvelope} onChange={(e) => setIsEnvelope(e.target.checked)} />
+                        <span>Envelope</span>
+                      </label>
+                    </div>
+                  </div>
+                  <div className="form-row-2col">
+                    <div className="form-field">
+                      <label>Declared Value<span className="required-star">*</span></label>
+                      <div className="input-with-prefix">
+                        <span className="input-prefix">$</span>
+                        <input type="number" value={declaredValue} onChange={(e) => { setDeclaredValue(e.target.value); setStep1Errors(p => ({...p, declaredValue: ''})); }} min="0" step="0.01" className={step1Errors.declaredValue ? 'input-error' : ''} />
+                      </div>
+                      {step1Errors.declaredValue && <span className="field-error">{step1Errors.declaredValue}</span>}
+                    </div>
+                  </div>
+                  {precisionHint && (
+                    <div className="precision-hint">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="#0d6eaa" strokeWidth="2"/><path d="M12 8v4M12 16h.01" stroke="#0d6eaa" strokeWidth="2" strokeLinecap="round"/></svg>
+                      {precisionHint}
                     </div>
                   )}
                 </div>
-                <div className="step-actions">
-                  <button type="button" className="btn-cancel" onClick={handleResetForm}>Reset</button>
-                  <div className="step-actions-right">
-                    <button type="button" className="btn-outline" onClick={handleCheckRate}>Check rate</button>
-                    {showSummary && <button type="button" className="btn-primary" onClick={handleStep1Continue}>Continue</button>}
+                {showSummary && (
+                  <div className="step1-summary-side">
+                    <div className="summary-side-panel">
+                      <div className="summary-side-header">Summary</div>
+                      <div className="summary-side-body">
+                        <div className="summary-side-row"><span>Service selected</span><span className="summary-side-val">{summary.service}</span></div>
+                        <div className="summary-side-row"><span>Estimated base price</span><span className="summary-side-val">${summary.basePrice.toFixed(2)}</span></div>
+                        <div className="summary-side-row"><span>Estimated service charge</span><span className="summary-side-val">${summary.serviceCharge.toFixed(2)}</span></div>
+                        <div className="summary-side-row"><span>Estimated additional insurance charge</span><span className="summary-side-val">${summary.insuranceCharge.toFixed(2)}</span></div>
+                        <div className="summary-side-row"><span>Estimated fuel surcharge</span><span className="summary-side-val">${summary.fuelSurcharge.toFixed(2)}</span></div>
+                        <div className="summary-side-row summary-side-total"><span>Estimated total charge</span><span className="summary-side-val">${summary.totalCharge.toFixed(2)}</span></div>
+                      </div>
+                    </div>
+                  </div>
+                )}
+                <div className="step1-actions-full">
+                  <div className="step-actions">
+                    <button type="button" className="btn-cancel" onClick={handleResetForm}>Reset</button>
+                    <div className="step-actions-right">
+                      <button type="button" className="btn-outline" onClick={handleCheckRate}>Check rate</button>
+                      {showSummary && <button type="button" className="btn-primary" onClick={handleStep1Continue}>Continue</button>}
+                    </div>
                   </div>
                 </div>
               </div>
@@ -549,7 +591,7 @@ const ShipWithAccount: React.FC = () => {
                       <div className="form-field">
                         <label>Weight<span className="required-star">*</span></label>
                         <div className="input-with-suffix">
-                          <input type="number" value={toWeight} onChange={(e) => { setToWeight(e.target.value); setStep3Errors(p => ({...p, toWeight: ''})); }} min="0" step="0.1" className={step3Errors.toWeight ? 'input-error' : ''} disabled={toEnvelope} />
+                          <input type="text" inputMode="decimal" value={toWeight} onChange={(e) => { limitPrecision(e.target.value, setToWeight); setStep3Errors(p => ({...p, toWeight: ''})); }} className={step3Errors.toWeight ? 'input-error' : ''} disabled={toEnvelope} />
                           <span className="input-suffix">lbs.</span>
                         </div>
                         {step3Errors.toWeight && <span className="field-error">{step3Errors.toWeight}</span>}
@@ -557,11 +599,11 @@ const ShipWithAccount: React.FC = () => {
                       <div className="form-field">
                         <label>Dimensions<span className="required-star">*</span></label>
                         <div className="dimension-row">
-                          <input type="number" value={toDimLength} onChange={(e) => { setToDimLength(e.target.value); setStep3Errors(p => ({...p, toDimensions: ''})); }} min="0" className={step3Errors.toDimensions ? 'input-error' : ''} disabled={toEnvelope} />
+                          <input type="text" inputMode="decimal" value={toDimLength} onChange={(e) => { limitPrecision(e.target.value, setToDimLength); setStep3Errors(p => ({...p, toDimensions: ''})); }} className={step3Errors.toDimensions ? 'input-error' : ''} disabled={toEnvelope} />
                           <span className="dim-x">x</span>
-                          <input type="number" value={toDimWidth} onChange={(e) => { setToDimWidth(e.target.value); setStep3Errors(p => ({...p, toDimensions: ''})); }} min="0" className={step3Errors.toDimensions ? 'input-error' : ''} disabled={toEnvelope} />
+                          <input type="text" inputMode="decimal" value={toDimWidth} onChange={(e) => { limitPrecision(e.target.value, setToDimWidth); setStep3Errors(p => ({...p, toDimensions: ''})); }} className={step3Errors.toDimensions ? 'input-error' : ''} disabled={toEnvelope} />
                           <span className="dim-x">x</span>
-                          <input type="number" value={toDimHeight} onChange={(e) => { setToDimHeight(e.target.value); setStep3Errors(p => ({...p, toDimensions: ''})); }} min="0" className={step3Errors.toDimensions ? 'input-error' : ''} disabled={toEnvelope} />
+                          <input type="text" inputMode="decimal" value={toDimHeight} onChange={(e) => { limitPrecision(e.target.value, setToDimHeight); setStep3Errors(p => ({...p, toDimensions: ''})); }} className={step3Errors.toDimensions ? 'input-error' : ''} disabled={toEnvelope} />
                           <span className="dim-unit">in.</span>
                         </div>
                         {step3Errors.toDimensions && <span className="field-error">{step3Errors.toDimensions}</span>}
