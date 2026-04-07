@@ -1,0 +1,30 @@
+.sv-page { max-width: 900px; margin: 0 auto; }
+.sv-back-btn { background: none; border: none; color: #0d6eaa; font-size: 14px; font-weight: 500; cursor: pointer; padding: 0; margin-bottom: 16px; }
+.sv-back-btn:hover { text-decoration: underline; }
+.sv-header { display: flex; align-items: center; gap: 16px; margin-bottom: 24px; }
+.sv-header h1 { font-size: 22px; font-weight: 700; color: #1a2b4a; margin: 0; }
+.sv-status { padding: 4px 12px; border-radius: 4px; font-size: 12px; font-weight: 700; letter-spacing: 0.3px; }
+.sv-delivered { background: #dcfce7; color: #16a34a; }
+.sv-transit { background: #dbeafe; color: #2563eb; }
+.sv-pending { background: #fef3c7; color: #d97706; }
+.sv-cancelled { background: #fee2e2; color: #dc2626; }
+.sv-not-found { text-align: center; padding: 60px 0; }
+.sv-not-found h2 { color: #1a2b4a; }
+.sv-not-found p { color: #666; }
+
+.sv-section { border: 1px solid #ddd; border-radius: 6px; margin-bottom: 20px; overflow: hidden; }
+.sv-section-head { padding: 14px 20px; background: #f8f9fa; border-bottom: 1px solid #e8e8e8; }
+.sv-badge { background: #0d3b66; color: #fff; font-size: 13px; font-weight: 700; padding: 4px 16px; border-radius: 12px; }
+.sv-badge-airbill { font-size: 18px; font-weight: 600; color: #1a2b4a; }
+.sv-badge-to-inline { display: inline-block; background: #0d7fa5; color: #fff; font-size: 13px; font-weight: 700; padding: 4px 16px; border-radius: 12px; margin: 12px 20px 8px; }
+.sv-details { padding: 14px 20px; }
+.sv-2col { display: grid; grid-template-columns: 1fr 1fr; gap: 0 32px; padding: 14px 20px; }
+.sv-row { display: flex; padding: 3px 0; font-size: 13px; color: #333; }
+.sv-label { font-weight: 600; color: #555; min-width: 160px; flex-shrink: 0; }
+.sv-value { color: #222; }
+.sv-actions { display: flex; justify-content: flex-end; gap: 12px; margin-top: 24px; }
+.sv-btn-outline { padding: 10px 24px; background: #fff; color: #0d3b66; border: 2px solid #0d3b66; border-radius: 4px; font-size: 14px; font-weight: 600; cursor: pointer; }
+.sv-btn-outline:hover { background: #f0f6fc; }
+.sv-btn-primary { padding: 10px 24px; background: #0d3b66; color: #fff; border: none; border-radius: 4px; font-size: 14px; font-weight: 600; cursor: pointer; }
+.sv-btn-primary:hover { background: #092a4a; }
+@media (max-width: 768px) { .sv-2col { grid-template-columns: 1fr; } }

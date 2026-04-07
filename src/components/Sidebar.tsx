@@ -39,6 +39,7 @@ const Sidebar: React.FC<SidebarProps> = ({ currentUser }) => {
       submenu: [
         { id: 'track', label: 'Track Shipments', path: '/dashboard/tracking' },
         { id: 'create', label: 'Create Shipment', path: '/dashboard/ship-with-account' },
+        { id: 'manage-shipment', label: 'Manage Shipment', path: '/dashboard/manage-shipment' },
         { id: 'schedule', label: 'Schedule Pickup', path: '/dashboard/schedule-pickup' },
         { id: 'manage', label: 'Manage Pickup', path: '/dashboard/cancel-pickup' },
         { id: 'rate', label: 'Rate', path: '/dashboard/calculate-rates' },

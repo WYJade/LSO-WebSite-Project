@@ -103,6 +103,7 @@ const AddressBook: React.FC<AddressBookProps> = ({
 
   const validateForm = (): boolean => {
     const errs: Record<string, string> = {};
+    if (!formData.quickCode?.trim()) errs.quickCode = 'Quick Code is required';
     if (!formData.recipientName?.trim()) errs.recipientName = 'Name is required';
     if (!formData.company?.trim()) errs.company = 'Company is required';
     if (!formData.phone?.trim()) errs.phone = 'Phone is required';
@@ -252,8 +253,9 @@ const AddressBook: React.FC<AddressBookProps> = ({
               {/* Row 1: Quick Code + Name + Company */}
               <div className="form-row-3col">
                 <div className="form-group">
-                  <label>Quick Code</label>
-                  <input type="text" value={formData.quickCode || ''} onChange={(e) => setFormData({ ...formData, quickCode: e.target.value })} placeholder="e.g., HOME01" />
+                  <label>Quick Code<span className="required-star">*</span></label>
+                  <input type="text" value={formData.quickCode || ''} onChange={(e) => { setFormData({ ...formData, quickCode: e.target.value }); setFormErrors(p => ({...p, quickCode: ''})); }} placeholder="e.g., HOME01" className={formErrors.quickCode ? 'ab-input-error' : ''} />
+                  {formErrors.quickCode && <span className="ab-field-error">{formErrors.quickCode}</span>}
                 </div>
                 <div className="form-group">
                   <label>Name<span className="required-star">*</span></label>
@@ -292,10 +294,7 @@ const AddressBook: React.FC<AddressBookProps> = ({
                 </div>
                 <div className="form-group">
                   <label>State<span className="required-star">*</span></label>
-                  <select value={formData.state || ''} onChange={(e) => { setFormData({ ...formData, state: e.target.value }); setFormErrors(p => ({...p, state: ''})); }} className={`ab-select ${formErrors.state ? 'ab-input-error' : ''}`}>
-                    <option value="">Select state</option>
-                    {['AL','AK','AZ','AR','CA','CO','CT','DE','FL','GA','HI','ID','IL','IN','IA','KS','KY','LA','ME','MD','MA','MI','MN','MS','MO','MT','NE','NV','NH','NJ','NM','NY','NC','ND','OH','OK','OR','PA','RI','SC','SD','TN','TX','UT','VT','VA','WA','WV','WI','WY'].map(s => <option key={s} value={s}>{s}</option>)}
-                  </select>
+                  <input type="text" value={formData.state || ''} onChange={(e) => { setFormData({ ...formData, state: e.target.value.toUpperCase() }); setFormErrors(p => ({...p, state: ''})); }} placeholder="e.g., TX" maxLength={2} className={formErrors.state ? 'ab-input-error' : ''} />
                   {formErrors.state && <span className="ab-field-error">{formErrors.state}</span>}
                 </div>
                 <div className="form-group">
@@ -309,9 +308,8 @@ const AddressBook: React.FC<AddressBookProps> = ({
                 <div className="form-group">
                   <label>Country<span className="required-star">*</span></label>
                   <select value={formData.country || 'United States'} onChange={(e) => setFormData({ ...formData, country: e.target.value })} className="ab-select">
-                    <option value="United States">United States</option>
-                    <option value="Canada">Canada</option>
                     <option value="Mexico">Mexico</option>
+                    <option value="United States">United States</option>
                   </select>
                 </div>
                 <div className="form-group checkbox-group">

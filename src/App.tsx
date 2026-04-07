@@ -21,6 +21,8 @@ import Reports from './pages/Reports';
 import Billing from './pages/Billing';
 import AddressBook from './components/AddressBook';
 import UserManagement from './components/UserManagement';
+import ManageShipment from './pages/ManageShipment';
+import ShipmentView from './pages/ShipmentView';
 import { User, UserRole, AccountUser, NewUserData, UserStatus } from './types/models';
 import './styles/theme.css';
 import './styles/global.css';
@@ -120,6 +122,8 @@ function App() {
             <Route path="overview" element={<Overview />} />
             <Route path="tracking" element={<TrackPackage />} />
             <Route path="ship-with-account" element={<ShipWithAccount />} />
+            <Route path="manage-shipment" element={<ManageShipment />} />
+            <Route path="shipment-view/:airbillNo" element={<ShipmentView />} />
             <Route path="schedule-pickup" element={<SchedulePickup />} />
             <Route path="cancel-pickup" element={<CancelPickup />} />
             <Route path="calculate-rates" element={<CalculateRates />} />

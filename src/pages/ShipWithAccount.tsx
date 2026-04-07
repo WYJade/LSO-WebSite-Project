@@ -69,8 +69,8 @@ const ShipWithAccount: React.FC = () => {
   const [releaseSignatureName, setReleaseSignatureName] = useState('');
   const [deliveryNotification, setDeliveryNotification] = useState(false);
   const [deliveryNotificationEmail, setDeliveryNotificationEmail] = useState('');
-  const [emailNotifications, setEmailNotifications] = useState('None');
-  const [returnLabels, setReturnLabels] = useState('None');
+  const [emailNotifications, setEmailNotifications] = useState('');
+  const [returnLabels, setReturnLabels] = useState('0');
   const [handlingFee, setHandlingFee] = useState('');
   const [poNumber, setPoNumber] = useState('');
   const [promotionCode, setPromotionCode] = useState('');
@@ -166,7 +166,7 @@ const ShipWithAccount: React.FC = () => {
     const errors: Record<string, string> = {};
     if (!fromName.trim()) errors.fromName = 'Name is required';
     if (!fromPhone.trim()) errors.fromPhone = 'Phone is required';
-    else if (!/^[\d\s\-()+]{7,15}$/.test(fromPhone.trim())) errors.fromPhone = 'Please enter a valid phone number';
+    else if (!/^\d{10}$/.test(fromPhone.trim())) errors.fromPhone = 'Phone number must be exactly 10 digits';
     if (!fromCompany.trim()) errors.fromCompany = 'Company is required';
     if (!fromAddress1.trim()) errors.fromAddress1 = 'Address 1 is required';
     if (!fromZip.trim()) errors.fromZip = 'Zip is required';
@@ -184,7 +184,7 @@ const ShipWithAccount: React.FC = () => {
     if (!toZip.trim()) errors.toZip = 'Zip is required';
     else if (!/^\d{5}$/.test(toZip.trim())) errors.toZip = 'Please enter a valid 5-digit zip code';
     if (!toPhone.trim()) errors.toPhone = 'Phone is required';
-    else if (!/^[\d\s\-()+]{7,15}$/.test(toPhone.trim())) errors.toPhone = 'Please enter a valid phone number';
+    else if (!/^\d{10}$/.test(toPhone.trim())) errors.toPhone = 'Phone number must be exactly 10 digits';
     if (!toDeclaredValue.trim()) errors.toDeclaredValue = 'Declared Value is required';
     else if (parseFloat(toDeclaredValue) < 0) errors.toDeclaredValue = 'Declared Value cannot be negative';
     if (!toWeight.trim()) errors.toWeight = 'Weight is required';
@@ -219,7 +219,7 @@ const ShipWithAccount: React.FC = () => {
     setBillingRef1(''); setBillingRef2(''); setBillingRef3(''); setBillingRef4('');
     setSignatureReq('None'); setReleaseSignature(false); setReleaseSignatureName('');
     setDeliveryNotification(false); setDeliveryNotificationEmail('');
-    setEmailNotifications('None'); setReturnLabels('None'); setHandlingFee('');
+    setEmailNotifications(''); setReturnLabels('0'); setHandlingFee('');
     setPoNumber(''); setPromotionCode(''); setThirdPartyBilling(''); setLsoPickup(false);
     showToast('Form has been reset.');
   };
@@ -418,7 +418,7 @@ const ShipWithAccount: React.FC = () => {
                 <div className="form-row-2col">
                   <div className="form-field">
                     <label>Phone<span className="required-star">*</span></label>
-                    <input type="tel" value={fromPhone} onChange={(e) => { setFromPhone(e.target.value); setStep2Errors(p => ({...p, fromPhone: ''})); }} placeholder="Phone" className={step2Errors.fromPhone ? 'input-error' : ''} />
+                    <input type="tel" value={fromPhone} onChange={(e) => { const v = e.target.value.replace(/[^\d]/g, '').slice(0, 10); setFromPhone(v); setStep2Errors(p => ({...p, fromPhone: ''})); }} maxLength={10} placeholder="10-digit number" className={step2Errors.fromPhone ? 'input-error' : ''} />
                     {step2Errors.fromPhone && <span className="field-error">{step2Errors.fromPhone}</span>}
                   </div>
                   <div className="form-field">
@@ -481,9 +481,9 @@ const ShipWithAccount: React.FC = () => {
                   <span className="required-notice"><span className="required-star">*</span>required fields</span>
                 </div>
 
-                {/* Top controls: To Quick Code, Pieces, checkboxes */}
-                <div className="form-row-2col">
-                  <div className="form-field">
+                {/* Top controls: all in one row */}
+                <div className="step3-top-row">
+                  <div className="form-field step3-quickcode">
                     <div className="label-with-action">
                       <label>To Quick Code</label>
                       <button type="button" className="refresh-btn" onClick={() => {}}>🔄 Refresh</button>
@@ -493,21 +493,18 @@ const ShipWithAccount: React.FC = () => {
                       <option value="" disabled>No options</option>
                     </select>
                   </div>
-                  <div className="form-field">
+                  <div className="form-field step3-pieces">
                     <label>Pieces</label>
                     <input type="number" value={pieces} onChange={(e) => setPieces(e.target.value)} min="1" />
                   </div>
-                </div>
-
-                <div className="step3-options-row">
-                  <div className="step3-options-left">
+                  <div className="step3-check-area">
                     <label className="checkbox-inline">
                       <input type="checkbox" checked={sameDeliveryOptions} onChange={(e) => setSameDeliveryOptions(e.target.checked)} />
                       <span>Same delivery options for all packages</span>
                     </label>
                     <span className="step3-help-link">(see <a href="#help" className="link-blue">help</a> for details)</span>
                   </div>
-                  <div className="apply-weight-row">
+                  <div className="step3-apply-area">
                     <label className="checkbox-label-text">Apply weight to all packages (lbs.)</label>
                     <div className="apply-weight-input">
                       <input type="number" value={applyWeightAll} onChange={(e) => setApplyWeightAll(e.target.value)} placeholder="" min="0" step="0.1" />
@@ -517,11 +514,11 @@ const ShipWithAccount: React.FC = () => {
                   </div>
                 </div>
 
-                {/* Airbill 1 Section */}
+                {/* Airbill 1 Section - compact 3-4 col layout */}
                 <div className="airbill-section">
                   <div className="airbill-header">Airbill 1</div>
                   <div className="airbill-body">
-                    <div className="form-row-2col">
+                    <div className="form-row-3col">
                       <div className="form-field">
                         <label>Name<span className="required-star">*</span></label>
                         <input type="text" value={toName} onChange={(e) => { setToName(e.target.value); setStep3Errors(p => ({...p, toName: ''})); }} className={step3Errors.toName ? 'input-error' : ''} />
@@ -532,8 +529,13 @@ const ShipWithAccount: React.FC = () => {
                         <input type="text" value={toCompany} onChange={(e) => { setToCompany(e.target.value); setStep3Errors(p => ({...p, toCompany: ''})); }} className={step3Errors.toCompany ? 'input-error' : ''} />
                         {step3Errors.toCompany && <span className="field-error">{step3Errors.toCompany}</span>}
                       </div>
+                      <div className="form-field">
+                        <label>Phone<span className="required-star">*</span></label>
+                        <input type="tel" value={toPhone} onChange={(e) => { const v = e.target.value.replace(/[^\d]/g, '').slice(0, 10); setToPhone(v); setStep3Errors(p => ({...p, toPhone: ''})); }} maxLength={10} className={step3Errors.toPhone ? 'input-error' : ''} placeholder="10-digit number" />
+                        {step3Errors.toPhone && <span className="field-error">{step3Errors.toPhone}</span>}
+                      </div>
                     </div>
-                    <div className="form-row-2col">
+                    <div className="form-row-3col">
                       <div className="form-field">
                         <label>Address 1<span className="required-star">*</span></label>
                         <input type="text" value={toAddress1} onChange={(e) => { setToAddress1(e.target.value); setStep3Errors(p => ({...p, toAddress1: ''})); }} className={step3Errors.toAddress1 ? 'input-error' : ''} />
@@ -543,12 +545,13 @@ const ShipWithAccount: React.FC = () => {
                         <label>Address 2</label>
                         <input type="text" value={toAddress2} onChange={(e) => setToAddress2(e.target.value)} />
                       </div>
-                    </div>
-                    <div className="envelope-row">
-                      <label className="checkbox-inline">
-                        <input type="checkbox" checked={toResidential} onChange={(e) => setToResidential(e.target.checked)} />
-                        <span>Residential Address</span>
-                      </label>
+                      <div className="form-field">
+                        <label>&nbsp;</label>
+                        <label className="checkbox-inline" style={{ marginTop: '8px' }}>
+                          <input type="checkbox" checked={toResidential} onChange={(e) => setToResidential(e.target.checked)} />
+                          <span>Residential Address</span>
+                        </label>
+                      </div>
                     </div>
                     <div className="form-row-address">
                       <div className="form-field field-country">
@@ -572,12 +575,7 @@ const ShipWithAccount: React.FC = () => {
                         {step3Errors.toZip && <span className="field-error">{step3Errors.toZip}</span>}
                       </div>
                     </div>
-                    <div className="form-row-2col">
-                      <div className="form-field">
-                        <label>Phone<span className="required-star">*</span></label>
-                        <input type="tel" value={toPhone} onChange={(e) => { setToPhone(e.target.value); setStep3Errors(p => ({...p, toPhone: ''})); }} className={step3Errors.toPhone ? 'input-error' : ''} />
-                        {step3Errors.toPhone && <span className="field-error">{step3Errors.toPhone}</span>}
-                      </div>
+                    <div className="form-row-4col">
                       <div className="form-field">
                         <label>Declared Value<span className="required-star">*</span></label>
                         <div className="input-with-prefix">
@@ -586,8 +584,6 @@ const ShipWithAccount: React.FC = () => {
                         </div>
                         {step3Errors.toDeclaredValue && <span className="field-error">{step3Errors.toDeclaredValue}</span>}
                       </div>
-                    </div>
-                    <div className="form-row-2col">
                       <div className="form-field">
                         <label>Weight<span className="required-star">*</span></label>
                         <div className="input-with-suffix">
@@ -608,12 +604,13 @@ const ShipWithAccount: React.FC = () => {
                         </div>
                         {step3Errors.toDimensions && <span className="field-error">{step3Errors.toDimensions}</span>}
                       </div>
-                    </div>
-                    <div className="envelope-row">
-                      <label className="checkbox-inline">
-                        <input type="checkbox" checked={toEnvelope} onChange={(e) => setToEnvelope(e.target.checked)} />
-                        <span>Envelope</span>
-                      </label>
+                      <div className="form-field">
+                        <label>&nbsp;</label>
+                        <label className="checkbox-inline" style={{ marginTop: '8px' }}>
+                          <input type="checkbox" checked={toEnvelope} onChange={(e) => setToEnvelope(e.target.checked)} />
+                          <span>Envelope</span>
+                        </label>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -633,109 +630,107 @@ const ShipWithAccount: React.FC = () => {
                   <span className="required-notice"><span className="required-star">*</span>required fields</span>
                 </div>
 
-                <div className="form-row-2col">
-                  <div className="form-field">
-                    <label>Billing Reference 1</label>
-                    <input type="text" value={billingRef1} onChange={(e) => setBillingRef1(e.target.value)} />
-                  </div>
-                  <div className="form-field">
-                    <label>Billing Reference 2</label>
-                    <input type="text" value={billingRef2} onChange={(e) => setBillingRef2(e.target.value)} />
-                  </div>
-                </div>
-                <div className="form-row-2col">
-                  <div className="form-field">
-                    <label>Billing Reference 3</label>
-                    <input type="text" value={billingRef3} onChange={(e) => setBillingRef3(e.target.value)} />
-                  </div>
-                  <div className="form-field">
-                    <label>Billing Reference 4</label>
-                    <input type="text" value={billingRef4} onChange={(e) => setBillingRef4(e.target.value)} />
-                  </div>
-                </div>
-
-                <div className="form-row-2col">
-                  <div className="form-field">
-                    <label>Signature Requirement</label>
-                    <select value={signatureReq} onChange={(e) => setSignatureReq(e.target.value)} className="form-select-field">
-                      <option value="None">None</option>
-                      <option value="General">General</option>
-                      <option value="Adult">Adult</option>
-                      <option value="Recipient">Recipient</option>
-                    </select>
-                  </div>
-                  <div className="form-field">
-                    <label className="checkbox-inline" style={{ marginTop: '28px' }}>
-                      <input type="checkbox" checked={releaseSignature} onChange={(e) => setReleaseSignature(e.target.checked)} />
-                      <span>Release Signature</span>
-                    </label>
-                    {releaseSignature && (
-                      <input type="text" value={releaseSignatureName} onChange={(e) => setReleaseSignatureName(e.target.value)} placeholder="Printed name" style={{ marginTop: '8px' }} />
-                    )}
-                  </div>
-                </div>
-
-                <div className="form-row-2col">
-                  <div className="form-field">
-                    <label className="checkbox-inline">
-                      <input type="checkbox" checked={deliveryNotification} onChange={(e) => setDeliveryNotification(e.target.checked)} />
-                      <span>Delivery Notification</span>
-                    </label>
-                    {deliveryNotification && (
-                      <input type="email" value={deliveryNotificationEmail} onChange={(e) => setDeliveryNotificationEmail(e.target.value)} placeholder="Email address" style={{ marginTop: '8px' }} />
-                    )}
-                  </div>
-                  <div className="form-field">
-                    <label>Email Notifications</label>
-                    <select value={emailNotifications} onChange={(e) => setEmailNotifications(e.target.value)} className="form-select-field">
-                      <option value="None">None</option>
-                      <option value="Ship Notification">Ship Notification</option>
-                      <option value="Exception Notification">Exception Notification</option>
-                      <option value="Delivery Notification">Delivery Notification</option>
-                      <option value="All Notifications">All Notifications</option>
-                    </select>
-                  </div>
-                </div>
-
-                <div className="form-row-2col">
-                  <div className="form-field">
-                    <label>Return Labels</label>
-                    <select value={returnLabels} onChange={(e) => setReturnLabels(e.target.value)} className="form-select-field">
-                      <option value="None">None</option>
-                      <option value="Print Return Label">Print Return Label</option>
-                      <option value="Email Return Label">Email Return Label</option>
-                    </select>
-                  </div>
-                  <div className="form-field">
-                    <label>Handling Fee</label>
-                    <div className="input-with-prefix">
-                      <span className="input-prefix">$</span>
-                      <input type="number" value={handlingFee} onChange={(e) => setHandlingFee(e.target.value)} min="0" step="0.01" />
+                {/* Billing References Group */}
+                <div className="step4-group">
+                  <div className="step4-group-label">Billing References</div>
+                  <div className="form-row-4col">
+                    <div className="form-field">
+                      <label>Billing Reference 1</label>
+                      <input type="text" value={billingRef1} onChange={(e) => setBillingRef1(e.target.value)} />
+                    </div>
+                    <div className="form-field">
+                      <label>Billing Reference 2</label>
+                      <input type="text" value={billingRef2} onChange={(e) => setBillingRef2(e.target.value)} />
+                    </div>
+                    <div className="form-field">
+                      <label>Billing Reference 3</label>
+                      <input type="text" value={billingRef3} onChange={(e) => setBillingRef3(e.target.value)} />
+                    </div>
+                    <div className="form-field">
+                      <label>Billing Reference 4</label>
+                      <input type="text" value={billingRef4} onChange={(e) => setBillingRef4(e.target.value)} />
                     </div>
                   </div>
                 </div>
 
-                <div className="form-row-2col">
-                  <div className="form-field">
-                    <label>PO #</label>
-                    <input type="text" value={poNumber} onChange={(e) => setPoNumber(e.target.value)} />
+                {/* Signature & Notifications Group */}
+                <div className="step4-group">
+                  <div className="step4-group-label">Signature &amp; Notifications</div>
+                  <div className="form-row-3col">
+                    <div className="form-field">
+                      <label>Signature Requirement</label>
+                      <select value={signatureReq} onChange={(e) => setSignatureReq(e.target.value)} className="form-select-field">
+                        <option value="None">None</option>
+                        <option value="General">General</option>
+                        <option value="Adult">Adult</option>
+                        <option value="Recipient">Recipient</option>
+                      </select>
+                    </div>
+                    <div className="form-field">
+                      <label>Email Notifications</label>
+                      <select value={emailNotifications} onChange={(e) => setEmailNotifications(e.target.value)} className="form-select-field">
+                        <option value="">Select Notifications...</option>
+                        <option value="Delivery">Delivery</option>
+                        <option value="Pickup">Pickup</option>
+                        <option value="Exception">Exception</option>
+                      </select>
+                    </div>
+                    <div className="form-field">
+                      <label>Return labels</label>
+                      <input type="number" value={returnLabels} onChange={(e) => setReturnLabels(e.target.value)} min="0" />
+                    </div>
                   </div>
-                  <div className="form-field">
-                    <label>Promotion Code</label>
-                    <input type="text" value={promotionCode} onChange={(e) => setPromotionCode(e.target.value)} />
+                  <div className="form-row-3col">
+                    <div className="form-field">
+                      <label className="checkbox-inline">
+                        <input type="checkbox" checked={releaseSignature} onChange={(e) => setReleaseSignature(e.target.checked)} />
+                        <span>Release Signature</span>
+                      </label>
+                      {releaseSignature && (
+                        <input type="text" value={releaseSignatureName} onChange={(e) => setReleaseSignatureName(e.target.value)} placeholder="Printed name" style={{ marginTop: '8px' }} />
+                      )}
+                    </div>
+                    <div className="form-field">
+                      <label className="checkbox-inline">
+                        <input type="checkbox" checked={deliveryNotification} onChange={(e) => setDeliveryNotification(e.target.checked)} />
+                        <span>Delivery Notification</span>
+                      </label>
+                      {deliveryNotification && (
+                        <input type="email" value={deliveryNotificationEmail} onChange={(e) => setDeliveryNotificationEmail(e.target.value)} placeholder="Email address" style={{ marginTop: '8px' }} />
+                      )}
+                    </div>
+                    <div className="form-field">
+                      <label className="checkbox-inline">
+                        <input type="checkbox" checked={lsoPickup} onChange={(e) => setLsoPickup(e.target.checked)} />
+                        <span>LSO Pickup</span>
+                      </label>
+                    </div>
                   </div>
                 </div>
 
-                <div className="form-row-2col">
-                  <div className="form-field">
-                    <label>3rd Party Billing</label>
-                    <input type="text" value={thirdPartyBilling} onChange={(e) => setThirdPartyBilling(e.target.value)} placeholder="Account number" />
-                  </div>
-                  <div className="form-field">
-                    <label className="checkbox-inline" style={{ marginTop: '28px' }}>
-                      <input type="checkbox" checked={lsoPickup} onChange={(e) => setLsoPickup(e.target.checked)} />
-                      <span>LSO Pickup</span>
-                    </label>
+                {/* Additional Options Group */}
+                <div className="step4-group">
+                  <div className="step4-group-label">Additional Options</div>
+                  <div className="form-row-4col">
+                    <div className="form-field">
+                      <label>Handling Fee</label>
+                      <div className="input-with-prefix">
+                        <span className="input-prefix">$</span>
+                        <input type="number" value={handlingFee} onChange={(e) => setHandlingFee(e.target.value)} min="0" step="0.01" />
+                      </div>
+                    </div>
+                    <div className="form-field">
+                      <label>PO #</label>
+                      <input type="text" value={poNumber} onChange={(e) => setPoNumber(e.target.value)} />
+                    </div>
+                    <div className="form-field">
+                      <label>Promotion Code</label>
+                      <input type="text" value={promotionCode} onChange={(e) => setPromotionCode(e.target.value)} />
+                    </div>
+                    <div className="form-field">
+                      <label>3rd Party Billing</label>
+                      <input type="text" value={thirdPartyBilling} onChange={(e) => setThirdPartyBilling(e.target.value)} placeholder="Account number" />
+                    </div>
                   </div>
                 </div>
 
@@ -746,7 +741,7 @@ const ShipWithAccount: React.FC = () => {
                     <button type="button" className="btn-outline-sm" onClick={() => {}}>Reports</button>
                   </div>
                   <div className="step-actions-right">
-                    <button type="button" className="btn-outline" onClick={() => { setBillingRef1(''); setBillingRef2(''); setBillingRef3(''); setBillingRef4(''); setSignatureReq('None'); setReleaseSignature(false); setReleaseSignatureName(''); setDeliveryNotification(false); setDeliveryNotificationEmail(''); setEmailNotifications('None'); setReturnLabels('None'); setHandlingFee(''); setPoNumber(''); setPromotionCode(''); setThirdPartyBilling(''); setLsoPickup(false); }}>Clear form</button>
+                    <button type="button" className="btn-outline" onClick={() => { setBillingRef1(''); setBillingRef2(''); setBillingRef3(''); setBillingRef4(''); setSignatureReq('None'); setReleaseSignature(false); setReleaseSignatureName(''); setDeliveryNotification(false); setDeliveryNotificationEmail(''); setEmailNotifications(''); setReturnLabels('0'); setHandlingFee(''); setPoNumber(''); setPromotionCode(''); setThirdPartyBilling(''); setLsoPickup(false); }}>Clear form</button>
                     <button type="button" className="btn-primary" onClick={handleStep4Continue}>Continue</button>
                   </div>
                 </div>
@@ -760,80 +755,102 @@ const ShipWithAccount: React.FC = () => {
                   <h2>Review &amp; Create Airbill</h2>
                 </div>
 
-                {/* From Section */}
-                <div className="review-section">
-                  <div className="review-section-header">
-                    <span className="review-badge">From</span>
-                    <button type="button" className="btn-edit" onClick={() => setCurrentStep(2)}>Edit</button>
+                {/* From + Airbill 1 (To) side by side */}
+                <div className="review-side-by-side">
+                  {/* From Section */}
+                  <div className="review-section">
+                    <div className="review-section-header">
+                      <span className="review-badge">From</span>
+                    </div>
+                    <div className="review-details review-details-compact">
+                      <div className="review-row"><span className="review-label">Name</span><span>{fromName || ''}</span></div>
+                      <div className="review-row"><span className="review-label">Phone</span><span>{fromPhone || ''}</span></div>
+                      <div className="review-row"><span className="review-label">Company</span><span>{fromCompany || ''}</span></div>
+                      <div className="review-row"><span className="review-label">Address 1</span><span>{fromAddress1 || ''}</span></div>
+                      <div className="review-row"><span className="review-label">Address 2</span><span>{fromAddress2 || ''}</span></div>
+                      <div className="review-row"><span className="review-label">Residential Address</span><span>{fromResidential ? 'Yes' : 'No'}</span></div>
+                      <div className="review-row"><span className="review-label">Country</span><span>{fromCountry}</span></div>
+                      <div className="review-row"><span className="review-label">City</span><span>{fromCity || ''}</span></div>
+                      <div className="review-row"><span className="review-label">State</span><span>{fromState || ''}</span></div>
+                      <div className="review-row"><span className="review-label">Zip code</span><span>{fromZip || ''}</span></div>
+                    </div>
+                    <div className="review-edit-footer">
+                      <button type="button" className="btn-edit" onClick={() => setCurrentStep(2)}>Edit</button>
+                    </div>
                   </div>
-                  <div className="review-details">
-                    <div className="review-row"><span className="review-label">Name:</span><span>{fromName || '—'}</span></div>
-                    <div className="review-row"><span className="review-label">Company:</span><span>{fromCompany || '—'}</span></div>
-                    <div className="review-row"><span className="review-label">Address:</span><span>{fromAddress1}{fromAddress2 ? `, ${fromAddress2}` : ''}</span></div>
-                    <div className="review-row"><span className="review-label">City/State/Zip:</span><span>{fromCity}{fromState ? `, ${fromState}` : ''} {fromZip}</span></div>
-                    <div className="review-row"><span className="review-label">Country:</span><span>{fromCountry}</span></div>
-                    <div className="review-row"><span className="review-label">Phone:</span><span>{fromPhone || '—'}</span></div>
-                    {fromResidential && <div className="review-row"><span className="review-label">Type:</span><span>Residential</span></div>}
-                  </div>
-                </div>
 
-                {/* Airbill 1 - To Section */}
-                <div className="review-section">
-                  <div className="review-section-header">
-                    <div className="review-badge-group">
-                      <span className="review-badge">Airbill 1</span>
+                  {/* Airbill 1 - To + shipment details + cost */}
+                  <div className="review-section">
+                    <div className="review-section-header">
                       <span className="review-badge review-badge-to">To</span>
                     </div>
-                    <button type="button" className="btn-edit" onClick={() => setCurrentStep(3)}>Edit</button>
-                  </div>
-                  <div className="review-details">
-                    <div className="review-row"><span className="review-label">Name:</span><span>{toName || '—'}</span></div>
-                    <div className="review-row"><span className="review-label">Company:</span><span>{toCompany || '—'}</span></div>
-                    <div className="review-row"><span className="review-label">Address:</span><span>{toAddress1}{toAddress2 ? `, ${toAddress2}` : ''}</span></div>
-                    <div className="review-row"><span className="review-label">City/State/Zip:</span><span>{toCity}{toState ? `, ${toState}` : ''} {toZip}</span></div>
-                    <div className="review-row"><span className="review-label">Country:</span><span>{toCountry3}</span></div>
-                    <div className="review-row"><span className="review-label">Phone:</span><span>{toPhone || '—'}</span></div>
-                    <div className="review-row"><span className="review-label">Service:</span><span>{service || '—'}</span></div>
-                    <div className="review-row"><span className="review-label">Weight:</span><span>{toWeight || weight} lbs</span></div>
-                    <div className="review-row"><span className="review-label">Dimensions:</span><span>{toDimLength || dimLength} x {toDimWidth || dimWidth} x {toDimHeight || dimHeight} in.</span></div>
-                    <div className="review-row"><span className="review-label">Declared Value:</span><span>${toDeclaredValue || declaredValue}</span></div>
-                    {(toEnvelope || isEnvelope) && <div className="review-row"><span className="review-label">Package:</span><span>Envelope</span></div>}
-                  </div>
-                  <div className="review-cost-summary">
-                    <div className="summary-row"><span>Estimated base price</span><span className="summary-val">${summary.basePrice.toFixed(2)}</span></div>
-                    <div className="summary-row"><span>Fuel surcharge</span><span className="summary-val">${summary.fuelSurcharge.toFixed(2)}</span></div>
-                    <div className="summary-row summary-total"><span>Estimated total</span><span className="summary-val">${summary.totalCharge.toFixed(2)}</span></div>
+                    <div className="review-airbill-inner">
+                      <div className="review-details-2col">
+                        <div className="review-details-col">
+                          <div className="review-row"><span className="review-label">Name</span><span>{toName || ''}</span></div>
+                          <div className="review-row"><span className="review-label">Company</span><span>{toCompany || ''}</span></div>
+                          <div className="review-row"><span className="review-label">Address 1</span><span>{toAddress1 || ''}</span></div>
+                          <div className="review-row"><span className="review-label">Address 2</span><span>{toAddress2 || ''}</span></div>
+                          <div className="review-row"><span className="review-label">Phone</span><span>{toPhone || ''}</span></div>
+                          <div className="review-row"><span className="review-label">Country</span><span>{toCountry3}</span></div>
+                          <div className="review-row"><span className="review-label">Zip code</span><span>{toZip || ''}</span></div>
+                          <div className="review-row"><span className="review-label">City</span><span>{toCity || ''}</span></div>
+                          <div className="review-row"><span className="review-label">State</span><span>{toState || ''}</span></div>
+                          <div className="review-row"><span className="review-label">Residential Address</span><span>{toResidential ? 'Yes' : 'No'}</span></div>
+                        </div>
+                        <div className="review-details-col">
+                          <div className="review-row"><span className="review-label">Service selected</span><span>{service || ''}</span></div>
+                          <div className="review-row"><span className="review-label">Weight (lbs.)</span><span>{toWeight || weight || ''}</span></div>
+                          <div className="review-row"><span className="review-label">Declared value</span><span>${toDeclaredValue || declaredValue}</span></div>
+                          <div className="review-row"><span className="review-label">Dimensions</span><span>{toDimLength || dimLength} x {toDimWidth || dimWidth} x {toDimHeight || dimHeight} in.</span></div>
+                          <div className="review-row"><span className="review-label">Estimate base price</span><span>${summary.basePrice.toFixed(2)}</span></div>
+                          <div className="review-row"><span className="review-label">Estimated service charge</span><span>${summary.serviceCharge.toFixed(2)}</span></div>
+                          <div className="review-row"><span className="review-label">Estimated additional</span><span>${summary.insuranceCharge.toFixed(2)}</span></div>
+                          <div className="review-row"><span className="review-label">insurance charge</span><span></span></div>
+                          <div className="review-row"><span className="review-label">Estimated fuel surcharge</span><span>${summary.fuelSurcharge.toFixed(2)}</span></div>
+                          <div className="review-row"><span className="review-label">Estimated total charge</span><span>${summary.totalCharge.toFixed(2)}</span></div>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="review-edit-footer">
+                      <button type="button" className="btn-edit" onClick={() => setCurrentStep(3)}>Edit</button>
+                    </div>
                   </div>
                 </div>
 
-                {/* Shipping Options Section */}
-                <div className="review-section">
-                  <div className="review-section-header">
-                    <span className="review-badge">Shipping Options</span>
-                    <button type="button" className="btn-edit" onClick={() => setCurrentStep(4)}>Edit</button>
+                {/* Shipping Options Section - below From/To */}
+                <div className="review-section review-section-noheader">
+                  <div className="review-details-2col">
+                    <div className="review-details-col">
+                      <div className="review-row"><span className="review-label">Billing Reference 1</span><span>{billingRef1 || ''}</span></div>
+                      <div className="review-row"><span className="review-label">Billing Reference 2</span><span>{billingRef2 || ''}</span></div>
+                      <div className="review-row"><span className="review-label">Billing Reference 3</span><span>{billingRef3 || ''}</span></div>
+                      <div className="review-row"><span className="review-label">Billing Reference 4</span><span>{billingRef4 || ''}</span></div>
+                      <div className="review-row"><span className="review-label">Signature Requirement</span><span>{signatureReq}</span></div>
+                      <div className="review-row"><span className="review-label">Release Signature</span><span>{releaseSignature ? (releaseSignatureName || 'Yes') : 'No'}</span></div>
+                      <div className="review-row"><span className="review-label">Signature</span><span></span></div>
+                      <div className="review-row"><span className="review-label">Delivery Notification</span><span>{deliveryNotification ? 'Yes' : 'No'}</span></div>
+                    </div>
+                    <div className="review-details-col">
+                      <div className="review-row"><span className="review-label">Delivery Notification Email</span><span>{deliveryNotificationEmail || ''}</span></div>
+                      <div className="review-row"><span className="review-label">Email Notifications</span><span>{emailNotifications || ''}</span></div>
+                      <div className="review-row"><span className="review-label">Return labels</span><span>{returnLabels}</span></div>
+                      <div className="review-row"><span className="review-label">Handling Fee</span><span>{handlingFee ? `$${parseFloat(handlingFee).toFixed(2)}` : '$0.00'}</span></div>
+                      <div className="review-row"><span className="review-label">PO #</span><span>{poNumber || ''}</span></div>
+                      <div className="review-row"><span className="review-label">Promotion Code</span><span>{promotionCode || ''}</span></div>
+                      <div className="review-row"><span className="review-label">LSO Pickup</span><span>{lsoPickup ? 'Yes' : 'No'}</span></div>
+                      <div className="review-row"><span className="review-label">3rd Party Billing</span><span>{thirdPartyBilling || ''}</span></div>
+                    </div>
                   </div>
-                  <div className="review-details">
-                    {billingRef1 && <div className="review-row"><span className="review-label">Billing Ref 1:</span><span>{billingRef1}</span></div>}
-                    {billingRef2 && <div className="review-row"><span className="review-label">Billing Ref 2:</span><span>{billingRef2}</span></div>}
-                    {billingRef3 && <div className="review-row"><span className="review-label">Billing Ref 3:</span><span>{billingRef3}</span></div>}
-                    {billingRef4 && <div className="review-row"><span className="review-label">Billing Ref 4:</span><span>{billingRef4}</span></div>}
-                    <div className="review-row"><span className="review-label">Signature:</span><span>{signatureReq}</span></div>
-                    {releaseSignature && <div className="review-row"><span className="review-label">Release Signature:</span><span>{releaseSignatureName || 'Yes'}</span></div>}
-                    {deliveryNotification && <div className="review-row"><span className="review-label">Delivery Notification:</span><span>{deliveryNotificationEmail || 'Yes'}</span></div>}
-                    {emailNotifications !== 'None' && <div className="review-row"><span className="review-label">Email Notifications:</span><span>{emailNotifications}</span></div>}
-                    {returnLabels !== 'None' && <div className="review-row"><span className="review-label">Return Labels:</span><span>{returnLabels}</span></div>}
-                    {handlingFee && <div className="review-row"><span className="review-label">Handling Fee:</span><span>${handlingFee}</span></div>}
-                    {poNumber && <div className="review-row"><span className="review-label">PO #:</span><span>{poNumber}</span></div>}
-                    {promotionCode && <div className="review-row"><span className="review-label">Promotion Code:</span><span>{promotionCode}</span></div>}
-                    {thirdPartyBilling && <div className="review-row"><span className="review-label">3rd Party Billing:</span><span>{thirdPartyBilling}</span></div>}
-                    {lsoPickup && <div className="review-row"><span className="review-label">LSO Pickup:</span><span>Yes</span></div>}
+                  <div className="review-edit-footer">
+                    <button type="button" className="btn-edit" onClick={() => setCurrentStep(4)}>Edit</button>
                   </div>
                 </div>
 
                 <div className="step-actions step5-actions">
                   <div className="step-actions-left">
                     <button type="button" className="btn-outline" onClick={() => { showToast('Ready for another shipment.'); setCurrentStep(1); setShowSummary(false); }}>Ship another package</button>
-                    <button type="button" className="btn-outline-sm" onClick={() => {}}>Reports</button>
+                    <button type="button" className="btn-outline-sm step5-reports-btn" onClick={() => {}}>Reports</button>
                   </div>
                   <div className="step-actions-right">
                     <button type="button" className="btn-outline" onClick={() => {}}>Schedule a pickup</button>

@@ -189,6 +189,7 @@
   width: 100%;
   border-collapse: collapse;
   font-size: 0.9rem;
+  table-layout: fixed;
 }
 
 .address-table thead {
@@ -221,10 +222,13 @@
 .address-table td {
   padding: 0.9rem 0.75rem;
   color: #333;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .checkbox-col {
-  width: 40px;
+  width: 36px;
   text-align: center;
 }
 
@@ -237,11 +241,14 @@
 .quickcode-col {
   font-weight: 600;
   color: #003087;
+  width: 90px;
 }
 
 .actions-col {
   text-align: center;
-  width: 70px;
+  width: 80px;
+  min-width: 80px;
+  position: relative;
 }
 
 .address-table th.actions-col {
@@ -250,6 +257,8 @@
 
 .address-table td.actions-col {
   text-align: center;
+  vertical-align: middle;
+  padding: 0.9rem 8px;
 }
 
 .edit-icon-btn {
